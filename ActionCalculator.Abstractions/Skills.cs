@@ -6,13 +6,14 @@ namespace ActionCalculator.Abstractions
     [Flags]
     public enum Skills
     {
+        None = 0,
         [Description("D")]
         Dodge = 1,
         [Description("SH")]
         SureHands = 2,
         [Description("SF")]
         SureFeet = 4,
-        [Description("P")]
+        [Description("PA")]
         Pass = 8,
         [Description("C")]
         Catch = 16,
@@ -31,6 +32,8 @@ namespace ActionCalculator.Abstractions
         [Description("B")]
         Brawler = 2048,
         [Description("CL")]
-        Claw = 4096
+        Claw = 4096,
+        [Description("SG")]
+        SneakyGit = 8192
     }
 }

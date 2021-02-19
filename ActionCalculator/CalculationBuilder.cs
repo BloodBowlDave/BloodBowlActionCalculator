@@ -5,12 +5,12 @@ namespace ActionCalculator
 {
     public class CalculationBuilder
     {
-        private readonly IActionParser _actionParser;
+        private readonly IActionBuilder _actionBuilder;
         private readonly IPlayerParser _playerParser;
 
-        public CalculationBuilder(IActionParser actionParser, IPlayerParser playerParser)
+        public CalculationBuilder(IActionBuilder actionBuilder, IPlayerParser playerParser)
         {
-            _actionParser = actionParser;
+            _actionBuilder = actionBuilder;
             _playerParser = playerParser;
         }
 
@@ -24,11 +24,10 @@ namespace ActionCalculator
             {
                 var playerString = playerStrings[i];
                 var playerSplit = playerString.Split(':');
-
-                var actions = playerSplit[0].Split(',').Select(x => _actionParser.Parse(x)).ToArray();
-
+                
                 var player = playerSplit.Length > 1 ? _playerParser.Parse(playerSplit[1]) : new Player();
-
+                
+                var actions = playerSplit[0].Split(',').Select(x => _actionBuilder.Build(x, player.Skills)).ToArray();
                 player.Actions = actions;
 
                 players[i] = player;

@@ -2,21 +2,15 @@
 {
     public class Action
     {
-        private readonly string _action;
-
-        public Action(decimal success, decimal failure, string action)
+        public Action(ActionType actionType, decimal success, decimal failure)
         {
+            ActionType = actionType;
             Success = success;
             Failure = failure;
-            _action = action;
         }
         
+        public ActionType ActionType { get; }
         public decimal Success { get; }
         public decimal Failure { get; }
-
-        public override string ToString()
-        {
-            return _action;
-        }
     }
 }
