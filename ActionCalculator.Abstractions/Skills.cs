@@ -7,33 +7,31 @@ namespace ActionCalculator.Abstractions
     public enum Skills
     {
         None = 0,
-        [Description("D")]
+        [Description("D")]//done
         Dodge = 1,
-        [Description("SH")]
+        [Description("SH")]//done
         SureHands = 2,
-        [Description("SF")]
+        [Description("SF")]//done
         SureFeet = 4,
-        [Description("PA")]
+        [Description("PA")]//not done
         Pass = 8,
-        [Description("C")]
+        [Description("C")]//done
         Catch = 16,
-        [Description("P")]
+        [Description("P")]//not done
         Pro = 32,
-        [Description("L")]
+        [Description("L")]//done
         Loner = 64,
-        [Description("DC")]
+        [Description("DC")]//not done
         DivingCatch = 128,
-        [Description("DP")]
+        [Description("DP")]//not done
         DirtyPlayer = 256,
-        [Description("F")]
-        Frenzy = 512,
-        [Description("MB")]
-        MightyBlow = 1024,
-        [Description("B")]
-        Brawler = 2048,
-        [Description("CL")]
-        Claw = 4096,
-        [Description("SG")]
-        SneakyGit = 8192
+        [Description("MB")]//not done
+        MightyBlow = 512,
+        [Description("B")]//not done
+        Brawler = 1024,
+        [Description("CL")]//not done
+        Claw = 2048,
+        [Description("SG")]//not done
+        SneakyGit = 4096
     }
 }

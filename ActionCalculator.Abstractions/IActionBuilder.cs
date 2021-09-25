@@ -2,6 +2,6 @@
 {
     public interface IActionBuilder
     {
-        Action Build(string input, Skills skills);
+        Action Build(string input);
     }
 }

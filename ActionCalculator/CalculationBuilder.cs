@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ActionCalculator.Abstractions;
 
 namespace ActionCalculator
 {
-    public class CalculationBuilder
+    public class CalculationBuilder : ICalculationBuilder
     {
         private readonly IActionBuilder _actionBuilder;
         private readonly IPlayerParser _playerParser;
@@ -16,24 +17,28 @@ namespace ActionCalculator
 
         public Calculation Build(string calculation)
         {
-            var playerStrings = calculation.Split('(', ')').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+            var playerStrings = calculation.Split('(', ')')
+	            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
-            var players = new Player[playerStrings.Length];
+            var playerActions = new List<PlayerAction>();
 
             for (var i = 0; i < playerStrings.Length; i++)
             {
-                var playerString = playerStrings[i];
-                var playerSplit = playerString.Split(':');
-                
-                var player = playerSplit.Length > 1 ? _playerParser.Parse(playerSplit[1]) : new Player();
-                
-                var actions = playerSplit[0].Split(',').Select(x => _actionBuilder.Build(x, player.Skills)).ToArray();
-                player.Actions = actions;
+	            var playerString = playerStrings[i];
+	            var playerSplit = playerString.Split(':');
 
-                players[i] = player;
+	            var player = playerSplit.Length > 1
+		            ? _playerParser.Parse(playerSplit[1], i)
+		            : new Player(i);
+
+	            var actions = playerSplit[0].Split(',')
+		            .Select(x => _actionBuilder.Build(x)).ToArray();
+
+	            playerActions.AddRange(actions.Select(x =>
+		            new PlayerAction(player, x)));
             }
 
-            return new Calculation(players);
+            return new Calculation(playerActions.ToArray());
         }
     }
 }

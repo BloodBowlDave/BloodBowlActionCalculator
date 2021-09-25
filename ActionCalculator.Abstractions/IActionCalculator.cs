@@ -1,7 +1,7 @@
 ﻿namespace ActionCalculator.Abstractions
 {
-    public interface IActionCalculator
-    {
-        decimal[] Calculate(Calculation calculation);
-    }
+	public interface IActionCalculator
+	{
+		public CalculationResult Calculate(string calculation);
+	}
 }

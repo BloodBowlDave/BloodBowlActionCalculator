@@ -3,19 +3,14 @@ using Xunit;
 
 namespace ActionCalculator.Tests
 {
-    public class ActionCalculatorTests
+    public class BB3ActionCalculatorTests
     {
-        private readonly ActionCalculator _actionCalculator;
-        private readonly ActionBuilder _actionBuilder;
-        private readonly PlayerParser _playerParser;
-        private readonly CalculationBuilder _calculationBuilder;
+        private readonly IActionCalculator _actionCalculator;
 
-        public ActionCalculatorTests()
+        public BB3ActionCalculatorTests()
         {
-            _actionCalculator = new ActionCalculator();
-            _actionBuilder = new ActionBuilder();
-            _playerParser = new PlayerParser();
-            _calculationBuilder = new CalculationBuilder(_actionBuilder, _playerParser);
+            var actionCalculatorFactory = new ActionCalculatorFactory();
+            _actionCalculator = actionCalculatorFactory.Create(Ruleset.BB3);
         }
 
         [Theory]
@@ -33,15 +28,19 @@ namespace ActionCalculator.Tests
         [InlineData("(U2,R2,R2,R2:SH,SF)", 0.84394, 0.89083, 0.89343)]
         [InlineData("C3:C", 0.88889)]
         [InlineData("2,2:L4", 0.69444, 0.81019, 0.81501)]
+		[InlineData("2,2,2,2:L3", 0.48225, 0.69659, 0.73231, 0.73496, 0.73503)]
+		[InlineData("(P2:PA)(C2)", 0.81019, 0.94522)]
+		[InlineData("(P4-2)(C2)", 0.13889, 0.27778, 0.29707)]
+		[InlineData("(I4-2,N24/512)(C3)", 0.01042, 0.01910, 0.02199)]
         public void ActionCalculatorReturnsExpectedResult(string calculation, params double[] expected)
         {
-            var result = _actionCalculator.Calculate(_calculationBuilder.Build(calculation));
+	        var result = _actionCalculator.Calculate(calculation);
 
-            Assert.Equal(expected.Length, result.Length);
+            Assert.Equal(expected.Length, result.Probabilities.Count);
 
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal((decimal) expected[i], result[i], 5);
+                Assert.Equal((decimal) expected[i], result.Probabilities[i], 5);
             }
         }
     }

@@ -7,20 +7,18 @@ namespace ActionCalculator
 {
     public class PlayerParser : IPlayerParser
     {
-        public Player Parse(string input)
+        public Player Parse(string skillsInput, int playerIndex)
         {
-            var skills = input.Split(',')
+            var skills = skillsInput.Split(',')
                 .Select(GetSkillAndRoll)
                 .Select(x => 
                     new Tuple<Skills, int>(EnumExtensions.GetValueFromDescription<Skills>(x.Item1), x.Item2))
                 .ToList();
             
-            return new Player
-            {
-                Skills = skills.Aggregate(Skills.None, (current, skill) => current | skill.Item1),
-                LonerSuccess = SkillSuccess(skills, Skills.Loner),
-                ProSuccess = SkillSuccess(skills, Skills.Pro)
-            };
+            return new Player(playerIndex,
+                skills.Aggregate(Skills.None, (current, skill) => current | skill.Item1),
+                SkillSuccess(skills, Skills.Loner),
+                SkillSuccess(skills, Skills.Pro));
         }
 
         private static double? SkillSuccess(IEnumerable<Tuple<Skills, int>> skillsAndRolls, Skills skill)
@@ -36,7 +34,9 @@ namespace ActionCalculator
 
             return last == '2' || last == '3' || last == '4' || last == '5' || last == '6'
                 ? new Tuple<string, int>(input.Remove(input.Length - 1), int.Parse(last.ToString()))
-                : new Tuple<string, int>(input, 0);
+                : input == "L" || input == "P" 
+	                ? new Tuple<string, int>(input, 4) //assume default pro/loner roll is 4
+	                : new Tuple<string, int>(input, 0);
         }
     }
 }

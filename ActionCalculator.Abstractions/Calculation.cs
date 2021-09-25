@@ -2,11 +2,11 @@
 {
     public class Calculation
     {
-        public Calculation(Player[] players)
+        public Calculation(PlayerAction[] playerActions)
         {
-            Players = players;
+            PlayerActions = playerActions;
         }
 
-        public Player[] Players { get; }
+        public PlayerAction[] PlayerActions { get; }
     }
 }
