@@ -30,7 +30,7 @@ namespace ActionCalculator.Tests
         [InlineData("2,2:L4", 0.69444, 0.81019, 0.81501)]
 		[InlineData("2,2,2,2:L3", 0.48225, 0.69659, 0.73231, 0.73496, 0.73503)]
 		[InlineData("(P2:PA)(C2)", 0.81019, 0.94522)]
-		[InlineData("(P4-2)(C2)", 0.13889, 0.27778, 0.29707)]
+		//[InlineData("(P4-2)(C2)", 0.13889, 0.27778, 0.29707)]
 		[InlineData("(I4-2,N24/512)(C3)", 0.01042, 0.01910, 0.02199)]
         public void ActionCalculatorReturnsExpectedResult(string calculation, params double[] expected)
         {
