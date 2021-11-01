@@ -17,7 +17,6 @@ namespace ActionCalculator
 	        {
 		        ActionType.Block => BlockAction(input),
 		        ActionType.Pass => PassAction(input),
-		        ActionType.InaccuratePass => InaccuratePassAction(input),
 		        _ => OtherAction(input, actionType)
 	        };
         }
@@ -42,14 +41,14 @@ namespace ActionCalculator
 		        var success = (decimal) Math.Pow(successPerDice, Math.Abs(blockDice));
 		        var failure = 1 - success;
 
-		        return new Action(ActionType.Block, success, failure);
+		        return new Action(ActionType.Block, success, failure, 0, false);
 	        }
 	        else
 	        {
 		        var failure = (decimal) Math.Pow(1 - successPerDice, blockDice);
 		        var success = 1 - failure;
 
-		        return new Action(ActionType.Block, success, failure);
+		        return new Action(ActionType.Block, success, failure, 0, false);
 	        }
         }
 
@@ -69,7 +68,7 @@ namespace ActionCalculator
 				success = (7m - int.Parse(input.Length == 2 ? input[1..] : input)) / 6;
 			}
 
-	        return new Action(actionType, success, 1 - success);
+	        return new Action(actionType, success, 1 - success, 0, false);
         }
 
         private static Action PassAction(string input)
@@ -95,20 +94,15 @@ namespace ActionCalculator
 		        return new Action(ActionType.Pass, 
 			        successes / 6, 
 			        failures / 6, 
-			        nonCriticalFailures / 6);
+			        nonCriticalFailures / 6, 
+                    true);
 	        }
 
 	        var success = (7m - int.Parse(input[1..])) / 6;
-	        var failure = 1 - success;
+            var failure = 1m / 6;
+	        var nonCriticalFailure = 1 - success - failure;
 
-	        return new Action(ActionType.Pass, success, failure);
-        }
-
-        private static Action InaccuratePassAction(string input)
-        {
-	        var passAction = PassAction(input);
-	        return new Action(ActionType.InaccuratePass, passAction.Success, passAction.Failure,
-		        passAction.NonCriticalFailure);
+	        return new Action(ActionType.Pass, success, failure, nonCriticalFailure, true);
         }
 	}
 }

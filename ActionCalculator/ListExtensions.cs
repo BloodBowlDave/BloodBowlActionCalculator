@@ -5,7 +5,7 @@ namespace ActionCalculator
 {
 	public static class ListExtensions
 	{
-		public static IEnumerable<List<T>> GetAllCombinations<T>(this List<T> list)
+		public static IEnumerable<List<T>> GetAllCombinations<T>(this IReadOnlyList<T> list)
 		{
 			var result = new List<List<T>>();
 

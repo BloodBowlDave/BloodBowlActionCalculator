@@ -4,11 +4,11 @@ namespace ActionCalculator.Abstractions
 {
 	public class CalculationResult
 	{
-		public CalculationResult(List<decimal> probabilities)
+		public CalculationResult(List<ProbabilityResult> probabilityResults)
 		{
-			Probabilities = probabilities;
+			ProbabilityResults = probabilityResults;
 		}
 
-		public List<decimal> Probabilities { get; }
+		public List<ProbabilityResult> ProbabilityResults { get; }
 	}
 }

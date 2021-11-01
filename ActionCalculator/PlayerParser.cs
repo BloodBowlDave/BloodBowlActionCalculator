@@ -32,11 +32,13 @@ namespace ActionCalculator
         {
             var last = input.Last();
 
-            return last == '2' || last == '3' || last == '4' || last == '5' || last == '6'
+            return last is '2' or '3' or '4' or '5' or '6'
                 ? new Tuple<string, int>(input.Remove(input.Length - 1), int.Parse(last.ToString()))
-                : input == "L" || input == "P" 
-	                ? new Tuple<string, int>(input, 4) //assume default pro/loner roll is 4
-	                : new Tuple<string, int>(input, 0);
+                : input is "L"
+	                ? new Tuple<string, int>(input, 4) //assume default loner roll is 4
+	                : input is "P" 
+                        ? new Tuple<string, int>(input, 3)
+                        : new Tuple<string, int>(input, 0);
         }
     }
 }

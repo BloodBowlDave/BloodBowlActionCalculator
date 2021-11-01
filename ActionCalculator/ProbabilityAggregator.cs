@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using ActionCalculator.Abstractions;
 
-namespace ActionCalculator.BB3
+namespace ActionCalculator
 {
 	public class ProbabilityAggregator : IProbabilityAggregator
 	{

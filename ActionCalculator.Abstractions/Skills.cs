@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace ActionCalculator.Abstractions
 {
     [Flags]
-    public enum Skills
+    public enum Skills : ulong
     {
         None = 0,
         [Description("D")]//done

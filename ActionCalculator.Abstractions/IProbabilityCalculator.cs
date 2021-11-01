@@ -4,6 +4,6 @@ namespace ActionCalculator.Abstractions
 {
     public interface IProbabilityCalculator
     {
-        IEnumerable<decimal> Calculate(Calculation calculation);
+        IReadOnlyList<ProbabilityResult> Calculate(Calculation calculation);
     }
 }

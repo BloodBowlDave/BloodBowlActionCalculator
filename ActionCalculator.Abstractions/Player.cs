@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Abstractions
+﻿using System;
+
+namespace ActionCalculator.Abstractions
 {
 	public class Player
 	{
@@ -16,8 +18,10 @@
 		}
 
 		public int Index { get; }
-		public Skills Skills { get; }
+		private Skills Skills { get; }
 		public double? ProSuccess { get; }
 		public double? LonerSuccess { get; }
-	}
+
+        public bool HasSkill(Enum skill) => Skills.HasFlag(skill);
+    }
 }

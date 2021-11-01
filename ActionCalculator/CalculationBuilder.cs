@@ -34,8 +34,8 @@ namespace ActionCalculator
 	            var actions = playerSplit[0].Split(',')
 		            .Select(x => _actionBuilder.Build(x)).ToArray();
 
-	            playerActions.AddRange(actions.Select(x =>
-		            new PlayerAction(player, x)));
+                playerActions.AddRange(actions.Select((x, j) 
+                    => new PlayerAction(player, x, j)));
             }
 
             return new Calculation(playerActions.ToArray());

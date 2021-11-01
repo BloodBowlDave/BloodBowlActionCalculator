@@ -5,7 +5,6 @@
         Other = 'O',
         Dodge = 'D',
         Rush = 'R',
-        GoForIt = 'G',
         PickUp = 'U',
         Pass = 'P',
         Block = 'B',
@@ -14,7 +13,6 @@
         ArmourBreak = 'A',
         Injury = 'J',
         OtherNonRerollable = 'N',
-        ThrowTeamMate = 'T',
-        InaccuratePass = 'I'
+        ThrowTeamMate = 'T'
     }
 }

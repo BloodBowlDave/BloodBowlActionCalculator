@@ -1,6 +1,5 @@
 ﻿using System;
 using ActionCalculator.Abstractions;
-using ActionCalculator.BB3;
 
 namespace ActionCalculator
 {
@@ -15,7 +14,7 @@ namespace ActionCalculator
 
 		private static ActionCalculator CreateBB3ActionCalculator() =>
 			new(new CalculationBuilder(new ActionBuilder(), new PlayerParser()),
-				new ProbabilityCalculator());
+				new ProbabilityCalculator(new ProbabilityComparer()));
 		
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ActionCalculator.BB3
+namespace ActionCalculator.Abstractions
 {
 	public interface IProbabilityAggregator
 	{

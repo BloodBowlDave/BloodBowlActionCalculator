@@ -1,4 +1,4 @@
-﻿namespace ActionCalculator
+﻿namespace ActionCalculator.Abstractions
 {
 	public enum Ruleset
 	{
