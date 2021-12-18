@@ -7,32 +7,54 @@ namespace ActionCalculator
 	public class ActionCalculator : IActionCalculator
 	{
 		private readonly ICalculationBuilder _calculationBuilder;
-		private readonly IProbabilityCalculator _probabilityCalculator;
-		
+        private readonly IEqualityComparer<decimal> _probabilityComparer;
+        private readonly IBaseProbabilityCalculator _baseProbabilityCalculator;
+        
+        private const int MaximumRerolls = 8;
+
 		public ActionCalculator(
-			ICalculationBuilder calculationBuilder, 
-			IProbabilityCalculator probabilityCalculator)
+            ICalculationBuilder calculationBuilder, 
+            IEqualityComparer<decimal> probabilityComparer,
+            IBaseProbabilityCalculator baseProbabilityCalculator)
 		{
 			_calculationBuilder = calculationBuilder;
-			_probabilityCalculator = probabilityCalculator;
-		}
+            _probabilityComparer = probabilityComparer;
+            _baseProbabilityCalculator = baseProbabilityCalculator;
+        }
 
 		public CalculationResult Calculate(string calculationString)
 		{
 			var calculation = _calculationBuilder.Build(calculationString);
-			
-			var probabilityResults = _probabilityCalculator.Calculate(calculation)
-                .Where(x => x != null).ToList();
 
+            var probabilityResults = new List<ProbabilityResult>();
+
+            for (var rerolls = 0; rerolls < MaximumRerolls; rerolls++)
+            {
+                var context = new CalculationContext(calculation, rerolls,
+                    new decimal[calculation.PlayerActions.Length * 2 + 1]);
+
+                _baseProbabilityCalculator.Initialise(context);
+                _baseProbabilityCalculator.Calculate(1m, rerolls, null, Skills.None);
+
+                var results = context.Results.Where(x => x > 0).ToArray();
+
+                if (rerolls > 0 && probabilityResults[rerolls - 1].Probabilities.SequenceEqual(results, _probabilityComparer))
+                {
+                    break;
+                }
+
+                probabilityResults.Add(new ProbabilityResult(results));
+            }
+			
             foreach (var probabilityResult in probabilityResults)
 			{
                 AggregateResults(probabilityResult.Probabilities);
             }
 
-            return new CalculationResult(probabilityResults);
+            return new CalculationResult(probabilityResults.ToList());
 		}
-
-		private static void AggregateResults(IList<decimal> result)
+        
+        private static void AggregateResults(IList<decimal> result)
 		{
 			for (var i = 1; i < result.Count; i++)
 			{

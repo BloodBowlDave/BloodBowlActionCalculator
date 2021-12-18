@@ -13,12 +13,16 @@ namespace ActionCalculator
                     typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
                 {
                     if (attribute.Description == description)
+                    {
                         return (T)field.GetValue(null);
+                    }
                 }
                 else
                 {
                     if (field.Name == description)
+                    {
                         return (T)field.GetValue(null);
+                    }
                 }
             }
 

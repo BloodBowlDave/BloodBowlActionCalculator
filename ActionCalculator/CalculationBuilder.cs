@@ -21,21 +21,25 @@ namespace ActionCalculator
 	            .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
             var playerActions = new List<PlayerAction>();
+            var actionIndex = 0;
 
-            for (var i = 0; i < playerStrings.Length; i++)
+            for (var playerIndex = 0; playerIndex < playerStrings.Length; playerIndex++)
             {
-	            var playerString = playerStrings[i];
+	            var playerString = playerStrings[playerIndex];
 	            var playerSplit = playerString.Split(':');
 
 	            var player = playerSplit.Length > 1
-		            ? _playerParser.Parse(playerSplit[1], i)
-		            : new Player(i);
-
+		            ? _playerParser.Parse(playerSplit[1], playerIndex)
+		            : new Player(playerIndex, Skills.None, null, null);
+                
 	            var actions = playerSplit[0].Split(',')
-		            .Select(x => _actionBuilder.Build(x)).ToArray();
+		            .Select(x => _actionBuilder.Build(x));
 
-                playerActions.AddRange(actions.Select((x, j) 
-                    => new PlayerAction(player, x, j)));
+	            foreach (var action in actions)
+	            {
+		            playerActions.Add(new PlayerAction(player, action, actionIndex));
+		            actionIndex++;
+	            }
             }
 
             return new Calculation(playerActions.ToArray());

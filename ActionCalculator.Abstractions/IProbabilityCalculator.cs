@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace ActionCalculator.Abstractions
+﻿namespace ActionCalculator.Abstractions
 {
     public interface IProbabilityCalculator
     {
-        IReadOnlyList<ProbabilityResult> Calculate(Calculation calculation);
+        void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool inaccuratePass = false);
     }
 }

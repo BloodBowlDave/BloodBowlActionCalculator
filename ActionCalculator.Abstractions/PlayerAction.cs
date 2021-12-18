@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Abstractions
+﻿using System;
+
+namespace ActionCalculator.Abstractions
 {
     public class PlayerAction
     {
@@ -6,11 +8,11 @@
 	    {
 		    Player = player;
 		    Action = action;
-            Index = index;
-        }
+		    Index = index;
+	    }
 
 	    public Player Player { get; }
 	    public Action Action { get; }
-	    public int Index { get; }
+		public int Index { get; }
     }
 }

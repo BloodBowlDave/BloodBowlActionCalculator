@@ -1,16 +1,22 @@
 using ActionCalculator.Abstractions;
+using ActionCalculator.ProbabilityCalculators;
 using Xunit;
 
 namespace ActionCalculator.Tests
 {
-    public class BB3ActionCalculatorTests
+    public class ActionCalculatorTests
     {
         private readonly IActionCalculator _actionCalculator;
 
-        public BB3ActionCalculatorTests()
+        public ActionCalculatorTests()
         {
-            var actionCalculatorFactory = new ActionCalculatorFactory();
-            _actionCalculator = actionCalculatorFactory.Create(Ruleset.BB3);
+            _actionCalculator = new ActionCalculator(
+                new CalculationBuilder(
+                    new ActionBuilder(), 
+                    new PlayerParser()), 
+                new ProbabilityComparer(),
+                new BaseProbabilityCalculator(
+                    new ProbabilityCalculatorFactory()));
         }
 
         [Theory]
@@ -30,9 +36,16 @@ namespace ActionCalculator.Tests
         [InlineData("2,2:L4", 2, 0.69444, 0.81019, 0.81501)]
 		[InlineData("2,2,2,2:L3", 4, 0.48225, 0.69659, 0.73231, 0.73496, 0.73503)]
 		[InlineData("(P2:PA)(C2)", 1, 0.81019, 0.94522)]
-        [InlineData("(P4-2)(C2)", 2, 0.13889, 0.28646, 0.30864)]
-        [InlineData("(P4-2)(C2)", 1, 0.13889, 0.28646)]
-        [InlineData("(P4-2)(C2)", 0, 0.14931)]
+        [InlineData("(P4-2)(C2)", 2, 0.13889, 0.29622, 0.32166)]
+        [InlineData("(P4-2)(C2)", 0, 0.16102)]
+        [InlineData("(P4-2)(C1)", 0, 0.16656)]
+        [InlineData("(P4-2)(C2:DC)", 0, 0.22141)]
+        [InlineData("(P4-2)(C2:DC,C)", 0, 0.28252)]
+        [InlineData("(2,3:P4)", 1, 0.55556, 0.84877)]
+        [InlineData("(2,3,4,5,6:P4)", 0, 0.03472)]
+        [InlineData("(2,3,4,5,6:P4)", 1, 0.01543, 0.07223)]
+        [InlineData("(2,3,4,5,6:P4)", 5, 0.01543, 0.05401, 0.09045, 0.10652, 0.10979, 0.11003)]
+        [InlineData("1D1:B", 0, 0.00)]
         public void ActionCalculatorReturnsExpectedResult(string calculation, int rerolls, params double[] expected)
         {
             var result = _actionCalculator.Calculate(calculation);

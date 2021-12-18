@@ -17,11 +17,11 @@ namespace ActionCalculator.Abstractions
         Pass = 8,
         [Description("C")]//done
         Catch = 16,
-        [Description("P")]//not done
+        [Description("P")]//done
         Pro = 32,
         [Description("L")]//done
         Loner = 64,
-        [Description("DC")]//not done
+        [Description("DC")]//done
         DivingCatch = 128,
         [Description("DP")]//not done
         DirtyPlayer = 256,
@@ -32,6 +32,8 @@ namespace ActionCalculator.Abstractions
         [Description("CL")]//not done
         Claw = 2048,
         [Description("SG")]//not done
-        SneakyGit = 4096
+        SneakyGit = 4096,
+        [Description("DT")]//not done
+        DivingTackle = 8192
     }
 }
