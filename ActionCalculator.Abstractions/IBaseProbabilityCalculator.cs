@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Abstractions
+﻿using ActionCalculator.Abstractions.ProbabilityCalculators;
+
+namespace ActionCalculator.Abstractions
 {
 	public interface IBaseProbabilityCalculator : IProbabilityCalculator
 	{

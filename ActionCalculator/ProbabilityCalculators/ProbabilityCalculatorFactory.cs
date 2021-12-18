@@ -1,5 +1,7 @@
 ﻿using System;
 using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.ProbabilityCalculators;
+using ActionCalculator.ProbabilityCalculators.Block;
 
 namespace ActionCalculator.ProbabilityCalculators
 {
@@ -19,7 +21,7 @@ namespace ActionCalculator.ProbabilityCalculators
                     -3 => new ThirdDieBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
                     -2 => new HalfDieBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
                     1 => new OneDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
-                    2 => new TwoDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
+                    2 => new TwoDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator(), new BrawlerCalculator()),
                     3 => new ThreeDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
                     _ => throw new ArgumentOutOfRangeException(nameof(blockDice), blockDice, null)
                 },

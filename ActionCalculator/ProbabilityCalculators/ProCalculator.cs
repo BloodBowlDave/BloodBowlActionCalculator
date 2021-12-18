@@ -1,6 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.ProbabilityCalculators;
 
-namespace ActionCalculator
+namespace ActionCalculator.ProbabilityCalculators
 {
 	public class ProCalculator : IProCalculator
 	{

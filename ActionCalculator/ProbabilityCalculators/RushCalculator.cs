@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.ProbabilityCalculators;
 
 namespace ActionCalculator.ProbabilityCalculators
 {
