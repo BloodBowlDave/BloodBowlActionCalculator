@@ -2,6 +2,6 @@
 {
     public interface IProbabilityCalculator
     {
-        void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool inaccuratePass = false);
+        void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false);
     }
 }

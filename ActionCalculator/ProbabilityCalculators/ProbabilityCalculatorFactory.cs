@@ -18,11 +18,11 @@ namespace ActionCalculator.ProbabilityCalculators
                 ActionType.Pass => new PassCalculator(baseProbabilityCalculator, new ProCalculator()),
                 ActionType.Block => blockDice switch
                 {
-                    -3 => new ThirdDieBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
-                    -2 => new HalfDieBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
-                    1 => new OneDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
+                    -3 => new ThirdDieBlockCalculator(baseProbabilityCalculator, new ProCalculator(), new BrawlerCalculator()),
+                    -2 => new HalfDieBlockCalculator(baseProbabilityCalculator, new ProCalculator(), new BrawlerCalculator()),
+                    1 => new OneDieBlockCalculator(baseProbabilityCalculator, new ProCalculator(), new BrawlerCalculator()),
                     2 => new TwoDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator(), new BrawlerCalculator()),
-                    3 => new ThreeDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator()),
+                    3 => new ThreeDiceBlockCalculator(baseProbabilityCalculator, new ProCalculator(), new BrawlerCalculator()),
                     _ => throw new ArgumentOutOfRangeException(nameof(blockDice), blockDice, null)
                 },
                 ActionType.Catch => inaccuratePass 

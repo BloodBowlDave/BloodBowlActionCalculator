@@ -1,18 +1,16 @@
-﻿using System;
-using ActionCalculator.Abstractions;
+﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.ProbabilityCalculators;
 using ActionCalculator.Abstractions.ProbabilityCalculators.Block;
-using Action = ActionCalculator.Abstractions.Action;
 
 namespace ActionCalculator.ProbabilityCalculators.Block
 {
-	public class ThirdDieBlockCalculator : IProbabilityCalculator
+	public class OneDieBlockCalculator : IProbabilityCalculator
 	{
 		private readonly IProbabilityCalculator _probabilityCalculator;
 		private readonly IProCalculator _proCalculator;
 		private readonly IBrawlerCalculator _brawlerCalculator;
-
-		public ThirdDieBlockCalculator(IProbabilityCalculator probabilityCalculator, 
+		
+		public OneDieBlockCalculator(IProbabilityCalculator probabilityCalculator, 
 			IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
 		{
 			_probabilityCalculator = probabilityCalculator;
@@ -24,12 +22,30 @@ namespace ActionCalculator.ProbabilityCalculators.Block
 		{
 			var player = playerAction.Player;
 			var action = playerAction.Action;
-			var success = playerAction.Action.Success;
-			var failure = playerAction.Action.Failure;
-			var oneDieSuccess = action.SuccessOnOneDie;
+			var success = action.Success;
 
 			_probabilityCalculator.Calculate(p * success, r, playerAction, usedSkills);
-			
-        }
+
+			var failButRollBothDown = 0m;
+
+			if (_brawlerCalculator.UseBrawler(r, playerAction))
+			{
+				failButRollBothDown = _brawlerCalculator.ProbabilityCanUseBrawler(action);
+				_probabilityCalculator.Calculate(p * failButRollBothDown * success, r, playerAction, usedSkills);
+			}
+
+			p *= (action.Failure - failButRollBothDown) * success;
+
+			if (_proCalculator.UsePro(playerAction, r, usedSkills))
+			{
+				_probabilityCalculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills);
+				return;
+			}
+
+			if (r > 0)
+			{
+				_probabilityCalculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+			}
+		}
 	}
 }

@@ -18,7 +18,7 @@ namespace ActionCalculator.ProbabilityCalculators
 	        _context = context;
         }
 
-        public void Calculate(decimal p, int r, PlayerAction previousPlayerAction, Skills usedSkills, bool inaccuratePass = false)
+        public void Calculate(decimal p, int r, PlayerAction previousPlayerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             if (p == 0)
             {
@@ -41,7 +41,7 @@ namespace ActionCalculator.ProbabilityCalculators
             }
 
             _probabilityCalculatorFactory
-                .CreateProbabilityCalculator(playerAction.Action.ActionType, playerAction.Action.NumberOfDice, this, inaccuratePass)
+                .CreateProbabilityCalculator(playerAction.Action.ActionType, playerAction.Action.NumberOfDice, this, nonCriticalFailure)
                 .Calculate(p, r, playerAction, usedSkills);            
         }
     }

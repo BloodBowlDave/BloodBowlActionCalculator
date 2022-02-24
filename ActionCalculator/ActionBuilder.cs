@@ -51,15 +51,13 @@ namespace ActionCalculator
 	        var numberOfDice = int.Parse(split[0]);
 	        var numberOfSuccessfulResults = int.Parse(split[1]);
 
-	        return BuildAction(numberOfDice, numberOfSuccessfulResults);
+	        return BuildBlockAction(numberOfDice, numberOfSuccessfulResults);
 		}
 
-        private static Action BuildAction(int numberOfDice, int numberOfSuccessfulResults)
+        private static Action BuildBlockAction(int numberOfDice, int numberOfSuccessfulResults)
 		{
 			var successOnOneDie = (decimal)numberOfSuccessfulResults / 6;
-			decimal success;
-			decimal failure;
-			decimal successOnTwoDice;
+			decimal success, failure, successOnTwoDice;
 
 			switch (numberOfDice)
 	        {
@@ -108,7 +106,7 @@ namespace ActionCalculator
 				case 3:
 			        failure = (decimal) Math.Pow(1 - (double) successOnOneDie, 3);
 			        success = 1 - failure;
-			        successOnTwoDice = 1 - (decimal) Math.Pow((double) successOnOneDie, 2);
+			        successOnTwoDice = 1 - (decimal) Math.Pow(1 - (double) successOnOneDie, 2);
 
 			        return new Action(ActionType.Block, success, failure, 0)
 			        {

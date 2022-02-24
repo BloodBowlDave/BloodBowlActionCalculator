@@ -2,7 +2,8 @@
 {
 	public interface IBrawlerCalculator
 	{
-		decimal FailButRollBothDown(Action action);
+		decimal ProbabilityCanUseBrawler(Action action);
 		bool UseBrawler(int r, PlayerAction playerAction);
+		decimal ProbabilityCanUseBrawlerAndPro(Action action);
 	}
 }

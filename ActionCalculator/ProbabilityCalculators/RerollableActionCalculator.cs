@@ -14,7 +14,7 @@ namespace ActionCalculator.ProbabilityCalculators
 	        _proCalculator = proCalculator;
         }
 
-        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool inaccuratePass = false)
+        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var success = playerAction.Action.Success;

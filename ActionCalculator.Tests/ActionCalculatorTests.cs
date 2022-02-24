@@ -45,7 +45,7 @@ namespace ActionCalculator.Tests
         [InlineData("(2,3,4,5,6:P4)", 0, 0.03472)]
         [InlineData("(2,3,4,5,6:P4)", 1, 0.01543, 0.07223)]
         [InlineData("(2,3,4,5,6:P4)", 5, 0.01543, 0.05401, 0.09045, 0.10652, 0.10979, 0.11003)]
-        [InlineData("1D1:B", 0, 0.00)]
+        [InlineData("1D1:B", 0, 0.19444)]
         public void ActionCalculatorReturnsExpectedResult(string calculation, int rerolls, params double[] expected)
         {
             var result = _actionCalculator.Calculate(calculation);
