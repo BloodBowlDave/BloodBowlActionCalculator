@@ -7,12 +7,17 @@
         Rush = 'R',
         PickUp = 'U',
         Pass = 'P',
-        Block = 'B',
+        Block = 'K',
         Catch = 'C',
         Foul = 'F',
-        ArmourBreak = 'A',
-        Injury = 'J',
-        OtherNonRerollable = 'N',
-        ThrowTeamMate = 'T'
+        ArmourBreak = 'B',
+        OtherNonRerollable = 'H',
+        ThrowTeamMate = 'T',
+        Dauntless = 'L',
+        Interception = 'I',
+        Tentacles = 'N',
+        Shadowing = 'S',
+        ArgueTheCall = 'A',
+        Bribe = 'E'
     }
 }

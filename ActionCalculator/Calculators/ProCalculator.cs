@@ -1,7 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.ProbabilityCalculators;
+using ActionCalculator.Abstractions.Calculators;
 
-namespace ActionCalculator.ProbabilityCalculators
+namespace ActionCalculator.Calculators
 {
 	public class ProCalculator : IProCalculator
 	{
@@ -16,12 +16,12 @@ namespace ActionCalculator.ProbabilityCalculators
 
 			var action = playerAction.Action;
 
-			if (action.UseProBeforeReroll)
+			if (action.UsePro)
 			{
 				return true;
 			}
 
-			return r == 0 || player.ProSuccess > player.LonerSuccess;
+			return r == 0 || player.ProSuccess * action.SuccessOnOneDie > player.LonerSuccess * action.Success;
 		}
 	}
 }

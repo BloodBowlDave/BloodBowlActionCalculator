@@ -1,20 +1,20 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.ProbabilityCalculators;
+using ActionCalculator.Abstractions.Calculators;
 
-namespace ActionCalculator.ProbabilityCalculators
+namespace ActionCalculator.Calculators.BallHandling
 {
-	public class CatchInaccuratePassCalculator : IProbabilityCalculator
+	public class CatchInaccuratePassCalculator : ICalculator
 	{
-		private readonly IProbabilityCalculator _probabilityCalculator;
+		private readonly ICalculator _calculator;
 		private readonly IProCalculator _proCalculator;
 
 		private const decimal ScatterToTarget = 24m / 512;
 		private const decimal ScatterToTargetOrAdjacent = 240m / 512;
 		private const decimal ScatterThenBounceToTarget = (ScatterToTargetOrAdjacent - ScatterToTarget) / 8;
 
-		public CatchInaccuratePassCalculator(IProbabilityCalculator probabilityCalculator, IProCalculator proCalculator)
+		public CatchInaccuratePassCalculator(ICalculator calculator, IProCalculator proCalculator)
 		{
-			_probabilityCalculator = probabilityCalculator;
+			_calculator = calculator;
 			_proCalculator = proCalculator;
 		}
 
@@ -68,7 +68,7 @@ namespace ActionCalculator.ProbabilityCalculators
 
 			if (player.HasSkill(Skills.Catch))
 			{
-				_probabilityCalculator.Calculate(p * failDivingCatch * ScatterThenBounceToTarget * (catchFailure * catchSuccess + catchSuccess),
+				_calculator.Calculate(p * failDivingCatch * ScatterThenBounceToTarget * (catchFailure * catchSuccess + catchSuccess),
 					r, playerAction, usedSkills);
 
 				return;
@@ -76,13 +76,13 @@ namespace ActionCalculator.ProbabilityCalculators
 
 			if (_proCalculator.UsePro(playerAction, r, usedSkills))
 			{
-				_probabilityCalculator.Calculate(
+				_calculator.Calculate(
 					p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchSuccess, r, playerAction,
 					usedSkills | Skills.Pro);
 
 				if (r > 0)
 				{
-					_probabilityCalculator.Calculate(p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchFailure * player.LonerSuccess * catchSuccess, 
+					_calculator.Calculate(p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchFailure * player.LonerSuccess * catchSuccess, 
 						r - 1, playerAction, usedSkills | Skills.Pro);
 				}
 
@@ -91,12 +91,12 @@ namespace ActionCalculator.ProbabilityCalculators
 
 			if (r > 0)
 			{
-				_probabilityCalculator.Calculate(p * failDivingCatch * player.LonerSuccess * ScatterThenBounceToTarget * catchSuccess, 
+				_calculator.Calculate(p * failDivingCatch * player.LonerSuccess * ScatterThenBounceToTarget * catchSuccess, 
 					r - 1, playerAction, usedSkills);
 
 				if (r > 1)
 				{
-					_probabilityCalculator.Calculate(p * failDivingCatch * player.LonerSuccess * ScatterThenBounceToTarget
+					_calculator.Calculate(p * failDivingCatch * player.LonerSuccess * ScatterThenBounceToTarget
 					                                 * catchFailure * player.LonerSuccess * catchSuccess, r - 2, playerAction,
 						usedSkills);
 				}
@@ -104,33 +104,33 @@ namespace ActionCalculator.ProbabilityCalculators
 				return;
 			}
 
-			_probabilityCalculator.Calculate(p * catchFailure * ScatterThenBounceToTarget * catchSuccess, r, playerAction,
+			_calculator.Calculate(p * catchFailure * ScatterThenBounceToTarget * catchSuccess, r, playerAction,
 				usedSkills);
 		}
 
 		private void CalculateCatch(decimal p, int r, PlayerAction playerAction, Skills usedSkills,
 			decimal successNoReroll, decimal successWithReroll)
 		{
-			_probabilityCalculator.Calculate(p * successNoReroll, r, playerAction, usedSkills);
+			_calculator.Calculate(p * successNoReroll, r, playerAction, usedSkills);
 
 			p *= successWithReroll;
 
 			var player = playerAction.Player;
 			if (player.HasSkill(Skills.Catch))
 			{
-				_probabilityCalculator.Calculate(p, r, playerAction, usedSkills);
+				_calculator.Calculate(p, r, playerAction, usedSkills);
 				return;
 			}
 			
 			if (_proCalculator.UsePro(playerAction, r, usedSkills))
 			{
-				_probabilityCalculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
+				_calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
 				return;
 			}
 			
 			if (r > 0)
 			{
-				_probabilityCalculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+				_calculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
 			}
 		}
 	}

@@ -7,12 +7,19 @@ namespace ActionCalculator
 {
     public class ActionBuilder : IActionBuilder
     {
+        private readonly ITwoD6 _twoD6;
+
+        public ActionBuilder(ITwoD6 twoD6)
+        {
+            _twoD6 = twoD6;
+        }
+
         public Action Build(string input)
         {
 	        input = input.ToUpperInvariant();
 
-			var useProBeforeReroll = input.Contains("*");
-			var useBrawlerBeforeReroll = input.Contains("^");
+			var usePro = input.Contains("*");
+			var useBrawler = input.Contains("^");
 			var rerollNonCriticalFailure = !input.Contains("'");
 			var affectedByDivingTackle = input.Contains("\"");
 
@@ -24,12 +31,15 @@ namespace ActionCalculator
 			var action = actionType switch
 			{
 				ActionType.Block => BlockAction(input),
+				ActionType.Foul => FoulAction(input),
 				ActionType.Pass => PassAction(input),
+				ActionType.Bribe => BribeAction(),
+				ActionType.ArgueTheCall => ArgueTheCallAction(input),
 				_ => OtherAction(input, actionType)
 			};
 
-			action.UseProBeforeReroll = useProBeforeReroll;
-			action.UseBrawlerBeforeReroll = useBrawlerBeforeReroll;
+			action.UsePro = usePro;
+			action.UseBrawler = useBrawler;
 			action.RerollNonCriticalFailure = rerollNonCriticalFailure;
 			action.AffectedByDivingTackle = affectedByDivingTackle;
 
@@ -54,6 +64,27 @@ namespace ActionCalculator
 	        return BuildBlockAction(numberOfDice, numberOfSuccessfulResults);
 		}
 
+        private Action FoulAction(string input)
+        {
+            var requiresRemoval = input.Contains("~", StringComparison.InvariantCultureIgnoreCase);
+
+			if (requiresRemoval)
+            {
+                input = input.Replace("~", "", StringComparison.InvariantCultureIgnoreCase);
+            }
+			
+			var roll = int.Parse(input[1..]);
+            var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
+			
+			var action = new Action(ActionType.Foul, success, 1 - success, 0, success)
+            {
+                OriginalRoll = roll,
+                RequiresRemoval = requiresRemoval
+			};
+
+            return action;
+		}
+		
         private static Action BuildBlockAction(int numberOfDice, int numberOfSuccessfulResults)
 		{
 			var successOnOneDie = (decimal)numberOfSuccessfulResults / 6;
@@ -66,53 +97,48 @@ namespace ActionCalculator
 			        failure = 1 - success;
 			        successOnTwoDice = (decimal) Math.Pow((double) successOnOneDie, 2);
 
-			        return new Action(ActionType.Block, success, failure, 0)
+			        return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
 			        {
 				        NumberOfDice = numberOfDice,
 				        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-				        SuccessOnOneDie = successOnOneDie,
 				        SuccessOnTwoDice = successOnTwoDice
 			        };
 		        case -2:
 			        success = (decimal) Math.Pow((double) successOnOneDie, 2);
 			        failure = 1 - success;
 
-			        return new Action(ActionType.Block, success, failure, 0)
+			        return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
 			        {
 				        NumberOfDice = numberOfDice,
-				        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-				        SuccessOnOneDie = successOnOneDie
+				        NumberOfSuccessfulResults = numberOfSuccessfulResults
 			        };
 				case 1:
 			        success = successOnOneDie;
 			        failure = 1 - success;
 
-			        return new Action(ActionType.Block, success, failure, 0)
+			        return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
 			        {
 				        NumberOfDice = numberOfDice,
-				        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-				        SuccessOnOneDie = successOnOneDie
+				        NumberOfSuccessfulResults = numberOfSuccessfulResults
 			        };
 				case 2:
 			        failure = (decimal) Math.Pow(1 - (double) successOnOneDie, 2);
 			        success = 1 - failure;
 
-			        return new Action(ActionType.Block, success, failure, 0)
+			        return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
 			        {
 				        NumberOfDice = numberOfDice,
-				        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-				        SuccessOnOneDie = successOnOneDie
+				        NumberOfSuccessfulResults = numberOfSuccessfulResults
 			        };
 				case 3:
 			        failure = (decimal) Math.Pow(1 - (double) successOnOneDie, 3);
 			        success = 1 - failure;
 			        successOnTwoDice = 1 - (decimal) Math.Pow(1 - (double) successOnOneDie, 2);
 
-			        return new Action(ActionType.Block, success, failure, 0)
+			        return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
 			        {
 				        NumberOfDice = numberOfDice,
 				        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-				        SuccessOnOneDie = successOnOneDie,
 				        SuccessOnTwoDice = successOnTwoDice
 			        };
 				default:
@@ -129,14 +155,14 @@ namespace ActionCalculator
 		        var denominator = split[1];
 		        var success = decimal.Parse(numerator[1..]) / decimal.Parse(denominator);
 
-                return new Action(actionType, success, 1 - success, 0);
+                return new Action(actionType, success, 1 - success, 0, success);
 			}
 	        else
             {
                 var roll = int.Parse(input.Length == 2 ? input[1..] : input);
                 var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 				
-                var action = new Action(actionType, success, 1 - success, 0)
+                var action = new Action(actionType, success, 1 - success, 0, success)
                 {
 	                OriginalRoll = roll
                 };
@@ -165,14 +191,27 @@ namespace ActionCalculator
 		        return new Action(ActionType.Pass, 
 			        successes / 6, 
 			        failures / 6, 
-			        nonCriticalFailures / 6);
+			        nonCriticalFailures / 6,
+                    successes / 6);
 	        }
 
 	        var success = (7m - int.Parse(input[1..])) / 6;
             var failure = 1m / 6;
 	        var nonCriticalFailure = 1 - success - failure;
 
-	        return new Action(ActionType.Pass, success, failure, nonCriticalFailure);
+	        return new Action(ActionType.Pass, success, failure, nonCriticalFailure, success);
+		}
+
+		private static Action BribeAction() => 
+            new(ActionType.Bribe, 5m / 6, 1m / 6, 0, 0);
+
+
+        private static Action ArgueTheCallAction(string input)
+        {
+            var roll = int.Parse(input.Length == 2 ? input[1..] : input);
+            var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+
+            return new Action(ActionType.ArgueTheCall, success, 1m / 6, 1 - success - 1m / 6, 0);
         }
-    }
+	}
 }

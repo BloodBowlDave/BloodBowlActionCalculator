@@ -1,19 +1,19 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.ProbabilityCalculators;
-using ActionCalculator.Abstractions.ProbabilityCalculators.Block;
+using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Abstractions.Calculators.Blocking;
 
-namespace ActionCalculator.ProbabilityCalculators.Block
+namespace ActionCalculator.Calculators.Blocking
 {
-	public class OneDieBlockCalculator : IProbabilityCalculator
+	public class OneDieBlockCalculator : ICalculator
 	{
-		private readonly IProbabilityCalculator _probabilityCalculator;
+		private readonly ICalculator _calculator;
 		private readonly IProCalculator _proCalculator;
 		private readonly IBrawlerCalculator _brawlerCalculator;
 		
-		public OneDieBlockCalculator(IProbabilityCalculator probabilityCalculator, 
+		public OneDieBlockCalculator(ICalculator calculator, 
 			IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
 		{
-			_probabilityCalculator = probabilityCalculator;
+			_calculator = calculator;
 			_proCalculator = proCalculator;
 			_brawlerCalculator = brawlerCalculator;
 		}
@@ -24,27 +24,27 @@ namespace ActionCalculator.ProbabilityCalculators.Block
 			var action = playerAction.Action;
 			var success = action.Success;
 
-			_probabilityCalculator.Calculate(p * success, r, playerAction, usedSkills);
+			_calculator.Calculate(p * success, r, playerAction, usedSkills);
 
 			var failButRollBothDown = 0m;
 
 			if (_brawlerCalculator.UseBrawler(r, playerAction))
 			{
 				failButRollBothDown = _brawlerCalculator.ProbabilityCanUseBrawler(action);
-				_probabilityCalculator.Calculate(p * failButRollBothDown * success, r, playerAction, usedSkills);
+				_calculator.Calculate(p * failButRollBothDown * success, r, playerAction, usedSkills);
 			}
 
 			p *= (action.Failure - failButRollBothDown) * success;
 
 			if (_proCalculator.UsePro(playerAction, r, usedSkills))
 			{
-				_probabilityCalculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills);
+				_calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills);
 				return;
 			}
 
 			if (r > 0)
 			{
-				_probabilityCalculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+				_calculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
 			}
 		}
 	}

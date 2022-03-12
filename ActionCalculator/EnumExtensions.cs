@@ -27,7 +27,6 @@ namespace ActionCalculator
             }
 
             throw new ArgumentException("Not found.", nameof(description));
-            // Or return default(T);
         }
     }
 }

@@ -31,10 +31,27 @@ namespace ActionCalculator
 	            var player = playerSplit.Length > 1
 		            ? _playerParser.Parse(playerSplit[1], playerIndex)
 		            : new Player(playerIndex, Skills.None, null, null);
-                
-	            var actions = playerSplit[0].Split(',')
-		            .Select(x => _actionBuilder.Build(x));
 
+                var actions = new List<Action>();
+
+                foreach (var actionString in playerSplit[0].Split(','))
+                {
+                    var actionSplit = actionString.Split('|');
+
+                    actions.Add(_actionBuilder.Build(actionSplit[0]));
+
+                    if (actionSplit.Length == 1)
+                    {
+                        continue;
+                    }
+
+                    var action = _actionBuilder.Build(actionSplit[1]);
+
+                    action.RequiresDauntlessFail = true;
+
+                    actions.Add(action);
+                }
+                
 	            foreach (var action in actions)
 	            {
 		            playerActions.Add(new PlayerAction(player, action, actionIndex));

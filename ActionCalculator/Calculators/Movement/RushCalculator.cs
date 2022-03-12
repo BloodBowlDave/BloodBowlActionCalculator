@@ -1,16 +1,16 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.ProbabilityCalculators;
+using ActionCalculator.Abstractions.Calculators;
 
-namespace ActionCalculator.ProbabilityCalculators
+namespace ActionCalculator.Calculators.Movement
 {
-    public class RushCalculator : IProbabilityCalculator
+    public class RushCalculator : ICalculator
     {
-        private readonly IProbabilityCalculator _probabilityCalculator;
+        private readonly ICalculator _calculator;
         private readonly IProCalculator _proCalculator;
 
-        public RushCalculator(IProbabilityCalculator probabilityCalculator, IProCalculator proCalculator)
+        public RushCalculator(ICalculator calculator, IProCalculator proCalculator)
         {
-            _probabilityCalculator = probabilityCalculator;
+            _calculator = calculator;
             _proCalculator = proCalculator;
         }
 
@@ -20,25 +20,25 @@ namespace ActionCalculator.ProbabilityCalculators
             var success = playerAction.Action.Success;
             var failure = playerAction.Action.Failure;
 
-            _probabilityCalculator.Calculate(p * success, r, playerAction, usedSkills);
+            _calculator.Calculate(p * success, r, playerAction, usedSkills);
 
             p *= failure * success;
 
             if (player.HasSkill(Skills.SureFeet) && !usedSkills.HasFlag(Skills.SureFeet))
             {
-                _probabilityCalculator.Calculate(p, r, playerAction, usedSkills | Skills.SureFeet);
+                _calculator.Calculate(p, r, playerAction, usedSkills | Skills.SureFeet);
                 return;
             }
             
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
 			{
-				_probabilityCalculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
+				_calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
                 return;
             }
 
             if (r > 0)
             {
-	            _probabilityCalculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+	            _calculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
             }
         }
     }

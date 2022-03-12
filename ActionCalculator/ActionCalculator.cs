@@ -8,18 +8,18 @@ namespace ActionCalculator
 	{
 		private readonly ICalculationBuilder _calculationBuilder;
         private readonly IEqualityComparer<decimal> _probabilityComparer;
-        private readonly IBaseProbabilityCalculator _baseProbabilityCalculator;
+        private readonly IMasterCalculator _masterCalculator;
         
         private const int MaximumRerolls = 8;
 
 		public ActionCalculator(
             ICalculationBuilder calculationBuilder, 
             IEqualityComparer<decimal> probabilityComparer,
-            IBaseProbabilityCalculator baseProbabilityCalculator)
+            IMasterCalculator masterCalculator)
 		{
 			_calculationBuilder = calculationBuilder;
             _probabilityComparer = probabilityComparer;
-            _baseProbabilityCalculator = baseProbabilityCalculator;
+            _masterCalculator = masterCalculator;
         }
 
 		public CalculationResult Calculate(string calculationString)
@@ -33,8 +33,8 @@ namespace ActionCalculator
                 var context = new CalculationContext(calculation, rerolls,
                     new decimal[calculation.PlayerActions.Length * 2 + 1]);
 
-                _baseProbabilityCalculator.Initialise(context);
-                _baseProbabilityCalculator.Calculate(1m, rerolls, null, Skills.None);
+                _masterCalculator.Initialise(context);
+                _masterCalculator.Calculate(1m, rerolls, null, Skills.None);
 
                 var results = context.Results.Where(x => x > 0).ToArray();
 

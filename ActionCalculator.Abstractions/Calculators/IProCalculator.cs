@@ -1,4 +1,4 @@
-﻿namespace ActionCalculator.Abstractions.ProbabilityCalculators
+﻿namespace ActionCalculator.Abstractions.Calculators
 {
 	public interface IProCalculator
 	{

@@ -7,33 +7,37 @@ namespace ActionCalculator.Abstractions
     public enum Skills : ulong
     {
         None = 0,
-        [Description("D")]//done
+        [Description("D")]
         Dodge = 1,
-        [Description("SH")]//done
+        [Description("SH")]
         SureHands = 2,
-        [Description("SF")]//done
+        [Description("SF")]
         SureFeet = 4,
-        [Description("PA")]//not done
+        [Description("PA")]
         Pass = 8,
-        [Description("C")]//done
+        [Description("C")]
         Catch = 16,
-        [Description("P")]//done
+        [Description("P")]
         Pro = 32,
-        [Description("L")]//done
+        [Description("L")]
         Loner = 64,
-        [Description("DC")]//done
+        [Description("DC")]
         DivingCatch = 128,
-        [Description("DP")]//not done
+        [Description("DP")]
         DirtyPlayer = 256,
         [Description("MB")]//not done
         MightyBlow = 512,
-        [Description("B")]//not done
+        [Description("B")]
         Brawler = 1024,
         [Description("CL")]//not done
         Claw = 2048,
-        [Description("SG")]//not done
+        [Description("SG")]
         SneakyGit = 4096,
         [Description("DT")]//not done
-        DivingTackle = 8192
+        DivingTackle = 8192,
+        [Description("CB")]
+        CloudBurster = 16384,
+        [Description("S")]
+        Stunty = 32768
     }
 }
