@@ -25,6 +25,5 @@
         public int NumberOfSuccessfulResults { get; set; }
         public decimal SuccessOnTwoDice { get; set; }
         public bool RequiresDauntlessFail { get; set; }
-        public bool RequiresRemoval { get; set; }
     }
 }

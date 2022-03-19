@@ -41,6 +41,7 @@ namespace ActionCalculator.Calculators
                 ActionType.Shadowing => new ShadowingCalculator(calculator, new ProCalculator()),
                 ActionType.ArgueTheCall => new ArgueTheCallCalculator(calculator),
                 ActionType.Bribe => new BribeCalculator(calculator),
+                ActionType.Injury => new InjuryCalculator(calculator, new TwoD6()),
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), actionType, null)
             };
     }

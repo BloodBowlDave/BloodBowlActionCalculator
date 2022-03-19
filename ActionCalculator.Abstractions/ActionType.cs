@@ -18,6 +18,7 @@
         Tentacles = 'N',
         Shadowing = 'S',
         ArgueTheCall = 'A',
-        Bribe = 'E'
+        Bribe = 'E',
+        Injury = 'J'
     }
 }

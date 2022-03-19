@@ -32,9 +32,12 @@ namespace ActionCalculator
 			{
 				ActionType.Block => BlockAction(input),
 				ActionType.Foul => FoulAction(input),
+				ActionType.ArmourBreak => ArmourBreakAction(input),
 				ActionType.Pass => PassAction(input),
 				ActionType.Bribe => BribeAction(),
 				ActionType.ArgueTheCall => ArgueTheCallAction(input),
+				ActionType.Tentacles => TentaclesAction(input),
+				ActionType.Injury => InjuryAction(input),
 				_ => OtherAction(input, actionType)
 			};
 
@@ -66,20 +69,12 @@ namespace ActionCalculator
 
         private Action FoulAction(string input)
         {
-            var requiresRemoval = input.Contains("~", StringComparison.InvariantCultureIgnoreCase);
-
-			if (requiresRemoval)
-            {
-                input = input.Replace("~", "", StringComparison.InvariantCultureIgnoreCase);
-            }
-			
 			var roll = int.Parse(input[1..]);
             var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
 			
 			var action = new Action(ActionType.Foul, success, 1 - success, 0, success)
             {
-                OriginalRoll = roll,
-                RequiresRemoval = requiresRemoval
+                OriginalRoll = roll
 			};
 
             return action;
@@ -212,6 +207,54 @@ namespace ActionCalculator
             var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 
             return new Action(ActionType.ArgueTheCall, success, 1m / 6, 1 - success - 1m / 6, 0);
-        }
+		}
+
+        private Action ArmourBreakAction(string input)
+		{
+            var roll = int.Parse(input[1..]);
+            var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
+
+            var action = new Action(ActionType.ArmourBreak, success, 1 - success, 0, success)
+            {
+                OriginalRoll = roll
+            };
+
+            return action;
+		}
+
+        private Action InjuryAction(string input)
+		{
+			var roll = int.Parse(input[1..]);
+            var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
+
+            var action = new Action(ActionType.Injury, success, 1 - success, 0, success)
+            {
+                OriginalRoll = roll
+            };
+
+            return action;
+		}
+
+        private Action TentaclesAction(string input)
+        {
+            decimal failure;
+
+            if (input.Length == 4)
+            {
+                var tentaclesStrength = int.Parse(input.Substring(1, 1));
+                var playerStrength = int.Parse(input.Substring(3, 1));
+
+				failure = (decimal)(tentaclesStrength - playerStrength + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+				
+                return new Action(ActionType.Tentacles, 1 - failure, failure, 0, 1 - failure);
+
+            }
+
+            var difference = int.Parse(input[1..]);
+
+            failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+
+            return new Action(ActionType.Tentacles, 1 - failure, failure, 0, 1 - failure);
+		}
 	}
 }

@@ -25,19 +25,17 @@ namespace ActionCalculator.Abstractions
         DivingCatch = 128,
         [Description("DP")]
         DirtyPlayer = 256,
-        [Description("MB")]//not done
+        [Description("MB")]
         MightyBlow = 512,
         [Description("B")]
         Brawler = 1024,
-        [Description("CL")]//not done
+        [Description("CL")]
         Claw = 2048,
         [Description("SG")]
         SneakyGit = 4096,
         [Description("DT")]//not done
         DivingTackle = 8192,
         [Description("CB")]
-        CloudBurster = 16384,
-        [Description("S")]
-        Stunty = 32768
+        CloudBurster = 16384
     }
 }

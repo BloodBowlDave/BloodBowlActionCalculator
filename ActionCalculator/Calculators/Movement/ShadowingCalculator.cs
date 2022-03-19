@@ -6,7 +6,7 @@ namespace ActionCalculator.Calculators.Movement
 {
     public class ShadowingCalculator : ICalculator
     {
-        public ShadowingCalculator(ICalculator baseCalculator, ProCalculator proCalculator)
+        public ShadowingCalculator(ICalculator _calculator, ProCalculator proCalculator)
         {
             throw new NotImplementedException();
         }

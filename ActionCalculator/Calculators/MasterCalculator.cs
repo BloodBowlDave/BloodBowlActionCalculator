@@ -48,8 +48,9 @@ namespace ActionCalculator.Calculators
             {
                 switch (previousActionType)
                 {
-                    case ActionType.Foul when actionType is not (ActionType.Bribe or ActionType.ArgueTheCall):
+                    case ActionType.Foul when actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury):
                     case ActionType.ArgueTheCall when actionType is not ActionType.Bribe:
+                    case ActionType.Injury when actionType is not (ActionType.Bribe or ActionType.ArgueTheCall):
                     case ActionType.Bribe when actionType is not ActionType.ArgueTheCall:
                         return;
                 }

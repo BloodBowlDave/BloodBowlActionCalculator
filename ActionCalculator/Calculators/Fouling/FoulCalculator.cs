@@ -19,6 +19,7 @@ namespace ActionCalculator.Calculators.Fouling
             var player = playerAction.Player;
             var action = playerAction.Action;
             var useDpOnArmour = 0m;
+            var success = action.Success;
 
             var hasDirtyPlayer = player.HasSkill(Skills.DirtyPlayer);
             if (hasDirtyPlayer)
@@ -29,24 +30,12 @@ namespace ActionCalculator.Calculators.Fouling
             var doubleOnArmour = player.HasSkill(Skills.SneakyGit) ? 0 : _twoD6.RollDouble(action.OriginalRoll);
             var doubleOnInjury = _twoD6.RollDouble(2);
             var noDouble = (1 - doubleOnArmour) * (1 - doubleOnInjury);
-
-            if (action.RequiresRemoval)
-            {
-                var injuryRoll = player.HasSkill(Skills.Stunty) ? 7 : 8;
-
-                var successWithoutUsingDpOnArmour = action.Success * _twoD6.Success(injuryRoll - (hasDirtyPlayer ? 1 : 0));
-                var successUsingDpOnArmour = useDpOnArmour * _twoD6.Success(injuryRoll);
-                var successWithRemoval = successWithoutUsingDpOnArmour + successUsingDpOnArmour;
-
-                _calculator.Calculate(p * successWithRemoval * noDouble, r, playerAction, usedSkills);
-                _calculator.Calculate(p * successWithRemoval * (1 - noDouble), r, playerAction, usedSkills, true);
-                return;
-            }
-
-            var success = action.Success + useDpOnArmour;
+            
 
             _calculator.Calculate(p * success * noDouble, r, playerAction, usedSkills);
+            _calculator.Calculate(p * useDpOnArmour * noDouble, r, playerAction, usedSkills | Skills.DirtyPlayer);
             _calculator.Calculate(p * success * (1 - noDouble), r, playerAction, usedSkills, true);
+            _calculator.Calculate(p * useDpOnArmour * (1 - noDouble), r, playerAction, usedSkills | Skills.DirtyPlayer, true);
         }
     }
 }

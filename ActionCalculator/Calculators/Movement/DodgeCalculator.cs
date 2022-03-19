@@ -17,29 +17,40 @@ namespace ActionCalculator.Calculators.Movement
         public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
-            var success = playerAction.Action.Success;
-            var failure = playerAction.Action.Failure;
+            var action = playerAction.Action;
+            var success = action.Success;
+            var failure = action.Failure;
+            var triggerDivingTackle = 0m;
+
+            if (action.AffectedByDivingTackle && !usedSkills.HasFlag(Skills.DivingTackle))
+            {
+                triggerDivingTackle = success - (7m - (action.OriginalRoll + 2).ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+                success -= triggerDivingTackle;
+            }
 
             _calculator.Calculate(p * success, r, playerAction, usedSkills);
-
-            p *= failure * success;
-
+            
             if (player.HasSkill(Skills.Dodge) && !usedSkills.HasFlag(Skills.Dodge))
             {
-                _calculator.Calculate(p, r, playerAction, usedSkills | Skills.Dodge);
+                _calculator.Calculate(p * failure * success, r, playerAction, usedSkills | Skills.Dodge);
+                _calculator.Calculate(p * triggerDivingTackle * action.Success, r, playerAction, usedSkills | Skills.Dodge | Skills.DivingTackle);
                 return;
             }
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
-	            _calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
+	            _calculator.Calculate(p * failure * success * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
+	            _calculator.Calculate(p * triggerDivingTackle * action.Success * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro | Skills.DivingTackle);
                 return;
             }
 
-            if (r > 0)
+            if (r == 0)
             {
-	            _calculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+                return;
             }
+
+            _calculator.Calculate(p * failure * success * player.LonerSuccess, r - 1, playerAction, usedSkills);
+            _calculator.Calculate(p * triggerDivingTackle * action.Success * player.LonerSuccess, r - 1, playerAction, usedSkills | Skills.DivingTackle);
         }
     }
 }
