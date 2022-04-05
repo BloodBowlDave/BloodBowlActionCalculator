@@ -29,13 +29,24 @@ namespace ActionCalculator.Calculators
             var i = previousPlayerAction != null ? previousPlayerAction.Index + 1 : 0;
 
             var previousActionType = previousPlayerAction?.Action.ActionType;
-            var dauntlessFail = previousActionType == ActionType.Dauntless && nonCriticalFailure;
-            if (dauntlessFail)
+            var isEndOfCalculation = IsEndOfCalculation(previousPlayerAction);
+            var previousActionIsDauntless = previousActionType == ActionType.Dauntless;
+
+            if (nonCriticalFailure)
             {
-                i++;
+                if (previousActionIsDauntless)
+                {
+                    i++;
+                }
+
+                var tentaclesFail = previousActionType == ActionType.Tentacles;
+                if (tentaclesFail && isEndOfCalculation)
+                {
+                    return;
+                }
             }
             
-            if (i >= _context.Calculation.PlayerActions.Length)
+            if (isEndOfCalculation)
             {
                 WriteResults(p, r, usedSkills, nonCriticalFailure, previousActionType);
                 return;
@@ -46,38 +57,71 @@ namespace ActionCalculator.Calculators
 
             if (nonCriticalFailure)
             {
-                switch (previousActionType)
+                if (PlayerSentOff(previousActionType, actionType))
                 {
-                    case ActionType.Foul when actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury):
-                    case ActionType.ArgueTheCall when actionType is not ActionType.Bribe:
-                    case ActionType.Injury when actionType is not (ActionType.Bribe or ActionType.ArgueTheCall):
-                    case ActionType.Bribe when actionType is not ActionType.ArgueTheCall:
-                        return;
-                }
-            }
-
-            if (playerAction.Action.RequiresDauntlessFail && !dauntlessFail)
-            {
-                i++;
-
-                if (i >= _context.Calculation.PlayerActions.Length)
-                {
-                    WriteResults(p, r, usedSkills, nonCriticalFailure, previousActionType);
                     return;
                 }
 
-                playerAction = _context.Calculation.PlayerActions[i];
+                if (previousActionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.Pass or ActionType.Interception)
+                    && !playerAction.Action.RequiresNonCriticalFailure)
+                {
+                    return;
+                }
+            }
+            else if (playerAction.Action.RequiresNonCriticalFailure)
+            {
+                if (previousPlayerAction?.Depth == playerAction.Depth)
+                {
+                    if (IsEndOfCalculation(playerAction))
+                    {
+                        WriteResults(p, r, usedSkills, false, previousActionType);
+                        return;
+                    }
+
+                    playerAction = _context.Calculation.PlayerActions[i + 1];
+                }
+                else
+                {
+                    var depth = playerAction.Depth;
+                    while (playerAction.Depth >= depth)
+                    {
+                        if (i >= _context.Calculation.PlayerActions.Length)
+                        {
+                            WriteResults(p, r, usedSkills, false, previousActionType);
+                            return;
+                        }
+
+                        playerAction = _context.Calculation.PlayerActions[i];
+                        i++;
+                    }
+                }
             }
 
-            if (previousPlayerAction?.Player.Index != playerAction.Player.Index)
+            if (previousPlayerAction?.Player.Id != playerAction.Player.Id)
             {
                 usedSkills &= Skills.DivingTackle;
             }
 
             var probabilityCalculator = _calculatorFactory
-                .CreateProbabilityCalculator(actionType, playerAction.Action.NumberOfDice, this, nonCriticalFailure);
+                .CreateProbabilityCalculator(playerAction.Action.ActionType, playerAction.Action.NumberOfDice, this, nonCriticalFailure);
 
             probabilityCalculator.Calculate(p, r, playerAction, usedSkills, nonCriticalFailure);            
+        }
+
+        private static bool PlayerSentOff(ActionType? previousActionType, ActionType actionType) =>
+            previousActionType == ActionType.Foul && actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury)
+            || previousActionType == ActionType.ArgueTheCall && actionType is not ActionType.Bribe
+            || previousActionType == ActionType.Injury && actionType is not (ActionType.Bribe or ActionType.ArgueTheCall)
+            || previousActionType == ActionType.Bribe && actionType is not ActionType.ArgueTheCall;
+
+        private bool IsEndOfCalculation(PlayerAction playerAction)
+        {
+            if (playerAction == null)
+            {
+                return false;
+            }
+
+            return playerAction.Index + 1 >= _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation;
         }
 
         private void WriteResults(decimal p, int r, Skills usedSkills, bool nonCriticalFailure, ActionType? previousActionType)

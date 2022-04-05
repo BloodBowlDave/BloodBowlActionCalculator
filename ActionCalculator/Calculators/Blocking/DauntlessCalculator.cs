@@ -27,8 +27,9 @@ namespace ActionCalculator.Calculators.Blocking
             {
                 if (_proCalculator.UsePro(playerAction, r, usedSkills))
                 {
-                    _calculator.Calculate(p * player.ProSuccess * action.Success, r, playerAction, usedSkills | Skills.Pro);
-                    _calculator.Calculate(p * (player.ProSuccess * action.Failure + (1 - player.ProSuccess)), r, playerAction, usedSkills | Skills.Pro, true);
+                    usedSkills |= Skills.Pro;
+                    _calculator.Calculate(p * player.ProSuccess * action.Success, r, playerAction, usedSkills);
+                    _calculator.Calculate(p * (player.ProSuccess * action.Failure + (1 - player.ProSuccess)), r, playerAction, usedSkills, true);
 
                     return;
                 }
@@ -44,8 +45,9 @@ namespace ActionCalculator.Calculators.Blocking
 
             if (action.UsePro && _proCalculator.UsePro(playerAction, r, usedSkills))
             {
-                _calculator.Calculate(p * player.ProSuccess * action.Success, r, playerAction, usedSkills | Skills.Pro);
-                _calculator.Calculate(p * (player.ProSuccess * action.Failure + (1 - player.ProSuccess)), r, playerAction, usedSkills | Skills.Pro, true);
+                usedSkills |= Skills.Pro;
+                _calculator.Calculate(p * player.ProSuccess * action.Success, r, playerAction, usedSkills);
+                _calculator.Calculate(p * (player.ProSuccess * action.Failure + (1 - player.ProSuccess)), r, playerAction, usedSkills, true);
 
                 return;
             }

@@ -21,7 +21,7 @@ namespace ActionCalculator.Calculators
 				return true;
 			}
 
-			return r == 0 || player.ProSuccess * action.SuccessOnOneDie > player.LonerSuccess * action.Success;
+			return r == 0 || player.ProSuccess * action.SuccessOnOneDie >= player.LonerSuccess * action.Success;
 		}
 	}
 }

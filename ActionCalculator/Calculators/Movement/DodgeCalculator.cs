@@ -18,29 +18,38 @@ namespace ActionCalculator.Calculators.Movement
         {
             var player = playerAction.Player;
             var action = playerAction.Action;
-            var success = action.Success;
-            var failure = action.Failure;
-            var triggerDivingTackle = 0m;
+            var affectedByDivingTackle = action.AffectedByDivingTackle && !usedSkills.HasFlag(Skills.DivingTackle);
+            var affectedByBreakTackle = player.HasSkill(Skills.BreakTackle) && !usedSkills.HasFlag(Skills.BreakTackle) && player.BreakTackleValue > 0;
+            var successAfterModifiers = SuccessAfterModifiers(playerAction, affectedByDivingTackle, affectedByBreakTackle);
 
-            if (action.AffectedByDivingTackle && !usedSkills.HasFlag(Skills.DivingTackle))
+            var success = action.Success;
+            var useDivingTackle = 0m;
+            if (affectedByDivingTackle)
             {
-                triggerDivingTackle = success - (7m - (action.OriginalRoll + 2).ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
-                success -= triggerDivingTackle;
+                useDivingTackle = success - successAfterModifiers;
+                success -= useDivingTackle;
             }
 
             _calculator.Calculate(p * success, r, playerAction, usedSkills);
-            
+
+            var failure = action.Failure;
+            var useBreakTackle = 0m;
+            if (affectedByBreakTackle)
+            {
+                useBreakTackle = successAfterModifiers - success;
+                failure -= useBreakTackle;
+                _calculator.Calculate(p * useBreakTackle, r, playerAction, usedSkills | Skills.BreakTackle);
+            }
+
             if (player.HasSkill(Skills.Dodge) && !usedSkills.HasFlag(Skills.Dodge))
             {
-                _calculator.Calculate(p * failure * success, r, playerAction, usedSkills | Skills.Dodge);
-                _calculator.Calculate(p * triggerDivingTackle * action.Success, r, playerAction, usedSkills | Skills.Dodge | Skills.DivingTackle);
+                CalculateDodgeReroll(p, r, playerAction, usedSkills | Skills.Dodge, failure, success, useBreakTackle, useDivingTackle);
                 return;
             }
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
-	            _calculator.Calculate(p * failure * success * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
-	            _calculator.Calculate(p * triggerDivingTackle * action.Success * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro | Skills.DivingTackle);
+                CalculateDodgeReroll(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro, failure, success, useBreakTackle, useDivingTackle);
                 return;
             }
 
@@ -48,9 +57,21 @@ namespace ActionCalculator.Calculators.Movement
             {
                 return;
             }
+            
+            CalculateDodgeReroll(p * player.LonerSuccess, r - 1, playerAction, usedSkills, failure, success, useBreakTackle, useDivingTackle);
+        }
 
-            _calculator.Calculate(p * failure * success * player.LonerSuccess, r - 1, playerAction, usedSkills);
-            _calculator.Calculate(p * triggerDivingTackle * action.Success * player.LonerSuccess, r - 1, playerAction, usedSkills | Skills.DivingTackle);
+        private static decimal SuccessAfterModifiers(PlayerAction playerAction, bool affectedByDivingTackle, bool affectedByBreakTackle) => 
+            (7m - (playerAction.Action.OriginalRoll + (affectedByDivingTackle ? 2 : 0) - (affectedByBreakTackle ? playerAction.Player.BreakTackleValue : 0))
+                .ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+
+        private void CalculateDodgeReroll(decimal p, int r, PlayerAction playerAction, Skills usedSkills, 
+            decimal failure, decimal success, decimal useBreakTackle, decimal useDivingTackle)
+        {
+            _calculator.Calculate(p * failure * success, r, playerAction, usedSkills);
+            _calculator.Calculate(p * failure * useBreakTackle, r, playerAction, usedSkills | Skills.BreakTackle);
+            _calculator.Calculate(p * useDivingTackle * success, r, playerAction, usedSkills | Skills.DivingTackle);
+            _calculator.Calculate(p * useDivingTackle * useBreakTackle, r, playerAction, usedSkills | Skills.DivingTackle | Skills.BreakTackle);
         }
     }
 }

@@ -33,8 +33,9 @@ namespace ActionCalculator.Calculators.BallHandling
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
-	            _calculator.Calculate(player.ProSuccess * accuratePassAfterFailure, r, playerAction, usedSkills | Skills.Pro);
-	            _calculator.Calculate(player.ProSuccess * inaccuratePassAfterFailure, r, playerAction, usedSkills | Skills.Pro, true);
+                usedSkills |= Skills.Pro;
+	            _calculator.Calculate(player.ProSuccess * accuratePassAfterFailure, r, playerAction, usedSkills);
+	            _calculator.Calculate(player.ProSuccess * inaccuratePassAfterFailure, r, playerAction, usedSkills, true);
                 return;
             }
 

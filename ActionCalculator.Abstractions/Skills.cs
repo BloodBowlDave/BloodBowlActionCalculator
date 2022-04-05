@@ -33,9 +33,11 @@ namespace ActionCalculator.Abstractions
         Claw = 2048,
         [Description("SG")]
         SneakyGit = 4096,
-        [Description("DT")]//not done
+        [Description("DT")]
         DivingTackle = 8192,
         [Description("CB")]
-        CloudBurster = 16384
+        CloudBurster = 16384,
+        [Description("BT")]
+        BreakTackle = 32768
     }
 }

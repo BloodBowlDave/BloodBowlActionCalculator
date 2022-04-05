@@ -7,18 +7,19 @@ namespace ActionCalculator
 {
     public class PlayerParser : IPlayerParser
     {
-        public Player Parse(string skillsInput, int playerIndex)
+        public Player Parse(string skillsInput)
         {
             var skills = skillsInput.Split(',')
+                .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(GetSkillAndRoll)
                 .Select(x => 
                     new Tuple<Skills, int>(EnumExtensions.GetValueFromDescription<Skills>(x.Item1), x.Item2))
                 .ToList();
             
-            return new Player(playerIndex,
-                skills.Aggregate(Skills.None, (current, skill) => current | skill.Item1),
+            return new Player(skills.Aggregate(Skills.None, (current, skill) => current | skill.Item1),
                 SkillSuccess(skills, Skills.Loner),
-                SkillSuccess(skills, Skills.Pro));
+                SkillSuccess(skills, Skills.Pro),
+                GetBreakTackleValue(skills));
         }
 
         private static double? SkillSuccess(IEnumerable<Tuple<Skills, int>> skillsAndRolls, Skills skill)
@@ -32,7 +33,7 @@ namespace ActionCalculator
         {
             var last = input.Last();
 
-            return last is '2' or '3' or '4' or '5' or '6'
+            return last is '1' or '2' or '3' or '4' or '5' or '6'
                 ? new Tuple<string, int>(input.Remove(input.Length - 1), int.Parse(last.ToString()))
                 : input is "L"
 	                ? new Tuple<string, int>(input, 4) //assume default loner roll is 4
@@ -40,5 +41,8 @@ namespace ActionCalculator
                         ? new Tuple<string, int>(input, 3)
                         : new Tuple<string, int>(input, 0);
         }
+
+        private static int GetBreakTackleValue(IEnumerable<Tuple<Skills, int>> skills) => 
+            skills.SingleOrDefault(x => x.Item1 == Skills.BreakTackle)?.Item2 ?? 1;
     }
 }

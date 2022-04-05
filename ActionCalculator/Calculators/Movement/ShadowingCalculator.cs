@@ -6,14 +6,41 @@ namespace ActionCalculator.Calculators.Movement
 {
     public class ShadowingCalculator : ICalculator
     {
-        public ShadowingCalculator(ICalculator _calculator, ProCalculator proCalculator)
+        private readonly ICalculator _calculator;
+        private readonly IProCalculator _proCalculator;
+
+        public ShadowingCalculator(ICalculator calculator, IProCalculator proCalculator)
         {
-            throw new NotImplementedException();
+            _calculator = calculator;
+            _proCalculator = proCalculator;
         }
 
         public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            throw new NotImplementedException();
+            var action = playerAction.Action;
+            var player = playerAction.Player;
+            var success = action.Success;
+
+            _calculator.Calculate(p * success, r, playerAction, usedSkills);
+
+            p *= action.Failure;
+
+            if (_proCalculator.UsePro(playerAction, r, usedSkills))
+            {
+                usedSkills |= Skills.Pro;
+                _calculator.Calculate(p * player.ProSuccess * success, r, playerAction, usedSkills);
+                _calculator.Calculate(p * (1 - player.ProSuccess + player.ProSuccess * action.Failure), r, playerAction, usedSkills, true);
+                return;
+            }
+
+            if (r > 0 && action.RerollNonCriticalFailure)
+            {
+                _calculator.Calculate(p * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * (1 - player.LonerSuccess + player.LonerSuccess * action.Failure), r - 1, playerAction, usedSkills, true);
+                return;
+            }
+
+            _calculator.Calculate(p, r, playerAction, usedSkills, true);
         }
     }
 }

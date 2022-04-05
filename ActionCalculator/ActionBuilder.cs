@@ -37,6 +37,7 @@ namespace ActionCalculator
 				ActionType.Bribe => BribeAction(),
 				ActionType.ArgueTheCall => ArgueTheCallAction(input),
 				ActionType.Tentacles => TentaclesAction(input),
+				ActionType.Shadowing => ShadowingAction(input),
 				ActionType.Injury => InjuryAction(input),
 				_ => OtherAction(input, actionType)
 			};
@@ -235,7 +236,7 @@ namespace ActionCalculator
             return action;
 		}
 
-        private Action TentaclesAction(string input)
+        private static Action TentaclesAction(string input)
         {
             decimal failure;
 
@@ -256,5 +257,26 @@ namespace ActionCalculator
 
             return new Action(ActionType.Tentacles, 1 - failure, failure, 0, 1 - failure);
 		}
+
+        private static Action ShadowingAction(string input)
+        {
+            decimal failure;
+
+            if (input.Length == 4)
+            {
+                var shadowingMovement = int.Parse(input.Substring(1, 1));
+                var playerMovement = int.Parse(input.Substring(3, 1));
+
+                failure = (decimal)(shadowingMovement - playerMovement + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+
+                return new Action(ActionType.Shadowing, 1 - failure, failure, 0, 1 - failure);
+            }
+
+            var difference = int.Parse(input[1..]);
+
+            failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+
+            return new Action(ActionType.Shadowing, 1 - failure, failure, 0, 1 - failure);
+        }
 	}
 }

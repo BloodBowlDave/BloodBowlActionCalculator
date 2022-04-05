@@ -19,19 +19,28 @@ namespace ActionCalculator.Calculators.Movement
         {
             var action = playerAction.Action;
             var player = playerAction.Player;
+            var success = action.Success;
 
-            _calculator.Calculate(p * action.Success, r, playerAction, usedSkills);
+            _calculator.Calculate(p * success, r, playerAction, usedSkills);
+
+            p *= action.Failure;
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
-                _calculator.Calculate(p * action.Failure * player.ProSuccess * action.Success, r, playerAction, usedSkills | Skills.Pro);
+                usedSkills |= Skills.Pro;
+                _calculator.Calculate(p * player.ProSuccess * success, r, playerAction, usedSkills);
+                _calculator.Calculate(p * (1 - player.ProSuccess + player.ProSuccess * action.Failure), r, playerAction, usedSkills, true);
                 return;
             }
 
-            if (r > 0)
+            if (r > 0 && action.RerollNonCriticalFailure)
             {
-                _calculator.Calculate(p * action.Failure * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * (1 - player.LonerSuccess + player.LonerSuccess * action.Failure), r - 1, playerAction, usedSkills, true);
+                return;
             }
+
+            _calculator.Calculate(p, r, playerAction, usedSkills, true);
         }
     }
 }

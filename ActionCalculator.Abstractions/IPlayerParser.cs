@@ -2,6 +2,6 @@
 {
     public interface IPlayerParser
     { 
-        Player Parse(string skillsInput, int playerIndex);
+        Player Parse(string skillsInput);
     }
 }
