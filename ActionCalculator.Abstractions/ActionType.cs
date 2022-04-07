@@ -19,6 +19,7 @@
         Shadowing = 'S',
         ArgueTheCall = 'A',
         Bribe = 'E',
-        Injury = 'J'
+        Injury = 'J',
+        Landing = 'G'
     }
 }

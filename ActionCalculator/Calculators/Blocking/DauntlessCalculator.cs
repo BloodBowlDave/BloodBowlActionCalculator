@@ -18,8 +18,9 @@ namespace ActionCalculator.Calculators.Blocking
         {
             var player = playerAction.Player;
             var action = playerAction.Action;
+            var success = action.Success;
 
-            _calculator.Calculate(p * action.Success, r, playerAction, usedSkills);
+            _calculator.Calculate(p * success, r, playerAction, usedSkills);
 
             p *= action.Failure;
 
@@ -28,7 +29,7 @@ namespace ActionCalculator.Calculators.Blocking
                 if (_proCalculator.UsePro(playerAction, r, usedSkills))
                 {
                     usedSkills |= Skills.Pro;
-                    _calculator.Calculate(p * player.ProSuccess * action.Success, r, playerAction, usedSkills);
+                    _calculator.Calculate(p * player.ProSuccess * success, r, playerAction, usedSkills);
                     _calculator.Calculate(p * (player.ProSuccess * action.Failure + (1 - player.ProSuccess)), r, playerAction, usedSkills, true);
 
                     return;
@@ -36,7 +37,7 @@ namespace ActionCalculator.Calculators.Blocking
 
                 if (r > 0)
                 {
-                    _calculator.Calculate(p * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+                    _calculator.Calculate(p * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
                     _calculator.Calculate(p * player.LonerSuccess * action.Failure, r - 1, playerAction, usedSkills, true);
 
                     return;
@@ -46,7 +47,7 @@ namespace ActionCalculator.Calculators.Blocking
             if (action.UsePro && _proCalculator.UsePro(playerAction, r, usedSkills))
             {
                 usedSkills |= Skills.Pro;
-                _calculator.Calculate(p * player.ProSuccess * action.Success, r, playerAction, usedSkills);
+                _calculator.Calculate(p * player.ProSuccess * success, r, playerAction, usedSkills);
                 _calculator.Calculate(p * (player.ProSuccess * action.Failure + (1 - player.ProSuccess)), r, playerAction, usedSkills, true);
 
                 return;

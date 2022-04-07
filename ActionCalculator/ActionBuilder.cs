@@ -33,7 +33,8 @@ namespace ActionCalculator
 				ActionType.Block => BlockAction(input),
 				ActionType.Foul => FoulAction(input),
 				ActionType.ArmourBreak => ArmourBreakAction(input),
-				ActionType.Pass => PassAction(input),
+				ActionType.Pass => PassAction(input, ActionType.Pass),
+				ActionType.ThrowTeamMate => PassAction(input, ActionType.ThrowTeamMate),
 				ActionType.Bribe => BribeAction(),
 				ActionType.ArgueTheCall => ArgueTheCallAction(input),
 				ActionType.Tentacles => TentaclesAction(input),
@@ -165,26 +166,23 @@ namespace ActionCalculator
 
                 return action;
 			}
-        }
-
-        private static Action PassAction(string input)
+		}
+		
+		private static Action PassAction(string input, ActionType actionType)
         {
 	        if (input.Length == 4)
 	        {
 		        var roll = int.Parse(input.Substring(1, 1));
 		        var modifier = int.Parse(input.Substring(3, 1));
-
-		        var modifierIsNegative = input.Substring(2, 1) == "-";
-		        modifier = modifierIsNegative ? -modifier : modifier;
+				modifier = input.Substring(2, 1) == "-" ? -modifier : modifier;
             
 		        var modifiedRoll = roll - modifier;
 				
-		        var successes = 7m - modifiedRoll.ThisOrMinimum(2).ThisOrMaximum(6);
-		        var failures = 6m - successes + (modifierIsNegative ? modifier : 0);
-		        failures = failures > 5 ? 5 : failures;
+		        var successes = (7m - modifiedRoll).ThisOrMinimum(1).ThisOrMaximum(5);
+                var failures = (1m - modifier).ThisOrMinimum(1).ThisOrMaximum(5);
 		        var nonCriticalFailures = 6m - successes - failures;
 		        
-		        return new Action(ActionType.Pass, 
+		        return new Action(actionType, 
 			        successes / 6, 
 			        failures / 6, 
 			        nonCriticalFailures / 6,
@@ -195,13 +193,12 @@ namespace ActionCalculator
             var failure = 1m / 6;
 	        var nonCriticalFailure = 1 - success - failure;
 
-	        return new Action(ActionType.Pass, success, failure, nonCriticalFailure, success);
+	        return new Action(actionType, success, failure, nonCriticalFailure, success);
 		}
 
 		private static Action BribeAction() => 
             new(ActionType.Bribe, 5m / 6, 1m / 6, 0, 0);
-
-
+		
         private static Action ArgueTheCallAction(string input)
         {
             var roll = int.Parse(input.Length == 2 ? input[1..] : input);

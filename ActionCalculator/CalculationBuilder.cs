@@ -19,50 +19,15 @@ namespace ActionCalculator
 
         public Calculation Build(string calculation)
         {
-            var playerActions = new List<PlayerAction>();
-            var startIndex = 0;
-            var i = 0;
-
-            //while (startIndex < calculation.Length)
-            //{
-            //    Player player;
-            //    var indexOfSkillsStart = calculation[startIndex..].IndexOf(':');
-            //    int indexOfPlayerEnd;
-
-            //    if (indexOfSkillsStart == -1)
-            //    {
-            //        player = new Player();
-            //        indexOfPlayerEnd = calculation.Length;
-            //    }
-            //    else
-            //    {
-            //        var indexOfSkillsEnd = calculation[indexOfSkillsStart..].IndexOf(',');
-            //        indexOfPlayerEnd = indexOfSkillsEnd == -1 ? calculation.Length : startIndex + indexOfSkillsStart + indexOfSkillsEnd;
-            //        player = _playerParser.Parse(calculation[(indexOfSkillsStart + 1)..indexOfPlayerEnd]);
-            //    }
-
-            //    foreach (var playerAction in GetPlayerActions(calculation[startIndex..indexOfPlayerEnd], player))
-            //    {
-            //        playerAction.Index = i;
-            //        i++;
-            //        playerActions.Add(playerAction);
-            //    }
-
-            //    startIndex = indexOfPlayerEnd + 1;
-            //}
-
             var playerStrings = calculation.Split('(', ')')
-                .Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+                .Where(x => !string.IsNullOrWhiteSpace(x));
+
+            var playerActions = new List<PlayerAction>();
+            var i = 0;
 
             foreach (var playerString in playerStrings)
             {
-                var playerSplit = playerString.Split(':');
-
-                var player = playerSplit.Length > 1
-                    ? _playerParser.Parse(playerSplit[1])
-                    : new Player();
-
-                foreach (var playerAction in GetPlayerActions(playerString, player))
+                foreach (var playerAction in GetPlayerActions(playerString, new Player()))
                 {
                     playerAction.Index = i;
                     i++;
@@ -140,7 +105,7 @@ namespace ActionCalculator
                 var isFirstAction = true;
                 PlayerAction previousPlayerAction = null;
 
-                foreach (var playerAction in GetPlayerActions(playerString[(indexOfOpeningSquareBracket + 1)..indexOfClosingSquareBracket], new Player(), depth + 1))
+                foreach (var playerAction in GetPlayerActions(playerString[(indexOfOpeningSquareBracket + 1)..indexOfClosingSquareBracket], player, depth + 1))
                 {
                     if (previousPlayerAction != null)
                     {
@@ -162,9 +127,10 @@ namespace ActionCalculator
                     yield return previousPlayerAction;
                 }
 
-                var endOfActionString = indexOfColon != -1 ? indexOfColon : playerString.Length;
+                var endOfActionString = indexOfColon != -1 && indexOfColon > indexOfClosingSquareBracket ? indexOfColon : playerString.Length;
 
-                foreach (var playerAction in GetActions(playerString[(indexOfClosingSquareBracket + 1)..endOfActionString]).Select(x => new PlayerAction(player, x, depth)))
+                foreach (var playerAction in GetActions(playerString[(indexOfClosingSquareBracket + 1)..endOfActionString])
+                             .Select(x => new PlayerAction(player, x, depth)))
                 {
                     yield return playerAction;
                 }

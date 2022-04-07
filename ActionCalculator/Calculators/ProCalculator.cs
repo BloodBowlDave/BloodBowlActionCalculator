@@ -5,7 +5,7 @@ namespace ActionCalculator.Calculators
 {
 	public class ProCalculator : IProCalculator
 	{
-		public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills)
+		public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie, decimal? successAfterReroll)
 		{
 			var player = playerAction.Player;
 
@@ -20,8 +20,8 @@ namespace ActionCalculator.Calculators
 			{
 				return true;
 			}
-
-			return r == 0 || player.ProSuccess * action.SuccessOnOneDie >= player.LonerSuccess * action.Success;
+			
+            return r == 0 || player.ProSuccess * (successOnOneDie ?? action.SuccessOnOneDie) >= player.LonerSuccess * (successAfterReroll ?? action.Success);
 		}
 	}
 }

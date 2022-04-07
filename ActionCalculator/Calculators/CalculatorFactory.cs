@@ -19,6 +19,7 @@ namespace ActionCalculator.Calculators
                 ActionType.Rush => new RushCalculator(calculator, new ProCalculator()),
                 ActionType.PickUp => new PickUpCalculator(calculator, new ProCalculator()),
                 ActionType.Pass => new PassCalculator(calculator, new ProCalculator()),
+                ActionType.ThrowTeamMate => new PassCalculator(calculator, new ProCalculator()),
                 ActionType.Block => blockDice switch
                 {
                     -3 => new ThirdDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
@@ -34,7 +35,6 @@ namespace ActionCalculator.Calculators
                 ActionType.Foul => new FoulCalculator(calculator, new TwoD6()),
                 ActionType.ArmourBreak => new ArmourBreakCalculator(calculator, new TwoD6()),
                 ActionType.OtherNonRerollable => new RerollableActionCalculator(calculator, new ProCalculator()),
-                ActionType.ThrowTeamMate => new RerollableActionCalculator(calculator, new ProCalculator()),
                 ActionType.Dauntless => new DauntlessCalculator(calculator, new ProCalculator()),
                 ActionType.Interception => new InterceptionCalculator(calculator),
                 ActionType.Tentacles => new TentaclesCalculator(calculator, new ProCalculator()),
@@ -42,6 +42,7 @@ namespace ActionCalculator.Calculators
                 ActionType.ArgueTheCall => new ArgueTheCallCalculator(calculator),
                 ActionType.Bribe => new BribeCalculator(calculator),
                 ActionType.Injury => new InjuryCalculator(calculator, new TwoD6()),
+                ActionType.Landing => new LandingCalculator(calculator, new ProCalculator()),
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), actionType, null)
             };
     }

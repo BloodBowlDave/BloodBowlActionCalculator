@@ -23,8 +23,7 @@ namespace ActionCalculator.Calculators.BallHandling
 			var player = playerAction.Player;
 			var action = playerAction.Action;
 
-			var roll = action.OriginalRoll + 1;
-			roll += player.HasSkill(Skills.DivingCatch) ? 1 : 0;
+			var roll = action.OriginalRoll + 1 + (player.HasSkill(Skills.DivingCatch) ? 1 : 0);
 
 			var catchSuccess = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 			var catchFailure = 1 - catchSuccess;

@@ -18,13 +18,14 @@ namespace ActionCalculator.Calculators.BallHandling
         {
             var player = playerAction.Player;
             var action = playerAction.Action;
+            var success = action.Success;
 
-            _calculator.Calculate(p * action.Success, r, playerAction, usedSkills);
+            _calculator.Calculate(p * success, r, playerAction, usedSkills);
 
-            var accuratePassAfterFailure = p * (action.Failure + action.NonCriticalFailure) * action.Success;
+            var accuratePassAfterFailure = p * (action.Failure + action.NonCriticalFailure) * success;
             var inaccuratePassAfterFailure = p * (action.Failure + action.NonCriticalFailure) * action.NonCriticalFailure;
 
-            if (player.HasSkill(Skills.Pass))
+            if (player.HasSkill(Skills.Pass) && action.ActionType == ActionType.Pass)
             {
                 _calculator.Calculate(accuratePassAfterFailure, r, playerAction, usedSkills);
                 _calculator.Calculate(inaccuratePassAfterFailure, r, playerAction, usedSkills, true);
@@ -39,7 +40,7 @@ namespace ActionCalculator.Calculators.BallHandling
                 return;
             }
 
-            if (r > 0)
+            if (r > 0 && action.RerollNonCriticalFailure)
             {
 	            _calculator.Calculate(player.LonerSuccess * accuratePassAfterFailure, r - 1, playerAction, usedSkills);
 	            _calculator.Calculate(player.LonerSuccess * inaccuratePassAfterFailure, r - 1, playerAction, usedSkills, true);

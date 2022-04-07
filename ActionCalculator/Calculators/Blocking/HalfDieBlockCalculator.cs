@@ -40,7 +40,7 @@ namespace ActionCalculator.Calculators.Blocking
 				_calculator.Calculate(p * canUseBrawler * oneDieSuccess, r, playerAction, usedSkills);
 			}
 			
-			if (_proCalculator.UsePro(playerAction, r, usedSkills))
+			if (_proCalculator.UsePro(playerAction, r, usedSkills, oneDieSuccess, action.Success))
 			{
 				_calculator.Calculate(p * (oneDiceFails - canUseBrawler) * player.ProSuccess * oneDieSuccess, r, playerAction, usedSkills | Skills.Pro);
 				return;

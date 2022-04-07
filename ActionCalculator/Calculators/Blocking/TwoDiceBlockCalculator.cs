@@ -36,7 +36,7 @@ namespace ActionCalculator.Calculators.Blocking
 
 				var pBrawler = p * failAndUseBrawler * (1 - oneDieSuccess) * oneDieSuccess;
 
-				if (_proCalculator.UsePro(playerAction, r, usedSkills))
+				if (_proCalculator.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
 				{
 					_calculator.Calculate(pBrawler * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
 					return;
@@ -51,13 +51,14 @@ namespace ActionCalculator.Calculators.Blocking
 
 			p *= action.Failure - failAndUseBrawler;
 
-			if (_proCalculator.UsePro(playerAction, r, usedSkills))
-			{
-				_calculator.Calculate(p * player.ProSuccess * oneDieSuccess, r, playerAction, usedSkills | Skills.Pro);
+			if (_proCalculator.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
+            {
+                usedSkills |= Skills.Pro;
+				_calculator.Calculate(p * player.ProSuccess * oneDieSuccess, r, playerAction, usedSkills);
 
 				if (r > 0)
 				{
-					_calculator.Calculate(p * (1 - player.ProSuccess * oneDieSuccess) * player.LonerSuccess * oneDieSuccess, r - 1, playerAction, usedSkills | Skills.Pro);
+					_calculator.Calculate(p * (1 - player.ProSuccess * oneDieSuccess) * player.LonerSuccess * oneDieSuccess, r - 1, playerAction, usedSkills);
 					return;
 				}
 			}

@@ -57,13 +57,7 @@ namespace ActionCalculator.Calculators
 
             if (nonCriticalFailure)
             {
-                if (PlayerSentOff(previousActionType, actionType))
-                {
-                    return;
-                }
-
-                if (previousActionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.Pass or ActionType.Interception)
-                    && !playerAction.Action.RequiresNonCriticalFailure)
+                if (PlayerSentOff(previousActionType, actionType) || NonCriticalFailureNotSupported(previousActionType, playerAction))
                 {
                     return;
                 }
@@ -108,21 +102,24 @@ namespace ActionCalculator.Calculators
             probabilityCalculator.Calculate(p, r, playerAction, usedSkills, nonCriticalFailure);            
         }
 
+        private static bool NonCriticalFailureNotSupported(ActionType? previousActionType, PlayerAction playerAction) =>
+            previousActionType is not (ActionType.Bribe 
+                or ActionType.ArgueTheCall 
+                or ActionType.Injury 
+                or ActionType.Foul 
+                or ActionType.Pass 
+                or ActionType.ThrowTeamMate
+                or ActionType.Interception)
+            && !playerAction.Action.RequiresNonCriticalFailure;
+
         private static bool PlayerSentOff(ActionType? previousActionType, ActionType actionType) =>
             previousActionType == ActionType.Foul && actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury)
             || previousActionType == ActionType.ArgueTheCall && actionType is not ActionType.Bribe
             || previousActionType == ActionType.Injury && actionType is not (ActionType.Bribe or ActionType.ArgueTheCall)
             || previousActionType == ActionType.Bribe && actionType is not ActionType.ArgueTheCall;
 
-        private bool IsEndOfCalculation(PlayerAction playerAction)
-        {
-            if (playerAction == null)
-            {
-                return false;
-            }
-
-            return playerAction.Index + 1 >= _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation;
-        }
+        private bool IsEndOfCalculation(PlayerAction playerAction) =>
+            playerAction != null && (playerAction.Index + 1 >= _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation);
 
         private void WriteResults(decimal p, int r, Skills usedSkills, bool nonCriticalFailure, ActionType? previousActionType)
         {
