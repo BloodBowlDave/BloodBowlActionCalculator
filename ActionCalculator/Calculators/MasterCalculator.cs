@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
 
@@ -21,109 +22,97 @@ namespace ActionCalculator.Calculators
 
         public void Calculate(decimal p, int r, PlayerAction previousPlayerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            if (p < 0.000001m)
+            if (p == 0)
             {
                 return;
             }
-
-            var i = previousPlayerAction != null ? previousPlayerAction.Index + 1 : 0;
 
             var previousActionType = previousPlayerAction?.Action.ActionType;
-            var isEndOfCalculation = IsEndOfCalculation(previousPlayerAction);
-            var previousActionIsDauntless = previousActionType == ActionType.Dauntless;
 
-            if (nonCriticalFailure)
+            if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction))
             {
-                if (previousActionIsDauntless)
-                {
-                    i++;
-                }
-
-                var tentaclesFail = previousActionType == ActionType.Tentacles;
-                if (tentaclesFail && isEndOfCalculation)
+                if (previousActionType == ActionType.Tentacles && nonCriticalFailure)
                 {
                     return;
                 }
-            }
-            
-            if (isEndOfCalculation)
-            {
-                WriteResults(p, r, usedSkills, nonCriticalFailure, previousActionType);
+
+                WriteResult(p, r, usedSkills, previousActionType);
                 return;
             }
-            
-            var playerAction = _context.Calculation.PlayerActions[i];
-            var actionType = playerAction.Action.ActionType;
 
+            var i = previousPlayerAction?.Index + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1) ?? 0;
+            var nextPlayerAction = _context.Calculation.PlayerActions[i];
             if (nonCriticalFailure)
             {
-                if (PlayerSentOff(previousActionType, actionType) || NonCriticalFailureNotSupported(previousActionType, playerAction))
+                if (PlayerSentOff(previousActionType, nextPlayerAction.Action.ActionType) 
+                    || !NonCriticalFailureSupported(previousActionType) 
+                    && !nextPlayerAction.Action.RequiresNonCriticalFailure)
                 {
                     return;
                 }
             }
-            else if (playerAction.Action.RequiresNonCriticalFailure)
+            else if (nextPlayerAction.Action.RequiresDauntlessFailure)
             {
-                if (previousPlayerAction?.Depth == playerAction.Depth)
-                {
-                    if (IsEndOfCalculation(playerAction))
-                    {
-                        WriteResults(p, r, usedSkills, false, previousActionType);
-                        return;
-                    }
+                nextPlayerAction = NextPlayerAction(previousActionType, i, nextPlayerAction);
 
-                    playerAction = _context.Calculation.PlayerActions[i + 1];
+                if (nextPlayerAction == null)
+                {
+                    WriteResult(p, r, usedSkills, previousActionType);
+                    return;
                 }
-                else
-                {
-                    var depth = playerAction.Depth;
-                    while (playerAction.Depth >= depth)
-                    {
-                        if (i >= _context.Calculation.PlayerActions.Length)
-                        {
-                            WriteResults(p, r, usedSkills, false, previousActionType);
-                            return;
-                        }
+            }
+            else if (nextPlayerAction.Action.RequiresNonCriticalFailure)
+            {
+                nextPlayerAction = GetNextPlayerAction(i, nextPlayerAction.Depth);
 
-                        playerAction = _context.Calculation.PlayerActions[i];
-                        i++;
-                    }
+                if (nextPlayerAction == null)
+                {
+                    WriteResult(p, r, usedSkills, previousActionType);
+                    return;
                 }
             }
 
-            if (previousPlayerAction?.Player.Id != playerAction.Player.Id)
+            if (previousPlayerAction?.Player.Id != nextPlayerAction.Player.Id)
             {
                 usedSkills &= Skills.DivingTackle;
             }
 
             var probabilityCalculator = _calculatorFactory
-                .CreateProbabilityCalculator(playerAction.Action.ActionType, playerAction.Action.NumberOfDice, this, nonCriticalFailure);
+                .CreateProbabilityCalculator(nextPlayerAction.Action.ActionType, nextPlayerAction.Action.NumberOfDice, this, nonCriticalFailure);
 
-            probabilityCalculator.Calculate(p, r, playerAction, usedSkills, nonCriticalFailure);            
+            probabilityCalculator.Calculate(p, r, nextPlayerAction, usedSkills, nonCriticalFailure);
         }
 
-        private static bool NonCriticalFailureNotSupported(ActionType? previousActionType, PlayerAction playerAction) =>
-            previousActionType is not (ActionType.Bribe 
-                or ActionType.ArgueTheCall 
-                or ActionType.Injury 
-                or ActionType.Foul 
-                or ActionType.Pass 
-                or ActionType.ThrowTeamMate
-                or ActionType.Interception)
-            && !playerAction.Action.RequiresNonCriticalFailure;
+        private PlayerAction NextPlayerAction(ActionType? previousActionType, int i, PlayerAction nextPlayerAction)
+        {
+            return previousActionType != ActionType.Dauntless
+                ? i + 1 == _context.Calculation.PlayerActions.Length ? null : _context.Calculation.PlayerActions[i + 1]
+                : nextPlayerAction;
+        }
+
+        private PlayerAction GetNextPlayerAction(int i, int depth) => 
+            _context.Calculation.PlayerActions.FirstOrDefault(x => x.Depth < depth && x.Index > i);
+
+        private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
+            previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul 
+                or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception;
 
         private static bool PlayerSentOff(ActionType? previousActionType, ActionType actionType) =>
-            previousActionType == ActionType.Foul && actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury)
-            || previousActionType == ActionType.ArgueTheCall && actionType is not ActionType.Bribe
-            || previousActionType == ActionType.Injury && actionType is not (ActionType.Bribe or ActionType.ArgueTheCall)
-            || previousActionType == ActionType.Bribe && actionType is not ActionType.ArgueTheCall;
+            previousActionType switch
+            {
+                ActionType.Foul => actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury),
+                ActionType.ArgueTheCall => actionType is not ActionType.Bribe,
+                ActionType.Bribe => actionType is not ActionType.ArgueTheCall,
+                ActionType.Injury => actionType is not (ActionType.Bribe or ActionType.ArgueTheCall),
+                _ => false
+            };
 
         private bool IsEndOfCalculation(PlayerAction playerAction) =>
-            playerAction != null && (playerAction.Index + 1 >= _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation);
+            (playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation);
 
-        private void WriteResults(decimal p, int r, Skills usedSkills, bool nonCriticalFailure, ActionType? previousActionType)
+        private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)
         {
-            Console.WriteLine($"Max Rerolls:{_context.MaxRerolls} P:{p:0.00000} R:{r} Action:{previousActionType} Non Critical Failure:{nonCriticalFailure} Used Skills:{usedSkills}");
+            Console.WriteLine($"MaxRerolls:{_context.MaxRerolls} P:{p:0.00000} R:{r} Action:{previousActionType} UsedSkills:{usedSkills}");
 
             _context.Results[_context.MaxRerolls - r] += p;
         }

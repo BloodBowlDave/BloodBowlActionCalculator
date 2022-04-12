@@ -10,8 +10,7 @@ namespace ActionCalculator.Calculators
 {
     public class CalculatorFactory : ICalculatorFactory
     {
-        public ICalculator CreateProbabilityCalculator(ActionType actionType, int blockDice,
-	        ICalculator calculator, bool inaccuratePass) =>
+        public ICalculator CreateProbabilityCalculator(ActionType actionType, int blockDice, ICalculator calculator, bool nonCriticalFailure) =>
             actionType switch
             {
                 ActionType.Other => new RerollableActionCalculator(calculator, new ProCalculator()),
@@ -29,12 +28,12 @@ namespace ActionCalculator.Calculators
                     3 => new ThreeDiceBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
                     _ => throw new ArgumentOutOfRangeException(nameof(blockDice), blockDice, null)
                 },
-                ActionType.Catch => inaccuratePass 
+                ActionType.Catch => nonCriticalFailure 
 	                ? new CatchInaccuratePassCalculator(calculator, new ProCalculator()) 
 	                : new CatchCalculator(calculator, new ProCalculator()),
                 ActionType.Foul => new FoulCalculator(calculator, new TwoD6()),
                 ActionType.ArmourBreak => new ArmourBreakCalculator(calculator, new TwoD6()),
-                ActionType.OtherNonRerollable => new RerollableActionCalculator(calculator, new ProCalculator()),
+                ActionType.OtherNonRerollable => new NonRerollableActionCalculator(calculator),
                 ActionType.Dauntless => new DauntlessCalculator(calculator, new ProCalculator()),
                 ActionType.Interception => new InterceptionCalculator(calculator),
                 ActionType.Tentacles => new TentaclesCalculator(calculator, new ProCalculator()),

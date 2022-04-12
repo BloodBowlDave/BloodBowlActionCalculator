@@ -26,5 +26,6 @@
         public decimal SuccessOnTwoDice { get; set; }
         public bool RequiresNonCriticalFailure { get; set; }
         public bool TerminatesCalculation { get; set; }
+        public bool RequiresDauntlessFailure { get; set; }
     }
 }

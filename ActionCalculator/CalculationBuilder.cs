@@ -47,10 +47,10 @@ namespace ActionCalculator
                     BuildPlayerActions(calculation[(index + 1)..], player, depth);
                     break;
                 case '{':
-                    BuildPlayerActionsWithBranch(calculation, player, depth, index);
+                    BuildPlayerActionsWithBranch(calculation, player, depth, index, calculation.LastIndexOf('}'), false);
                     break;
                 case '[':
-                    BuildPlayerActionsWithFork(calculation, player, depth, index);
+                    BuildPlayerActionsWithBranch(calculation, player, depth, index, calculation.LastIndexOf(']'), true);
                     break;
                 case ';':
                     BuildPlayerActionsForMultiplePlayers(calculation, player, depth, index);
@@ -84,53 +84,32 @@ namespace ActionCalculator
             BuildPlayerActions(calculation[(indexOfPlayerEnd + 1)..], new Player(), depth);
         }
 
-        private void BuildPlayerActionsWithFork(string calculation, Player player, int depth, int indexOfOpeningSquareBracket)
+        private void BuildPlayerActionsWithBranch(string calculation, Player player, int depth, int indexOfOpeningBracket, int indexOfClosingBracket, bool terminatesCalculation)
         {
-            var indexOfClosingSquareBracket = calculation.LastIndexOf(']');
-
-            if (indexOfClosingSquareBracket == -1)
+            if (indexOfClosingBracket == -1)
             {
                 throw new Exception("No matching closing bracket.");
             }
 
-            AddPlayerActions(GetActions(calculation[..indexOfOpeningSquareBracket]).Select(x => new PlayerAction(player, x, depth)));
-            
+            AddPlayerActions(GetActions(calculation[..indexOfOpeningBracket]).Select(x => new PlayerAction(player, x, depth)));
+
             var calculationLength = _playerActions.Count;
 
-            BuildPlayerActions(calculation[(indexOfOpeningSquareBracket + 1)..indexOfClosingSquareBracket], player, depth + 1);
+            BuildPlayerActions(calculation[(indexOfOpeningBracket + 1)..indexOfClosingBracket], player, depth + 1);
 
             var lengthOfFork = _playerActions.Count - calculationLength;
 
             if (lengthOfFork > 0)
             {
                 _playerActions[calculationLength].Action.RequiresNonCriticalFailure = true;
-                _playerActions[calculationLength + lengthOfFork - 1].Action.TerminatesCalculation = true;
+
+                if (terminatesCalculation)
+                {
+                    _playerActions[calculationLength + lengthOfFork - 1].Action.TerminatesCalculation = true;
+                }
             }
 
-            AddPlayerActions(GetActions(calculation[(indexOfClosingSquareBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
-        }
-
-        private void BuildPlayerActionsWithBranch(string calculation, Player player, int depth, int indexOfOpeningBrace)
-        {
-            var indexOfClosingBrace = calculation.LastIndexOf('}');
-
-            if (indexOfClosingBrace == -1)
-            {
-                throw new Exception("No matching closing brace.");
-            }
-
-            AddPlayerActions(GetActions(calculation[..indexOfOpeningBrace]).Select(x => new PlayerAction(player, x, depth)));
-
-            var calculationLength = _playerActions.Count;
-
-            BuildPlayerActions(calculation[(indexOfOpeningBrace + 1)..indexOfClosingBrace], player, depth + 1);
-            
-            if (_playerActions.Count - calculationLength > 0)
-            {
-                _playerActions[calculationLength].Action.RequiresNonCriticalFailure = true;
-            }
-
-            AddPlayerActions(GetActions(calculation[(indexOfClosingBrace + 1)..]).Select(x => new PlayerAction(player, x, depth)));
+            AddPlayerActions(GetActions(calculation[(indexOfClosingBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
         }
 
         private IEnumerable<Action> GetActions(string input)
@@ -153,6 +132,7 @@ namespace ActionCalculator
 
                 var action = _actionBuilder.Build(actionSplit[1]);
                 action.RequiresNonCriticalFailure = true;
+                action.RequiresDauntlessFailure = true;
 
                 yield return action;
             }

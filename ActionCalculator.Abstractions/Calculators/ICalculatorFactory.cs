@@ -3,6 +3,6 @@
     public interface ICalculatorFactory
     {
         ICalculator CreateProbabilityCalculator(ActionType actionType, int blockDice,
-	        ICalculator calculator, bool inaccuratePass);
+	        ICalculator calculator, bool nonCriticalFailure);
     }
 }

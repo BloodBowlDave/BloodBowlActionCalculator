@@ -75,6 +75,7 @@ namespace ActionCalculator.Tests
         [InlineData("L2',2D2|1D2", 1, 0.51852, 0.76132)]
         [InlineData("L2,2D2|1D2", 2, 0.46296, 0.75514, 0.79561)]
         [InlineData("P:L3'*,2D2|-2D2", 1, 0.47325, 0.69273)]
+        [InlineData("P:L3'*,2D2|-2D2,H4", 1, 0.23663, 0.34636)]
         [InlineData("F8", 0, 0.41667)]
         [InlineData("DP:F8", 0, 0.58333)]
         [InlineData("DP:F8,J8", 0, 0.31250)]
