@@ -37,8 +37,8 @@ namespace ActionCalculator.Calculators.Blocking
 
                 if (r > 0)
                 {
-                    _calculator.Calculate(p * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
-                    _calculator.Calculate(p * player.LonerSuccess * action.Failure, r - 1, playerAction, usedSkills, true);
+                    _calculator.Calculate(p * player.UseReroll * success, r - 1, playerAction, usedSkills);
+                    _calculator.Calculate(p * player.UseReroll * action.Failure, r - 1, playerAction, usedSkills, true);
 
                     return;
                 }

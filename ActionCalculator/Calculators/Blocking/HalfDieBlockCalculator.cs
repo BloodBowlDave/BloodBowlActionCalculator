@@ -48,7 +48,7 @@ namespace ActionCalculator.Calculators.Blocking
 
 			if (r > 0)
 			{
-				_calculator.Calculate(p * (oneDiceFails - canUseBrawler) * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+				_calculator.Calculate(p * (oneDiceFails - canUseBrawler) * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
 			}
 		}
 		
@@ -68,7 +68,7 @@ namespace ActionCalculator.Calculators.Blocking
 			
 			if (r > 0)
 			{
-				_calculator.Calculate(p * (twoFailures - canUseBrawlerAndPro) * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+				_calculator.Calculate(p * (twoFailures - canUseBrawlerAndPro) * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
 			}
 		}
 	}

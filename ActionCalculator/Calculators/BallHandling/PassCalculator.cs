@@ -22,32 +22,37 @@ namespace ActionCalculator.Calculators.BallHandling
 
             _calculator.Calculate(p * success, r, playerAction, usedSkills);
 
-            var accuratePassAfterFailure = p * (action.Failure + action.NonCriticalFailure) * success;
-            var inaccuratePassAfterFailure = p * (action.Failure + action.NonCriticalFailure) * action.NonCriticalFailure;
+            var inaccuratePass = action.NonCriticalFailure;
+            var rerollInaccuratePass = action.RerollNonCriticalFailure;
+            var accuratePassAfterFailure = p * (action.Failure + (rerollInaccuratePass ? inaccuratePass : 0)) * success;
+            var inaccuratePassAfterFailure = p * (action.Failure + (rerollInaccuratePass ? inaccuratePass : 0)) * inaccuratePass;
+            var inaccuratePassWithoutReroll = p * (rerollInaccuratePass ? 0m : inaccuratePass);
 
-            if (player.HasSkill(Skills.Pass) && action.ActionType == ActionType.Pass)
+            if (player.HasSkill(Skills.Pass) && action.ActionType == ActionType.Pass || player.HasSkill(Skills.TheBallista))
             {
                 _calculator.Calculate(accuratePassAfterFailure, r, playerAction, usedSkills);
-                _calculator.Calculate(inaccuratePassAfterFailure, r, playerAction, usedSkills, true);
+                _calculator.Calculate(inaccuratePassWithoutReroll + inaccuratePassAfterFailure, r, playerAction, usedSkills, true);
                 return;
             }
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
+                _calculator.Calculate(inaccuratePassWithoutReroll, r, playerAction, usedSkills, true);
+
                 usedSkills |= Skills.Pro;
-	            _calculator.Calculate(player.ProSuccess * accuratePassAfterFailure, r, playerAction, usedSkills);
-	            _calculator.Calculate(player.ProSuccess * inaccuratePassAfterFailure, r, playerAction, usedSkills, true);
+                _calculator.Calculate(player.ProSuccess * accuratePassAfterFailure, r, playerAction, usedSkills);
+                _calculator.Calculate(player.ProSuccess * inaccuratePassAfterFailure, r, playerAction, usedSkills, true);
                 return;
             }
 
-            if (r > 0 && action.RerollNonCriticalFailure)
+            if (r > 0 && rerollInaccuratePass)
             {
-	            _calculator.Calculate(player.LonerSuccess * accuratePassAfterFailure, r - 1, playerAction, usedSkills);
-	            _calculator.Calculate(player.LonerSuccess * inaccuratePassAfterFailure, r - 1, playerAction, usedSkills, true);
-	            return;
+	            _calculator.Calculate(player.UseReroll * accuratePassAfterFailure, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(player.UseReroll * inaccuratePassAfterFailure, r - 1, playerAction, usedSkills, true);
+                return;
             }
 
-            _calculator.Calculate(p * action.NonCriticalFailure, r, playerAction, usedSkills, true);
+            _calculator.Calculate(p * inaccuratePass, r, playerAction, usedSkills, true);
         }
     }
 }

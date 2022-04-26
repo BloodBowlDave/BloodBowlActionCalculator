@@ -58,7 +58,7 @@ namespace ActionCalculator.Calculators.Movement
                 return;
             }
             
-            CalculateDodgeReroll(p * player.LonerSuccess, r - 1, playerAction, usedSkills, failure, success, useBreakTackle, useDivingTackle);
+            CalculateDodgeReroll(p * player.UseReroll, r - 1, playerAction, usedSkills, failure, success, useBreakTackle, useDivingTackle);
         }
 
         private static decimal SuccessAfterModifiers(PlayerAction playerAction, bool affectedByDivingTackle, bool affectedByBreakTackle) => 

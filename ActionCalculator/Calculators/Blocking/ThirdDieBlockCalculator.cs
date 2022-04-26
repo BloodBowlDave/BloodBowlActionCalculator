@@ -49,7 +49,7 @@ namespace ActionCalculator.Calculators.Blocking
 
             if (r > 0)
             {
-                _calculator.Calculate(p * (oneDiceFails - canUseBrawler) * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * (oneDiceFails - canUseBrawler) * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
             }
 		}
 
@@ -71,7 +71,7 @@ namespace ActionCalculator.Calculators.Blocking
 
             if (r > 0)
             {
-                _calculator.Calculate(p * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
             }
 		}
 
@@ -87,7 +87,7 @@ namespace ActionCalculator.Calculators.Blocking
             var oneDieSuccess = action.SuccessOnOneDie;
             var threeFailures = (1 - oneDieSuccess) * (1 - oneDieSuccess) * (1 - oneDieSuccess);
 
-            _calculator.Calculate(p * threeFailures * player.LonerSuccess * action.Success, r - 1, playerAction, usedSkills);
+            _calculator.Calculate(p * threeFailures * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
         }
     }
 }

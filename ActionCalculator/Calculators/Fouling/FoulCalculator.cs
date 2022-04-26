@@ -24,18 +24,22 @@ namespace ActionCalculator.Calculators.Fouling
             var hasDirtyPlayer = player.HasSkill(Skills.DirtyPlayer);
             if (hasDirtyPlayer)
             {
-                useDpOnArmour = _twoD6.Success(action.OriginalRoll - 1) - action.Success;
+                useDpOnArmour = _twoD6.Success(action.OriginalRoll - player.DirtyPlayerValue) - action.Success;
             }
 
             var doubleOnArmour = player.HasSkill(Skills.SneakyGit) ? 0 : _twoD6.RollDouble(action.OriginalRoll);
             var doubleOnInjury = _twoD6.RollDouble(2);
             var noDouble = (1 - doubleOnArmour) * (1 - doubleOnInjury);
             
+            Calculate(p * success * noDouble, p * success * (1 - noDouble), r, playerAction, usedSkills);
+            p *= useDpOnArmour;
+            Calculate(p * noDouble, p * (1 - noDouble), r, playerAction, usedSkills | Skills.DirtyPlayer);
+        }
 
-            _calculator.Calculate(p * success * noDouble, r, playerAction, usedSkills);
-            _calculator.Calculate(p * useDpOnArmour * noDouble, r, playerAction, usedSkills | Skills.DirtyPlayer);
-            _calculator.Calculate(p * success * (1 - noDouble), r, playerAction, usedSkills, true);
-            _calculator.Calculate(p * useDpOnArmour * (1 - noDouble), r, playerAction, usedSkills | Skills.DirtyPlayer, true);
+        private void Calculate(decimal successNoDouble, decimal successWithDouble, int r, PlayerAction playerAction, Skills usedSkills)
+        {
+            _calculator.Calculate(successNoDouble, r, playerAction, usedSkills);
+            _calculator.Calculate(successWithDouble, r, playerAction, usedSkills, true);
         }
     }
 }

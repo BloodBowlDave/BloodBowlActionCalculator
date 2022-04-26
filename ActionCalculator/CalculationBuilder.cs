@@ -52,6 +52,9 @@ namespace ActionCalculator
                 case '[':
                     BuildPlayerActionsWithBranch(calculation, player, depth, index, calculation.LastIndexOf(']'), true);
                     break;
+                case '(':
+                    BuildPlayerActionsWithAlternateBranches(calculation, player, depth, index, calculation.LastIndexOf(')'));
+                    break;
                 case ';':
                     BuildPlayerActionsForMultiplePlayers(calculation, player, depth, index);
                     break;
@@ -84,9 +87,9 @@ namespace ActionCalculator
             BuildPlayerActions(calculation[(indexOfPlayerEnd + 1)..], new Player(), depth);
         }
 
-        private void BuildPlayerActionsWithBranch(string calculation, Player player, int depth, int indexOfOpeningBracket, int indexOfClosingBracket, bool terminatesCalculation)
+        private void BuildPlayerActionsWithBranch(string calculation, Player player, int depth, int indexOfOpeningBracket, int lastIndexOfClosingBracket, bool terminatesCalculation)
         {
-            if (indexOfClosingBracket == -1)
+            if (lastIndexOfClosingBracket == -1)
             {
                 throw new Exception("No matching closing bracket.");
             }
@@ -95,21 +98,48 @@ namespace ActionCalculator
 
             var calculationLength = _playerActions.Count;
 
-            BuildPlayerActions(calculation[(indexOfOpeningBracket + 1)..indexOfClosingBracket], player, depth + 1);
+            BuildPlayerActions(calculation[(indexOfOpeningBracket + 1)..lastIndexOfClosingBracket], player, depth + 1);
 
-            var lengthOfFork = _playerActions.Count - calculationLength;
+            var branchLength = _playerActions.Count - calculationLength;
 
-            if (lengthOfFork > 0)
+            if (branchLength > 0)
             {
                 _playerActions[calculationLength].Action.RequiresNonCriticalFailure = true;
+                _playerActions[calculationLength + branchLength - 1].Action.EndOfBranch = true;
 
                 if (terminatesCalculation)
                 {
-                    _playerActions[calculationLength + lengthOfFork - 1].Action.TerminatesCalculation = true;
+                    _playerActions[calculationLength + branchLength - 1].Action.TerminatesCalculation = true;
                 }
             }
 
-            AddPlayerActions(GetActions(calculation[(indexOfClosingBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
+            AddPlayerActions(GetActions(calculation[(lastIndexOfClosingBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
+        }
+
+        private void BuildPlayerActionsWithAlternateBranches(string calculation, Player player, int depth, int indexOfOpeningBracket, int lastIndexOfClosingBracket)
+        {
+            if (lastIndexOfClosingBracket == -1)
+            {
+                throw new Exception("No matching closing bracket.");
+            }
+
+            AddPlayerActions(GetActions(calculation[..indexOfOpeningBracket]).Select(x => new PlayerAction(player, x, depth)));
+
+            var branches = calculation[(indexOfOpeningBracket + 1)..lastIndexOfClosingBracket].Split(")(");
+
+            for (var i = 0; i < branches.Length; i++)
+            {
+                var calculationLength = _playerActions.Count;
+
+                BuildPlayerActions(branches[i], player, depth + 1);
+                
+                for (var j = calculationLength; j < _playerActions.Count; j++)
+                {
+                    _playerActions[j].BranchId = i + 1;
+                }
+            }
+
+            AddPlayerActions(GetActions(calculation[(lastIndexOfClosingBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
         }
 
         private IEnumerable<Action> GetActions(string input)

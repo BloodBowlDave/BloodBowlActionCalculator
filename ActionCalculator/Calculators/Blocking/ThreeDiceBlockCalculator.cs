@@ -46,13 +46,13 @@ namespace ActionCalculator.Calculators.Blocking
 						return;
 					}
 
-					_calculator.Calculate(pBrawler * (1 - player.ProSuccess * oneDieSuccess) * player.LonerSuccess * oneDieSuccess, r - 1, playerAction, usedSkills);
+					_calculator.Calculate(pBrawler * (1 - player.ProSuccess * oneDieSuccess) * player.UseReroll * oneDieSuccess, r - 1, playerAction, usedSkills);
 					return;
 				}
 
 				if (r > 0)
 				{
-					_calculator.Calculate(pBrawler * player.LonerSuccess * action.SuccessOnTwoDice, r - 1, playerAction, usedSkills);
+					_calculator.Calculate(pBrawler * player.UseReroll * action.SuccessOnTwoDice, r - 1, playerAction, usedSkills);
 					return;
 				}
 			}
@@ -66,14 +66,14 @@ namespace ActionCalculator.Calculators.Blocking
 
 				if (r > 0)
 				{
-					_calculator.Calculate(p * (1 - player.ProSuccess * oneDieSuccess) * player.LonerSuccess * action.SuccessOnTwoDice, r - 1, playerAction, usedSkills);
+					_calculator.Calculate(p * (1 - player.ProSuccess * oneDieSuccess) * player.UseReroll * action.SuccessOnTwoDice, r - 1, playerAction, usedSkills);
 					return;
 				}
 			}
 
 			if (r > 0)
 			{
-				_calculator.Calculate(p * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
+				_calculator.Calculate(p * player.UseReroll * success, r - 1, playerAction, usedSkills);
 			}
 		}
 	}

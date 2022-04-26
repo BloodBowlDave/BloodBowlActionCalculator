@@ -5,11 +5,11 @@ namespace ActionCalculator.Calculators
 {
 	public class ProCalculator : IProCalculator
 	{
-		public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie, decimal? successAfterReroll)
+        public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie, decimal? successAfterReroll)
 		{
 			var player = playerAction.Player;
 
-			if (!player.HasSkill(Skills.Pro) || usedSkills.HasFlag(Skills.Pro))
+			if (!player.HasSkill(Skills.Pro) && !player.HasSkill(Skills.ConsummateProfessional) || usedSkills.HasFlag(Skills.Pro))
 			{
 				return false;
 			}
@@ -21,7 +21,7 @@ namespace ActionCalculator.Calculators
 				return true;
 			}
 			
-            return r == 0 || player.ProSuccess * (successOnOneDie ?? action.SuccessOnOneDie) >= player.LonerSuccess * (successAfterReroll ?? action.Success);
+            return r == 0 || player.ProSuccess * (successOnOneDie ?? action.SuccessOnOneDie) >= player.UseReroll * (successAfterReroll ?? action.Success);
 		}
-	}
+    }
 }

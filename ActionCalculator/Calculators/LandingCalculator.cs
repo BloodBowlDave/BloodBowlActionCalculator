@@ -30,7 +30,7 @@ namespace ActionCalculator.Calculators
 
             if (r > 0)
             {
-                _calculator.Calculate(p * failure * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * failure * player.UseReroll * success, r - 1, playerAction, usedSkills);
             }
         }
     }

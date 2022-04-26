@@ -14,7 +14,7 @@ namespace ActionCalculator.Calculators
 
         public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            _calculator.Calculate(p * playerAction.Action.Success, r, playerAction, usedSkills);
+            _calculator.Calculate(p * playerAction.Action.Success, r, playerAction, usedSkills, nonCriticalFailure);
         }
     }
 }

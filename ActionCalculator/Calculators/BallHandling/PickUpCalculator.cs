@@ -38,7 +38,7 @@ namespace ActionCalculator.Calculators.BallHandling
 
             if (r > 0)
             {
-	            _calculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+	            _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
             }
         }
     }

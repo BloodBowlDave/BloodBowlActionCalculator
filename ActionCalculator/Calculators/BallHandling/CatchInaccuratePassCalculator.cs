@@ -81,7 +81,7 @@ namespace ActionCalculator.Calculators.BallHandling
 
 				if (r > 0)
 				{
-					_calculator.Calculate(p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchFailure * player.LonerSuccess * catchSuccess, 
+					_calculator.Calculate(p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchFailure * player.UseReroll * catchSuccess, 
 						r - 1, playerAction, usedSkills | Skills.Pro);
 				}
 
@@ -90,13 +90,13 @@ namespace ActionCalculator.Calculators.BallHandling
 
 			if (r > 0)
 			{
-				_calculator.Calculate(p * failDivingCatch * player.LonerSuccess * ScatterThenBounceToTarget * catchSuccess, 
+				_calculator.Calculate(p * failDivingCatch * player.UseReroll * ScatterThenBounceToTarget * catchSuccess, 
 					r - 1, playerAction, usedSkills);
 
 				if (r > 1)
 				{
-					_calculator.Calculate(p * failDivingCatch * player.LonerSuccess * ScatterThenBounceToTarget
-					                                 * catchFailure * player.LonerSuccess * catchSuccess, r - 2, playerAction,
+					_calculator.Calculate(p * failDivingCatch * player.UseReroll * ScatterThenBounceToTarget
+					                                 * catchFailure * player.UseReroll * catchSuccess, r - 2, playerAction,
 						usedSkills);
 				}
 
@@ -129,7 +129,7 @@ namespace ActionCalculator.Calculators.BallHandling
 			
 			if (r > 0)
 			{
-				_calculator.Calculate(p * player.LonerSuccess, r - 1, playerAction, usedSkills);
+				_calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
 			}
 		}
 	}

@@ -35,8 +35,8 @@ namespace ActionCalculator.Calculators.Movement
 
             if (r > 0 && action.RerollNonCriticalFailure)
             {
-                _calculator.Calculate(p * player.LonerSuccess * success, r - 1, playerAction, usedSkills);
-                _calculator.Calculate(p * (1 - player.LonerSuccess + player.LonerSuccess * action.Failure), r - 1, playerAction, usedSkills, true);
+                _calculator.Calculate(p * player.UseReroll * success, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * (1 - player.UseReroll + player.UseReroll * action.Failure), r - 1, playerAction, usedSkills, true);
                 return;
             }
 

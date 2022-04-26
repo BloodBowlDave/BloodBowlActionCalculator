@@ -1,13 +1,21 @@
 ﻿using System;
 using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Abstractions.Calculators.Blocking;
 using Action = ActionCalculator.Abstractions.Action;
 
 namespace ActionCalculator.Calculators.Blocking
 {
 	public class BrawlerCalculator : IBrawlerCalculator
-	{
-		public decimal ProbabilityCanUseBrawler(Action action) =>
+    {
+        private readonly IProCalculator _proCalculator;
+
+        public BrawlerCalculator(IProCalculator proCalculator)
+        {
+            _proCalculator = proCalculator;
+        }
+
+        public decimal ProbabilityCanUseBrawler(Action action) =>
 			action.NumberOfDice switch
 			{
 				-3 => action.NumberOfSuccessfulResults switch {
@@ -60,7 +68,7 @@ namespace ActionCalculator.Calculators.Blocking
 
             return r == 0 
                    || action.UseBrawler 
-                   || action.SuccessOnOneDie >= action.Success * player.LonerSuccess;
+                   || action.SuccessOnOneDie >= action.Success * player.UseReroll;
         }
 
 		public bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills)
@@ -73,10 +81,12 @@ namespace ActionCalculator.Calculators.Blocking
             }
 
             var action = playerAction.Action;
+            var successAfterBrawlerAndPro = action.SuccessOnOneDie * player.ProSuccess * action.SuccessOnOneDie;
+            var successAfterReroll = action.Success * player.UseReroll;
 
             return r == 0 
                    || action.UseBrawler && action.UsePro
-                   || action.SuccessOnOneDie * player.ProSuccess * action.SuccessOnOneDie >= action.Success * player.LonerSuccess;
+                   || _proCalculator.UsePro(playerAction, r, usedSkills, successAfterBrawlerAndPro, successAfterReroll);
         }
 
         public decimal ProbabilityCanUseBrawlerAndPro(Action action) =>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace ActionCalculator
 {
@@ -28,5 +29,11 @@ namespace ActionCalculator
 
             throw new ArgumentException("Not found.", nameof(description));
         }
+
+        public static string GetDescriptionFromValue(this Enum value) =>
+            value.GetType()
+                .GetMember(value.ToString())[0]
+                .GetCustomAttribute<DescriptionAttribute>()?
+                .Description ?? string.Empty;
     }
 }

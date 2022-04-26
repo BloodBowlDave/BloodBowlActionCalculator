@@ -21,11 +21,29 @@
         public bool RerollNonCriticalFailure { get; set; }
         public bool AffectedByDivingTackle { get; set; }
         public int OriginalRoll { get; set; }
+        public int Modifier { get; set; }
         public int NumberOfDice { get; set; }
         public int NumberOfSuccessfulResults { get; set; }
         public decimal SuccessOnTwoDice { get; set; }
         public bool RequiresNonCriticalFailure { get; set; }
         public bool TerminatesCalculation { get; set; }
         public bool RequiresDauntlessFailure { get; set; }
+        public bool EndOfBranch { get; set; }
+
+        public override string ToString() =>
+            ActionType switch
+            {
+                ActionType.Block => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(UseBrawler ? "^" : "")}{(UsePro ? "*" : "")}",
+                ActionType.Rerollable => OriginalRoll.ToString(),
+                ActionType.Bribe => ((char)ActionType).ToString(),
+                ActionType.Shadowing => $"{(char)ActionType}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",
+                ActionType.Tentacles => $"{(char)ActionType}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",
+                ActionType.Pass => $"{(char)ActionType}{OriginalRoll}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",
+                ActionType.ThrowTeamMate => $"{(char)ActionType}{OriginalRoll}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",
+                ActionType.NonRerollable => $"{(char)ActionType}{OriginalRoll}{(Modifier > 0 ? "/" + Modifier : "")}",
+                _ => $"{(char)ActionType}{OriginalRoll}{(AffectedByDivingTackle ? "\"" : "")}{(!RerollNonCriticalFailure ? "'" : "")}{(UsePro ? "*" : "")}"
+            };
+
+        private string GetModifier() => Modifier > 0 ? '+' + Modifier.ToString() : Modifier < 0 ? Modifier.ToString() : "";
     }
 }

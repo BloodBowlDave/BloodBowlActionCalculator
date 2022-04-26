@@ -5,35 +5,36 @@ using ActionCalculator.Calculators.BallHandling;
 using ActionCalculator.Calculators.Blocking;
 using ActionCalculator.Calculators.Fouling;
 using ActionCalculator.Calculators.Movement;
+using Action = ActionCalculator.Abstractions.Action;
 
 namespace ActionCalculator.Calculators
 {
     public class CalculatorFactory : ICalculatorFactory
     {
-        public ICalculator CreateProbabilityCalculator(ActionType actionType, int blockDice, ICalculator calculator, bool nonCriticalFailure) =>
-            actionType switch
+        public ICalculator CreateProbabilityCalculator(Action action, ICalculator calculator, bool nonCriticalFailure) =>
+            action.ActionType switch
             {
-                ActionType.Other => new RerollableActionCalculator(calculator, new ProCalculator()),
+                ActionType.Rerollable => new RerollableActionCalculator(calculator, new ProCalculator()),
                 ActionType.Dodge => new DodgeCalculator(calculator, new ProCalculator()),
                 ActionType.Rush => new RushCalculator(calculator, new ProCalculator()),
                 ActionType.PickUp => new PickUpCalculator(calculator, new ProCalculator()),
                 ActionType.Pass => new PassCalculator(calculator, new ProCalculator()),
                 ActionType.ThrowTeamMate => new PassCalculator(calculator, new ProCalculator()),
-                ActionType.Block => blockDice switch
+                ActionType.Block => action.NumberOfDice switch
                 {
-                    -3 => new ThirdDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
-                    -2 => new HalfDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
-                    1 => new OneDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
-                    2 => new TwoDiceBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
-                    3 => new ThreeDiceBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator()),
-                    _ => throw new ArgumentOutOfRangeException(nameof(blockDice), blockDice, null)
+                    -3 => new ThirdDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator(new ProCalculator())),
+                    -2 => new HalfDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator(new ProCalculator())),
+                    1 => new OneDieBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator(new ProCalculator())),
+                    2 => new TwoDiceBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator(new ProCalculator())),
+                    3 => new ThreeDiceBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator(new ProCalculator())),
+                    _ => throw new ArgumentOutOfRangeException(nameof(action.NumberOfDice), action.NumberOfDice, null)
                 },
                 ActionType.Catch => nonCriticalFailure 
 	                ? new CatchInaccuratePassCalculator(calculator, new ProCalculator()) 
 	                : new CatchCalculator(calculator, new ProCalculator()),
                 ActionType.Foul => new FoulCalculator(calculator, new TwoD6()),
                 ActionType.ArmourBreak => new ArmourBreakCalculator(calculator, new TwoD6()),
-                ActionType.OtherNonRerollable => new NonRerollableActionCalculator(calculator),
+                ActionType.NonRerollable => new NonRerollableActionCalculator(calculator),
                 ActionType.Dauntless => new DauntlessCalculator(calculator, new ProCalculator()),
                 ActionType.Interception => new InterceptionCalculator(calculator),
                 ActionType.Tentacles => new TentaclesCalculator(calculator, new ProCalculator()),
@@ -42,7 +43,9 @@ namespace ActionCalculator.Calculators
                 ActionType.Bribe => new BribeCalculator(calculator),
                 ActionType.Injury => new InjuryCalculator(calculator, new TwoD6()),
                 ActionType.Landing => new LandingCalculator(calculator, new ProCalculator()),
-                _ => throw new ArgumentOutOfRangeException(nameof(actionType), actionType, null)
+                ActionType.HailMaryPass => new HailMaryPassCalculator(calculator, new ProCalculator()),
+                ActionType.Hypnogaze => new HypnogazeCalculator(calculator, new ProCalculator()),
+                _ => throw new ArgumentOutOfRangeException(nameof(action.ActionType), action.ActionType, null)
             };
     }
 }

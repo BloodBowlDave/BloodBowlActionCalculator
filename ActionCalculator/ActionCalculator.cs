@@ -51,7 +51,7 @@ namespace ActionCalculator
                 AggregateResults(probabilityResult.Probabilities);
             }
 
-            return new CalculationResult(probabilityResults.ToList());
+            return new CalculationResult(calculation, probabilityResults.ToList());
 		}
         
         private static void AggregateResults(IList<decimal> result)

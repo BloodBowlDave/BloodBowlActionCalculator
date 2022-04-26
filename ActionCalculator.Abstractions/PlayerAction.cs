@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ActionCalculator.Abstractions
+﻿namespace ActionCalculator.Abstractions
 {
     public class PlayerAction
     {
@@ -16,5 +14,6 @@ namespace ActionCalculator.Abstractions
         public Action Action { get; }
         public int Index { get; set; }
         public int Depth { get; }
+        public int BranchId { get; set; }
     }
 }

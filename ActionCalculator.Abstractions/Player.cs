@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ActionCalculator.Abstractions
 {
@@ -8,25 +9,53 @@ namespace ActionCalculator.Abstractions
         {
             Id = Guid.NewGuid();
             Skills = Skills.None;
-            LonerSuccess = 1;
-            ProSuccess = 0;
+            UseReroll = 1;
             BreakTackleValue = 0;
+            MightyBlowValue = 0;
+            DirtyPlayerValue = 0;
+            ProSuccess = 2m / 3;
         }
 
-		public Player(Skills skills, double? lonerSuccess, double? proSuccess, int breakTackleValue)
+		public Player(Skills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue)
 		{
             Id = Guid.NewGuid();
             Skills = skills;
-            LonerSuccess = lonerSuccess != null ? (decimal)lonerSuccess : 1;
-            ProSuccess = proSuccess != null ? (decimal)proSuccess : 0;
+            UseReroll = (7m - lonerValue) / 6;
+            LonerValue = lonerValue;
             BreakTackleValue = breakTackleValue;
+            MightyBlowValue = mightyBlowValue;
+            DirtyPlayerValue = dirtyPlayerValue;
+            ProSuccess = skills.HasFlag(Skills.ConsummateProfessional) ? 1m : 2m / 3;
         }
 
 		public Guid Id { get; }
 		private Skills Skills { get; }
-        public decimal LonerSuccess { get; }
-        public decimal ProSuccess { get; }
+        public decimal UseReroll { get; }
+        private int LonerValue { get; }
         public int BreakTackleValue { get; }
-		public bool HasSkill(Enum skill) => Skills.HasFlag(skill);
-	}
+        public int MightyBlowValue { get; }
+        public int DirtyPlayerValue { get; }
+        public decimal ProSuccess { get; }
+
+        public bool HasSkill(Enum skill) => Skills.HasFlag(skill);
+
+        public override string ToString() =>
+            string.Join(',', Enum.GetValues(typeof(Skills))
+                .Cast<Skills>()
+                .Where(x => x != Skills.None && Skills.HasFlag(x))
+                .Select(x => x.GetDescriptionFromValue() + GetSkillRoll(x))
+                .OrderBy(x => x));
+
+        private string GetSkillRoll(Skills skill) =>
+            skill switch
+            {
+                Skills.Loner => LonerValue.ToString(),
+                Skills.DirtyPlayer => DirtyPlayerValue > 1 ? DirtyPlayerValue.ToString() : "",
+                Skills.MightyBlow => MightyBlowValue > 1 ? MightyBlowValue.ToString() : "",
+                Skills.BreakTackle => BreakTackleValue.ToString(),
+                _ => ""
+            };
+
+        public bool HasSkills() => Skills != Skills.None;
+    }
 }

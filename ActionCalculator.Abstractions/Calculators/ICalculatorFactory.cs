@@ -2,7 +2,6 @@
 {
     public interface ICalculatorFactory
     {
-        ICalculator CreateProbabilityCalculator(ActionType actionType, int blockDice,
-	        ICalculator calculator, bool nonCriticalFailure);
+        ICalculator CreateProbabilityCalculator(Action action, ICalculator calculator, bool nonCriticalFailure);
     }
 }

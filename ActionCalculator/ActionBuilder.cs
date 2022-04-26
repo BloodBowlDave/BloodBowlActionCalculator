@@ -37,8 +37,8 @@ namespace ActionCalculator
 				ActionType.ThrowTeamMate => PassAction(input, ActionType.ThrowTeamMate),
 				ActionType.Bribe => BribeAction(),
 				ActionType.ArgueTheCall => ArgueTheCallAction(input),
-				ActionType.Tentacles => TentaclesAction(input),
-				ActionType.Shadowing => ShadowingAction(input),
+				ActionType.Tentacles => GetActionWithStatDifferenceCheck(input, ActionType.Tentacles),
+				ActionType.Shadowing => GetActionWithStatDifferenceCheck(input, ActionType.Shadowing),
 				ActionType.Injury => InjuryAction(input),
 				_ => OtherAction(input, actionType)
 			};
@@ -56,7 +56,7 @@ namespace ActionCalculator
 		        ? ActionType.Block 
 		        : Enum.IsDefined(typeof(ActionType), (int) input[0]) 
 			        ? (ActionType) input[0] 
-			        : ActionType.Other;
+			        : ActionType.Rerollable;
 
         private static bool IsBlockAction(string input) => input.Skip(1).Contains('D');
 
@@ -148,11 +148,15 @@ namespace ActionCalculator
 	        if (input.Contains("/"))
 	        {
 		        var split = input.Split('/');
-		        var numerator = split[0];
-		        var denominator = split[1];
-		        var success = decimal.Parse(numerator[1..]) / decimal.Parse(denominator);
+		        var numerator = int.Parse(split[0][1..]);
+		        var denominator = int.Parse(split[1]);
+                var success = (decimal)numerator / denominator;
 
-                return new Action(actionType, success, 1 - success, 0, success);
+                return new Action(actionType, success, 1 - success, 0, success)
+                {
+					OriginalRoll = numerator,
+					Modifier = denominator
+                };
 			}
 	        else
             {
@@ -170,9 +174,10 @@ namespace ActionCalculator
 		
 		private static Action PassAction(string input, ActionType actionType)
         {
+            int roll;
 	        if (input.Length == 4)
 	        {
-		        var roll = int.Parse(input.Substring(1, 1));
+		        roll = int.Parse(input.Substring(1, 1));
 		        var modifier = int.Parse(input.Substring(3, 1));
 				modifier = input.Substring(2, 1) == "-" ? -modifier : modifier;
             
@@ -186,14 +191,22 @@ namespace ActionCalculator
 			        successes / 6, 
 			        failures / 6, 
 			        nonCriticalFailures / 6,
-                    successes / 6);
+                    successes / 6)
+                {
+					OriginalRoll = roll,
+					Modifier = modifier
+				};
 	        }
 
-	        var success = (7m - int.Parse(input[1..])) / 6;
+            roll = int.Parse(input[1..]);
+            var success = (7m - roll) / 6;
             var failure = 1m / 6;
 	        var nonCriticalFailure = 1 - success - failure;
 
-	        return new Action(actionType, success, failure, nonCriticalFailure, success);
+	        return new Action(actionType, success, failure, nonCriticalFailure, success)
+            {
+				OriginalRoll = roll
+            };
 		}
 
 		private static Action BribeAction() => 
@@ -204,7 +217,10 @@ namespace ActionCalculator
             var roll = int.Parse(input.Length == 2 ? input[1..] : input);
             var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 
-            return new Action(ActionType.ArgueTheCall, success, 1m / 6, 1 - success - 1m / 6, 0);
+            return new Action(ActionType.ArgueTheCall, success, 1m / 6, 1 - success - 1m / 6, 0)
+            {
+				OriginalRoll = roll
+            };
 		}
 
         private Action ArmourBreakAction(string input)
@@ -233,47 +249,15 @@ namespace ActionCalculator
             return action;
 		}
 
-        private static Action TentaclesAction(string input)
+        private static Action GetActionWithStatDifferenceCheck(string input, ActionType actionType)
         {
-            decimal failure;
-
-            if (input.Length == 4)
-            {
-                var tentaclesStrength = int.Parse(input.Substring(1, 1));
-                var playerStrength = int.Parse(input.Substring(3, 1));
-
-				failure = (decimal)(tentaclesStrength - playerStrength + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
-				
-                return new Action(ActionType.Tentacles, 1 - failure, failure, 0, 1 - failure);
-
-            }
-
             var difference = int.Parse(input[1..]);
+            var failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
 
-            failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
-
-            return new Action(ActionType.Tentacles, 1 - failure, failure, 0, 1 - failure);
+            return new Action(actionType, 1 - failure, failure, 0, 1 - failure)
+            {
+				Modifier = difference
+            };
 		}
-
-        private static Action ShadowingAction(string input)
-        {
-            decimal failure;
-
-            if (input.Length == 4)
-            {
-                var shadowingMovement = int.Parse(input.Substring(1, 1));
-                var playerMovement = int.Parse(input.Substring(3, 1));
-
-                failure = (decimal)(shadowingMovement - playerMovement + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
-
-                return new Action(ActionType.Shadowing, 1 - failure, failure, 0, 1 - failure);
-            }
-
-            var difference = int.Parse(input[1..]);
-
-            failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
-
-            return new Action(ActionType.Shadowing, 1 - failure, failure, 0, 1 - failure);
-        }
 	}
 }

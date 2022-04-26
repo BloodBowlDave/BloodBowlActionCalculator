@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace ActionCalculator.Abstractions
 {
     [Flags]
-    public enum Skills : ulong
+    public enum Skills : uint
     {
         None = 0,
         [Description("D")]
@@ -38,6 +38,26 @@ namespace ActionCalculator.Abstractions
         [Description("CB")]
         CloudBurster = 16384,
         [Description("BT")]
-        BreakTackle = 32768
+        BreakTackle = 32768,
+        [Description("CP")]
+        ConsummateProfessional = 65536,
+        [Description("OP")]
+        OldPro = 131072,
+        [Description("TB")]
+        TheBallista = 262144,
+        [Description("MD")]
+        MesmerisingDance = 524288,
+        [Description("R")]
+        Ram = 1048576,
+        [Description("BB")]
+        BrutalBlock = 2097152,
+        [Description("SM")]
+        SavageMauling = 4194304,
+        [Description("CR")]
+        CrushingBlow = 8388608,
+        [Description("S")]
+        Slayer = 16777216,
+        [Description("I")]
+        Incorporeal = 33554432
     }
 }

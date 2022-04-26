@@ -2,7 +2,7 @@
 {
     public enum ActionType
     {
-        Other = 'O',
+        Rerollable = 'O',
         Dodge = 'D',
         Rush = 'R',
         PickUp = 'U',
@@ -11,7 +11,7 @@
         Catch = 'C',
         Foul = 'F',
         ArmourBreak = 'B',
-        OtherNonRerollable = 'H',
+        NonRerollable = 'X',
         ThrowTeamMate = 'T',
         Dauntless = 'L',
         Interception = 'I',
@@ -20,6 +20,8 @@
         ArgueTheCall = 'A',
         Bribe = 'E',
         Injury = 'J',
-        Landing = 'G'
+        Landing = 'G',
+        HailMaryPass = 'M',
+        Hypnogaze = 'Y'
     }
 }

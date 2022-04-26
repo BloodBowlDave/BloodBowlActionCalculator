@@ -40,62 +40,80 @@ namespace ActionCalculator.Calculators
                 return;
             }
 
-            var i = previousPlayerAction?.Index + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1) ?? 0;
-            var nextPlayerAction = _context.Calculation.PlayerActions[i];
+            var playerAction = GetNextPlayerAction(previousPlayerAction?.Index, nonCriticalFailure, previousActionType);
+
             if (nonCriticalFailure)
             {
-                if (PlayerSentOff(previousActionType, nextPlayerAction.Action.ActionType) 
-                    || !NonCriticalFailureSupported(previousActionType) 
-                    && !nextPlayerAction.Action.RequiresNonCriticalFailure)
+                if (PlayerSentOff(previousActionType, playerAction.Action.ActionType) || !NonCriticalFailureSupported(previousActionType) 
+                    && !playerAction.Action.RequiresNonCriticalFailure)
                 {
                     return;
                 }
             }
-            else if (nextPlayerAction.Action.RequiresDauntlessFailure)
+            else if (playerAction.Action.RequiresNonCriticalFailure)
             {
-                nextPlayerAction = NextPlayerAction(previousActionType, i, nextPlayerAction);
+                playerAction = GetNextValidPlayerAction(playerAction);
 
-                if (nextPlayerAction == null)
-                {
-                    WriteResult(p, r, usedSkills, previousActionType);
-                    return;
-                }
-            }
-            else if (nextPlayerAction.Action.RequiresNonCriticalFailure)
-            {
-                nextPlayerAction = GetNextPlayerAction(i, nextPlayerAction.Depth);
-
-                if (nextPlayerAction == null)
+                if (playerAction == null)
                 {
                     WriteResult(p, r, usedSkills, previousActionType);
                     return;
                 }
             }
-
-            if (previousPlayerAction?.Player.Id != nextPlayerAction.Player.Id)
+            else if (IsEndOfBranch(previousPlayerAction, playerAction))
             {
-                usedSkills &= Skills.DivingTackle;
+                playerAction = GetNextNonBranchPlayerAction(playerAction);
+
+                if (playerAction == null)
+                {
+                    WriteResult(p, r, usedSkills, previousActionType);
+                    return;
+                }
             }
 
-            var probabilityCalculator = _calculatorFactory
-                .CreateProbabilityCalculator(nextPlayerAction.Action.ActionType, nextPlayerAction.Action.NumberOfDice, this, nonCriticalFailure);
+            if (!IsStartOfBranch(previousPlayerAction, playerAction))
+            {
+                usedSkills = GetUsedSkills(previousPlayerAction?.Player.Id, playerAction.Player.Id, usedSkills);
+                Calculate(playerAction, p, r, usedSkills, nonCriticalFailure);
+                return;
+            }
 
-            probabilityCalculator.Calculate(p, r, nextPlayerAction, usedSkills, nonCriticalFailure);
+            while (playerAction != null)
+            {
+                Calculate(playerAction, p, r, GetUsedSkills(previousPlayerAction?.Player.Id, playerAction.Player.Id, usedSkills), nonCriticalFailure);
+                playerAction = GetNextBranchStartPlayerAction(playerAction);
+            }
         }
 
-        private PlayerAction NextPlayerAction(ActionType? previousActionType, int i, PlayerAction nextPlayerAction)
-        {
-            return previousActionType != ActionType.Dauntless
-                ? i + 1 == _context.Calculation.PlayerActions.Length ? null : _context.Calculation.PlayerActions[i + 1]
-                : nextPlayerAction;
-        }
+        private static bool IsStartOfBranch(PlayerAction previousPlayerAction, PlayerAction playerAction) => 
+            playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
-        private PlayerAction GetNextPlayerAction(int i, int depth) => 
-            _context.Calculation.PlayerActions.FirstOrDefault(x => x.Depth < depth && x.Index > i);
+        private bool IsEndOfCalculation(PlayerAction playerAction) =>
+            playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation;
+
+        private PlayerAction GetNextBranchStartPlayerAction(PlayerAction playerAction) =>
+            _context.Calculation.PlayerActions.FirstOrDefault(x =>
+                x.Index > playerAction.Index && x.BranchId > playerAction.BranchId);
+
+        private PlayerAction GetNextPlayerAction(int? previousPlayerActionIndex, bool nonCriticalFailure, ActionType? previousActionType) => 
+            _context.Calculation.PlayerActions[previousPlayerActionIndex + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1) ?? 0];
+
+        private static bool IsEndOfBranch(PlayerAction previousPlayerAction, PlayerAction playerAction) => 
+            playerAction.BranchId > 0 && previousPlayerAction?.BranchId > 0 && previousPlayerAction.BranchId != playerAction.BranchId;
+
+        private PlayerAction GetNextNonBranchPlayerAction(PlayerAction playerAction) => 
+            _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index && x.BranchId == 0);
+
+        private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
+            previousPlayerId != playerId ? usedSkills & Skills.DivingTackle : usedSkills;
+        
+        private PlayerAction GetNextValidPlayerAction(PlayerAction playerAction) => 
+            _context.Calculation.PlayerActions.FirstOrDefault(x => 
+                (x.Depth < playerAction.Depth || playerAction.Action.RequiresDauntlessFailure) && x.Index > playerAction.Index);
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
-            previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul 
-                or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception;
+            previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass
+                or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception or ActionType.NonRerollable;
 
         private static bool PlayerSentOff(ActionType? previousActionType, ActionType actionType) =>
             previousActionType switch
@@ -107,8 +125,11 @@ namespace ActionCalculator.Calculators
                 _ => false
             };
 
-        private bool IsEndOfCalculation(PlayerAction playerAction) =>
-            (playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation);
+        private void Calculate(PlayerAction playerAction, decimal p, int r, Skills usedSkills, bool nonCriticalFailure)
+        {
+            var calculator = _calculatorFactory.CreateProbabilityCalculator(playerAction.Action, this, nonCriticalFailure);
+            calculator.Calculate(p, r, playerAction, usedSkills, nonCriticalFailure);
+        }
 
         private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)
         {

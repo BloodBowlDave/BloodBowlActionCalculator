@@ -21,8 +21,19 @@ namespace ActionCalculator.Calculators
             var action = playerAction.Action;
             var success = action.Success;
 
-            if (player.HasSkill(Skills.DirtyPlayer) && !usedSkills.HasFlag(Skills.DirtyPlayer) 
-                || player.HasSkill(Skills.MightyBlow) && !usedSkills.HasFlag(Skills.MightyBlow))
+            if (player.HasSkill(Skills.DirtyPlayer) && !usedSkills.HasFlag(Skills.DirtyPlayer))
+            {
+                success = _twoD6.Success(action.OriginalRoll - player.DirtyPlayerValue);
+            }
+            else if (player.HasSkill(Skills.MightyBlow) && !usedSkills.HasFlag(Skills.MightyBlow))
+            {
+                success = _twoD6.Success(action.OriginalRoll - player.MightyBlowValue);
+            }
+            else if (player.HasSkill(Skills.Ram) && !usedSkills.HasFlag(Skills.Ram))
+            {
+                success = _twoD6.Success(action.OriginalRoll - 1);
+            }
+            else if (player.HasSkill(Skills.Slayer) && !usedSkills.HasFlag(Skills.Slayer))
             {
                 success = _twoD6.Success(action.OriginalRoll - 1);
             }

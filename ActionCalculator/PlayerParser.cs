@@ -17,9 +17,10 @@ namespace ActionCalculator
                 .ToList();
             
             return new Player(skills.Aggregate(Skills.None, (current, skill) => current | skill.Item1),
-                SkillSuccess(skills, Skills.Loner),
-                SkillSuccess(skills, Skills.Pro),
-                GetBreakTackleValue(skills));
+                GetSkillValue(skills, Skills.Loner),
+                GetSkillValue(skills, Skills.BreakTackle),
+                GetSkillValue(skills, Skills.MightyBlow),
+                GetSkillValue(skills, Skills.DirtyPlayer));
         }
 
         private static double? SkillSuccess(IEnumerable<Tuple<Skills, int>> skillsAndRolls, Skills skill)
@@ -42,7 +43,7 @@ namespace ActionCalculator
                         : new Tuple<string, int>(input, 0);
         }
 
-        private static int GetBreakTackleValue(IEnumerable<Tuple<Skills, int>> skills) => 
-            skills.SingleOrDefault(x => x.Item1 == Skills.BreakTackle)?.Item2 ?? 1;
+        private static int GetSkillValue(IEnumerable<Tuple<Skills, int>> skills, Skills skill) => 
+            skills.SingleOrDefault(x => x.Item1 == skill && x.Item2 > 1)?.Item2 ?? 1;
     }
 }
