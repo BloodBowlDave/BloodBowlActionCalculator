@@ -1,6 +1,6 @@
-﻿using System;
-using ActionCalculator.Abstractions;
+﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Calculators
 {
@@ -8,6 +8,8 @@ namespace ActionCalculator.Calculators
     {
         private readonly ICalculator _calculator;
         private readonly ITwoD6 _twoD6;
+        private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer | Skills.DirtyPlayer;
+
 
         public InjuryCalculator(ICalculator calculator, ITwoD6 twoD6)
         {
@@ -19,26 +21,37 @@ namespace ActionCalculator.Calculators
         {
             var player = playerAction.Player;
             var action = playerAction.Action;
-            var success = action.Success;
-
-            if (player.HasSkill(Skills.DirtyPlayer) && !usedSkills.HasFlag(Skills.DirtyPlayer))
-            {
-                success = _twoD6.Success(action.OriginalRoll - player.DirtyPlayerValue);
-            }
-            else if (player.HasSkill(Skills.MightyBlow) && !usedSkills.HasFlag(Skills.MightyBlow))
-            {
-                success = _twoD6.Success(action.OriginalRoll - player.MightyBlowValue);
-            }
-            else if (player.HasSkill(Skills.Ram) && !usedSkills.HasFlag(Skills.Ram))
-            {
-                success = _twoD6.Success(action.OriginalRoll - 1);
-            }
-            else if (player.HasSkill(Skills.Slayer) && !usedSkills.HasFlag(Skills.Slayer))
-            {
-                success = _twoD6.Success(action.OriginalRoll - 1);
-            }
+            var modifier = GetModifier(player, usedSkills);
+            var success = _twoD6.Success(action.OriginalRoll - modifier);
 
             _calculator.Calculate(p * success, r, playerAction, usedSkills, nonCriticalFailure);
+        }
+
+        private static int GetModifier(Player player, Skills usedSkills)
+        {
+            var modifier = 0;
+
+            foreach (var skill in SkillsAffectingInjury.ToEnumerable(Skills.None)
+                         .Where(x => player.HasSkill(x) && !usedSkills.HasFlag(x)))
+            {
+                switch (skill)
+                {
+                    case Skills.DirtyPlayer:
+                        return player.DirtyPlayerValue;
+                    case Skills.MightyBlow:
+                        modifier += player.MightyBlowValue;
+                        break;
+                    case Skills.Ram:
+                    case Skills.Slayer:
+                    case Skills.BrutalBlock:
+                        modifier++;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(skill));
+                }
+            }
+
+            return modifier;
         }
     }
 }

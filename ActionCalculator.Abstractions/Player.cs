@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Abstractions
 {
@@ -40,9 +39,7 @@ namespace ActionCalculator.Abstractions
         public bool HasSkill(Enum skill) => Skills.HasFlag(skill);
 
         public override string ToString() =>
-            string.Join(',', Enum.GetValues(typeof(Skills))
-                .Cast<Skills>()
-                .Where(x => x != Skills.None && Skills.HasFlag(x))
+            string.Join(',', Skills.ToEnumerable(Skills.None)
                 .Select(x => x.GetDescriptionFromValue() + GetSkillRoll(x))
                 .OrderBy(x => x));
 

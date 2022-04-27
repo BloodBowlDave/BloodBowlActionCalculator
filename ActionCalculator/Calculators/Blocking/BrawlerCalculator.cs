@@ -1,5 +1,4 @@
-﻿using System;
-using ActionCalculator.Abstractions;
+﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Abstractions.Calculators.Blocking;
 using Action = ActionCalculator.Abstractions.Action;

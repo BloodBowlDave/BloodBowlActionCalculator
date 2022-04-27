@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ActionCalculator.Abstractions;
+﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator
 {
@@ -13,7 +11,7 @@ namespace ActionCalculator
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(GetSkillAndRoll)
                 .Select(x => 
-                    new Tuple<Skills, int>(EnumExtensions.GetValueFromDescription<Skills>(x.Item1), x.Item2))
+                    new Tuple<Skills, int>(x.Item1.GetValueFromDescription<Skills>(), x.Item2))
                 .ToList();
             
             return new Player(skills.Aggregate(Skills.None, (current, skill) => current | skill.Item1),

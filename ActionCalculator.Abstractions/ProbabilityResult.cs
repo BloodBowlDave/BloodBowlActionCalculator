@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ActionCalculator.Abstractions
+﻿namespace ActionCalculator.Abstractions
 {
     public class ProbabilityResult
     {

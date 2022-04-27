@@ -53,6 +53,7 @@ namespace ActionCalculator.Tests
         [InlineData("CL,MB:2D3,B8,J8", 0, 0.18229)]
         [InlineData("CL,MB:2D3,B9,J8", 0, 0.18229)]
         [InlineData("CP,L3,SF:R2,R2,2D2", 1, 0.52512, 0.68071)]
+        [InlineData("CR,MB,R,S:B9", 0, 0.83333)]
         [InlineData("D2\";D3\"", 0, 0.16667)]
         [InlineData("D3\",D2\"", 0, 0.16667)]
         [InlineData("D3\",D2\"", 1, 0.16667, 0.39815)]
@@ -95,6 +96,8 @@ namespace ActionCalculator.Tests
         [InlineData("M2;C,DC:C2", 1, 0.30121, 0.35141)]
         [InlineData("M2;C2", 0, 0.05534)]
         [InlineData("M2;DC:C2", 1, 0.19531, 0.33285)]
+        [InlineData("MB,R:B9", 0, 0.58333)]
+        [InlineData("MB,R,S:B9", 0, 0.72222)]
         [InlineData("MB2:2D3,B8", 0, 0.54167)]
         [InlineData("MB2:2D3,B8,J8", 0, 0.32118)]
         [InlineData("MB:2D3,B8", 0, 0.43750)]
@@ -128,7 +131,7 @@ namespace ActionCalculator.Tests
             var result = _actionCalculator.Calculate(calculation);
 
             Assert.Equal(expected.Length, result.ProbabilityResults[rerolls].Probabilities.Length);
-
+            
             for (var i = 0; i < expected.Length; i++)
             {
                 Assert.Equal((decimal)expected[i], result.ProbabilityResults[rerolls].Probabilities[i], 5);

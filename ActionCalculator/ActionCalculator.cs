@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ActionCalculator.Abstractions;
+﻿using ActionCalculator.Abstractions;
 
 namespace ActionCalculator
 {

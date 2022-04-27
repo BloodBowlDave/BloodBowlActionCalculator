@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using ActionCalculator.Abstractions;
+﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Calculators

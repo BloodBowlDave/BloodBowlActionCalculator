@@ -1,12 +1,11 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace ActionCalculator
+namespace ActionCalculator.Utilities
 {
     public static class EnumExtensions
     {
-        public static T GetValueFromDescription<T>(string description) where T : Enum
+        public static T GetValueFromDescription<T>(this string description) where T : Enum
         {
             foreach (var field in typeof(T).GetFields())
             {
@@ -15,20 +14,29 @@ namespace ActionCalculator
                 {
                     if (attribute.Description == description)
                     {
-                        return (T)field.GetValue(null);
+                        return (T)field.GetValue(null)!;
                     }
                 }
                 else
                 {
                     if (field.Name == description)
                     {
-                        return (T)field.GetValue(null);
+                        return (T)field.GetValue(null)!;
                     }
                 }
             }
 
             throw new ArgumentException("Not found.", nameof(description));
         }
+
+        public static IEnumerable<T> ToEnumerable<T>(this T value, T exclude) where T : Enum =>
+            value.ToEnumerable().Where(x => !exclude.HasFlag(x));
+
+        private static IEnumerable<T> ToEnumerable<T>(this T value) where T : Enum =>
+            value.GetType().ToEnumerable<T>().Where(x => value.HasFlag(x));
+
+        private static IEnumerable<T> ToEnumerable<T>(this Type type) where T : Enum => 
+            Enum.GetValues(type).Cast<T>();
 
         public static string GetDescriptionFromValue(this Enum value) =>
             value.GetType()

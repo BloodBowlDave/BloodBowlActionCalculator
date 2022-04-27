@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ActionCalculator
+﻿namespace ActionCalculator
 {
     public static class ComparableExtensions
     {
