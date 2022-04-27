@@ -7,7 +7,7 @@ namespace ActionCalculator
     {
         private readonly IActionBuilder _actionBuilder;
         private readonly IPlayerParser _playerParser;
-        private List<PlayerAction> _playerActions;
+        private readonly List<PlayerAction> _playerActions = new();
 
         public CalculationBuilder(IActionBuilder actionBuilder, IPlayerParser playerParser)
         {
@@ -17,8 +17,6 @@ namespace ActionCalculator
 
         public Calculation Build(string calculation)
         {
-            _playerActions = new List<PlayerAction>();
-
             BuildPlayerActions(calculation, new Player(), 0);
             
             return new Calculation(_playerActions.ToArray());

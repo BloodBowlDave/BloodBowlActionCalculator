@@ -89,7 +89,7 @@ namespace ActionCalculator.Calculators
         private bool IsEndOfCalculation(PlayerAction playerAction) =>
             playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation;
 
-        private PlayerAction GetNextBranchStartPlayerAction(PlayerAction playerAction) =>
+        private PlayerAction? GetNextBranchStartPlayerAction(PlayerAction playerAction) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x =>
                 x.Index > playerAction.Index && x.BranchId > playerAction.BranchId);
 
@@ -99,13 +99,13 @@ namespace ActionCalculator.Calculators
         private static bool IsEndOfBranch(PlayerAction previousPlayerAction, PlayerAction playerAction) => 
             playerAction.BranchId > 0 && previousPlayerAction?.BranchId > 0 && previousPlayerAction.BranchId != playerAction.BranchId;
 
-        private PlayerAction GetNextNonBranchPlayerAction(PlayerAction playerAction) => 
+        private PlayerAction? GetNextNonBranchPlayerAction(PlayerAction playerAction) => 
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index && x.BranchId == 0);
 
         private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
             previousPlayerId != playerId ? usedSkills & Skills.DivingTackle : usedSkills;
         
-        private PlayerAction GetNextValidPlayerAction(PlayerAction playerAction) => 
+        private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) => 
             _context.Calculation.PlayerActions.FirstOrDefault(x => 
                 (x.Depth < playerAction.Depth || playerAction.Action.RequiresDauntlessFailure) && x.Index > playerAction.Index);
 

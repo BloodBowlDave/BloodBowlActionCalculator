@@ -32,7 +32,7 @@ namespace ActionCalculator
                     new decimal[calculation.PlayerActions.Length * 2 + 1]);
 
                 _masterCalculator.Initialise(context);
-                _masterCalculator.Calculate(1m, rerolls, null, Skills.None);
+                _masterCalculator.Calculate(1m, rerolls, null!, Skills.None);
 
                 var results = context.Results.Where(x => x > 0).ToArray();
 
