@@ -20,7 +20,12 @@ namespace ActionCalculator.Calculators.BallHandling
             var action = playerAction.Action;
             var success = action.Success;
             var failure = action.Failure;
-            
+
+            if (player.HasSkill(Skills.BlastIt))
+            {
+                usedSkills |= Skills.BlastIt;
+            }
+
             _calculator.Calculate(p * success, r, playerAction, usedSkills, true);
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))

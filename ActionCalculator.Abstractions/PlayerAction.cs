@@ -2,10 +2,10 @@
 {
     public class PlayerAction
     {
-	    public PlayerAction(Player player, Action action, int depth)
-	    {
-		    Player = player;
-		    Action = action;
+        public PlayerAction(Player player, Action action, int depth)
+        {
+            Player = player;
+            Action = action;
             Depth = depth;
         }
 

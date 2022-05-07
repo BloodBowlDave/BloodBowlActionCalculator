@@ -57,6 +57,12 @@ namespace ActionCalculator.Abstractions
         [Description("S")]
         Slayer = 16777216,
         [Description("I")]
-        Incorporeal = 33554432
+        Incorporeal = 33554432,
+        [Description("BR")]
+        BlindRage = 67108864,
+        [Description("BI")]
+        BlastIt = 134217728,
+        [Description("WD")]
+        WhirlingDervish = 268435456
     }
 }

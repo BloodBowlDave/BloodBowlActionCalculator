@@ -19,7 +19,7 @@ namespace ActionCalculator.Calculators
             var player = playerAction.Player;
             var success = nonCriticalFailure ? (7m - (action.OriginalRoll + 1).ThisOrMinimum(2).ThisOrMaximum(6)) / 6 : action.Success;
             var failure = 1m - success;
-            
+
             _calculator.Calculate(p * success, r, playerAction, usedSkills);
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))

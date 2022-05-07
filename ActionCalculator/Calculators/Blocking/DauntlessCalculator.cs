@@ -26,6 +26,14 @@ namespace ActionCalculator.Calculators.Blocking
 
             if (action.RerollNonCriticalFailure)
             {
+                if (player.HasSkill(Skills.BlindRage))
+                {
+                    _calculator.Calculate(p * success, r, playerAction, usedSkills);
+                    _calculator.Calculate(p * action.Failure, r, playerAction, usedSkills, true);
+
+                    return;
+                }
+
                 if (_proCalculator.UsePro(playerAction, r, usedSkills))
                 {
                     usedSkills |= Skills.Pro;

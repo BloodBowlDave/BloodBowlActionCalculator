@@ -2,8 +2,8 @@
 
 namespace ActionCalculator.Abstractions
 {
-	public class Player
-	{
+    public class Player
+    {
         public Player()
         {
             Id = Guid.NewGuid();
@@ -15,20 +15,21 @@ namespace ActionCalculator.Abstractions
             ProSuccess = 2m / 3;
         }
 
-		public Player(Skills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue)
-		{
+        public Player(Skills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, int incorporealValue)
+        {
             Id = Guid.NewGuid();
             Skills = skills;
             UseReroll = (7m - lonerValue) / 6;
             LonerValue = lonerValue;
-            BreakTackleValue = breakTackleValue;
+            BreakTackleValue = skills.Contains(Skills.Incorporeal) ? incorporealValue : breakTackleValue;
             MightyBlowValue = mightyBlowValue;
             DirtyPlayerValue = dirtyPlayerValue;
-            ProSuccess = skills.HasFlag(Skills.ConsummateProfessional) ? 1m : 2m / 3;
+            ProSuccess = skills.Contains(Skills.ConsummateProfessional) ? 1m : 2m / 3;
         }
 
-		public Guid Id { get; }
-		private Skills Skills { get; }
+
+        public Guid Id { get; }
+        private Skills Skills { get; }
         public decimal UseReroll { get; }
         private int LonerValue { get; }
         public int BreakTackleValue { get; }
@@ -36,7 +37,7 @@ namespace ActionCalculator.Abstractions
         public int DirtyPlayerValue { get; }
         public decimal ProSuccess { get; }
 
-        public bool HasSkill(Enum skill) => Skills.HasFlag(skill);
+        public bool HasSkill(Enum skill) => Skills.Contains(skill);
 
         public override string ToString() =>
             string.Join(',', Skills.ToEnumerable(Skills.None)
@@ -47,9 +48,10 @@ namespace ActionCalculator.Abstractions
             skill switch
             {
                 Skills.Loner => LonerValue.ToString(),
-                Skills.DirtyPlayer => DirtyPlayerValue > 1 ? DirtyPlayerValue.ToString() : "",
-                Skills.MightyBlow => MightyBlowValue > 1 ? MightyBlowValue.ToString() : "",
+                Skills.DirtyPlayer => DirtyPlayerValue.ToString(),
+                Skills.MightyBlow => MightyBlowValue.ToString(),
                 Skills.BreakTackle => BreakTackleValue.ToString(),
+                Skills.Incorporeal => BreakTackleValue.ToString(),
                 _ => ""
             };
 

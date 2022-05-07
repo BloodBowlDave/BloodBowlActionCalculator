@@ -10,8 +10,8 @@ namespace ActionCalculator.Calculators.BallHandling
 
         public PassCalculator(ICalculator calculator, IProCalculator proCalculator)
         {
-	        _calculator = calculator;
-	        _proCalculator = proCalculator;
+            _calculator = calculator;
+            _proCalculator = proCalculator;
         }
 
         public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -47,7 +47,7 @@ namespace ActionCalculator.Calculators.BallHandling
 
             if (r > 0 && rerollInaccuratePass)
             {
-	            _calculator.Calculate(player.UseReroll * accuratePassAfterFailure, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(player.UseReroll * accuratePassAfterFailure, r - 1, playerAction, usedSkills);
                 _calculator.Calculate(player.UseReroll * inaccuratePassAfterFailure, r - 1, playerAction, usedSkills, true);
                 return;
             }

@@ -6,19 +6,19 @@ namespace ActionCalculator
     public class CalculationBuilder : ICalculationBuilder
     {
         private readonly IActionBuilder _actionBuilder;
-        private readonly IPlayerParser _playerParser;
+        private readonly IPlayerBuilder _playerBuilder;
         private readonly List<PlayerAction> _playerActions = new();
 
-        public CalculationBuilder(IActionBuilder actionBuilder, IPlayerParser playerParser)
+        public CalculationBuilder(IActionBuilder actionBuilder, IPlayerBuilder playerBuilder)
         {
             _actionBuilder = actionBuilder;
-            _playerParser = playerParser;
+            _playerBuilder = playerBuilder;
         }
 
         public Calculation Build(string calculation)
         {
             BuildPlayerActions(calculation, new Player(), 0);
-            
+
             return new Calculation(_playerActions.ToArray());
         }
 
@@ -38,7 +38,7 @@ namespace ActionCalculator
             switch (specialCharacter)
             {
                 case ':':
-                    player = _playerParser.Parse(calculation[..index]);
+                    player = _playerBuilder.Build(calculation[..index]);
                     BuildPlayerActions(calculation[(index + 1)..], player, depth);
                     break;
                 case '{':
@@ -64,7 +64,7 @@ namespace ActionCalculator
             for (var i = 0; i < calculation.Length; i++)
             {
                 var character = calculation[i];
-                foreach (var specialCharacter in new List<char> {':', ';', '{', '[', '('}.Where(x => character == x))
+                foreach (var specialCharacter in new List<char> { ':', ';', '{', '[', '(' }.Where(x => character == x))
                 {
                     return new Tuple<char?, int>(specialCharacter, i);
                 }
@@ -75,7 +75,7 @@ namespace ActionCalculator
 
         private void BuildPlayerActionsForOnePlayer(string calculation, Player player, int depth) =>
             AddPlayerActions(GetActions(calculation).Select(x => new PlayerAction(player, x, depth)));
-        
+
         private void BuildPlayerActionsForMultiplePlayers(string calculation, Player player, int depth, int indexOfPlayerEnd)
         {
             AddPlayerActions(GetActions(calculation[..indexOfPlayerEnd]).Select(x => new PlayerAction(player, x, depth)));
@@ -127,7 +127,7 @@ namespace ActionCalculator
                 var calculationLength = _playerActions.Count;
 
                 BuildPlayerActions(branches[i], player, depth + 1);
-                
+
                 for (var j = calculationLength; j < _playerActions.Count; j++)
                 {
                     _playerActions[j].BranchId = i + 1;

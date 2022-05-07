@@ -30,7 +30,7 @@ namespace ActionCalculator.Calculators.Fouling
             var doubleOnArmour = player.HasSkill(Skills.SneakyGit) ? 0 : _twoD6.RollDouble(action.OriginalRoll);
             var doubleOnInjury = _twoD6.RollDouble(2);
             var noDouble = (1 - doubleOnArmour) * (1 - doubleOnInjury);
-            
+
             Calculate(p * success * noDouble, p * success * (1 - noDouble), r, playerAction, usedSkills);
             p *= useDpOnArmour;
             Calculate(p * noDouble, p * (1 - noDouble), r, playerAction, usedSkills | Skills.DirtyPlayer);

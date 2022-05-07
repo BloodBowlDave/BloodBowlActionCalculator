@@ -10,8 +10,8 @@ namespace ActionCalculator.Calculators
 
         public RerollableActionCalculator(ICalculator calculator, IProCalculator proCalculator)
         {
-	        _calculator = calculator;
-	        _proCalculator = proCalculator;
+            _calculator = calculator;
+            _proCalculator = proCalculator;
         }
 
         public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -27,13 +27,13 @@ namespace ActionCalculator.Calculators
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
-	            _calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
-	            return;
+                _calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
+                return;
             }
 
             if (r > 0)
             {
-	            _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
             }
         }
     }

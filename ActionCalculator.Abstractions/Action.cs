@@ -18,8 +18,9 @@
         public decimal SuccessOnOneDie { get; }
         public bool UsePro { get; set; }
         public bool UseBrawler { get; set; }
+        public bool UseBreakTackle { get; set; }
         public bool RerollNonCriticalFailure { get; set; }
-        public bool AffectedByDivingTackle { get; set; }
+        public bool UseDivingTackle { get; set; }
         public int OriginalRoll { get; set; }
         public int Modifier { get; set; }
         public int NumberOfDice { get; set; }
@@ -41,7 +42,8 @@
                 ActionType.Pass => $"{(char)ActionType}{OriginalRoll}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",
                 ActionType.ThrowTeamMate => $"{(char)ActionType}{OriginalRoll}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",
                 ActionType.NonRerollable => $"{(char)ActionType}{OriginalRoll}{(Modifier > 0 ? "/" + Modifier : "")}",
-                _ => $"{(char)ActionType}{OriginalRoll}{(AffectedByDivingTackle ? "\"" : "")}{(!RerollNonCriticalFailure ? "'" : "")}{(UsePro ? "*" : "")}"
+                ActionType.Dodge => $"{(char)ActionType}{OriginalRoll}{(!UseBreakTackle ? "¬" : "")}{(UseDivingTackle ? "\"" : "")}{(UsePro ? "*" : "")}",
+                _ => $"{(char)ActionType}{OriginalRoll}{(!RerollNonCriticalFailure ? "'" : "")}{(UsePro ? "*" : "")}"
             };
 
         private string GetModifier() => Modifier > 0 ? '+' + Modifier.ToString() : Modifier < 0 ? Modifier.ToString() : "";

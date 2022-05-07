@@ -1,14 +1,14 @@
 ﻿namespace ActionCalculator.Abstractions
 {
-	public class CalculationResult
-	{
-		public CalculationResult(Calculation calculation, List<ProbabilityResult> probabilityResults)
+    public class CalculationResult
+    {
+        public CalculationResult(Calculation calculation, List<ProbabilityResult> probabilityResults)
         {
             Calculation = calculation;
-			ProbabilityResults = probabilityResults;
-		}
+            ProbabilityResults = probabilityResults;
+        }
 
-		public Calculation Calculation { get; }
-		public List<ProbabilityResult> ProbabilityResults { get; }
-	}
+        public Calculation Calculation { get; }
+        public List<ProbabilityResult> ProbabilityResults { get; }
+    }
 }

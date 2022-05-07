@@ -28,9 +28,9 @@ namespace ActionCalculator.Calculators
                     3 => new ThreeDiceBlockCalculator(calculator, new ProCalculator(), new BrawlerCalculator(new ProCalculator())),
                     _ => throw new ArgumentOutOfRangeException(nameof(action.NumberOfDice), action.NumberOfDice, null)
                 },
-                ActionType.Catch => nonCriticalFailure 
-	                ? new CatchInaccuratePassCalculator(calculator, new ProCalculator()) 
-	                : new CatchCalculator(calculator, new ProCalculator()),
+                ActionType.Catch => nonCriticalFailure
+                    ? new CatchInaccuratePassCalculator(calculator, new ProCalculator())
+                    : new CatchCalculator(calculator, new ProCalculator()),
                 ActionType.Foul => new FoulCalculator(calculator, new TwoD6()),
                 ActionType.ArmourBreak => new ArmourBreakCalculator(calculator, new TwoD6()),
                 ActionType.NonRerollable => new NonRerollableActionCalculator(calculator),

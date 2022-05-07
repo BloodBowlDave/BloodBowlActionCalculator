@@ -22,7 +22,7 @@ namespace ActionCalculator.Calculators.Fouling
                 _calculator.Calculate(p * action.Failure, r, playerAction, usedSkills, true);
                 return;
             }
-            
+
             _calculator.Calculate(p, r, playerAction, usedSkills);
         }
     }

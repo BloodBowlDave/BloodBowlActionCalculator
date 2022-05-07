@@ -30,12 +30,12 @@ namespace ActionCalculator.Utilities
         }
 
         public static IEnumerable<T> ToEnumerable<T>(this T value, T exclude) where T : Enum =>
-            value.ToEnumerable().Where(x => !exclude.HasFlag(x));
+            value.ToEnumerable().Where(x => !exclude.Contains(x));
 
         private static IEnumerable<T> ToEnumerable<T>(this T value) where T : Enum =>
-            value.GetType().ToEnumerable<T>().Where(x => value.HasFlag(x));
+            value.GetType().ToEnumerable<T>().Where(x => value.Contains(x));
 
-        private static IEnumerable<T> ToEnumerable<T>(this Type type) where T : Enum => 
+        private static IEnumerable<T> ToEnumerable<T>(this Type type) where T : Enum =>
             Enum.GetValues(type).Cast<T>();
 
         public static string GetDescriptionFromValue(this Enum value) =>
@@ -43,5 +43,7 @@ namespace ActionCalculator.Utilities
                 .GetMember(value.ToString())[0]
                 .GetCustomAttribute<DescriptionAttribute>()?
                 .Description ?? string.Empty;
+
+        public static bool Contains<T>(this T flags, T value) where T : Enum => flags.HasFlag(value);
     }
 }

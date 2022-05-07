@@ -52,7 +52,7 @@ namespace ActionCalculator.Abstractions
                     {
                         sb.Append("(");
                     }
-                    
+
                     if (!currentPlayerHasPreviousAction)
                     {
                         sb.Append(player);
@@ -67,7 +67,7 @@ namespace ActionCalculator.Abstractions
                 {
                     sb.Append(branchTerminatesCalculation ? '[' : '{');
                 }
-                
+
                 if (firstAction)
                 {
                     firstAction = false;
@@ -115,25 +115,25 @@ namespace ActionCalculator.Abstractions
             return sb.ToString();
         }
 
-        private int DepthOfNextAction(PlayerAction playerAction) => 
+        private int DepthOfNextAction(PlayerAction playerAction) =>
             PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index)?.Depth ?? 0;
 
         private static bool CharacterIsABracket(char character) =>
-            new List<char> {'}', ']', '{', '[', '(', ')'}.Contains(character);
+            new List<char> { '}', ']', '{', '[', '(', ')' }.Contains(character);
 
-        private bool CurrentPlayerHasPreviousAction(Guid currentPlayerId, PlayerAction playerAction) => 
+        private bool CurrentPlayerHasPreviousAction(Guid currentPlayerId, PlayerAction playerAction) =>
             PlayerActions.FirstOrDefault(x => x.Player.Id == currentPlayerId && x.Index < playerAction.Index) != null;
 
-        private bool PreviousPlayerHasSubsequentAction(Guid previousPlayerId, PlayerAction playerAction) => 
+        private bool PreviousPlayerHasSubsequentAction(Guid previousPlayerId, PlayerAction playerAction) =>
             PlayerActions.FirstOrDefault(x => x.Player.Id == previousPlayerId && x.Index > playerAction.Index) != null;
 
-        private bool IsEndOfAlternateBranches(PlayerAction playerAction) => 
+        private bool IsEndOfAlternateBranches(PlayerAction playerAction) =>
             playerAction.BranchId > 0 && (PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index)?.BranchId ?? 0) == 0;
 
-        private bool IsStartOfAlternateBranch(PlayerAction playerAction) => 
+        private bool IsStartOfAlternateBranch(PlayerAction playerAction) =>
             playerAction.BranchId > 0 && !PlayerActions.Any(x => x.BranchId == playerAction.BranchId && x.Index < playerAction.Index);
 
-        private bool BranchTerminatesCalculation(PlayerAction playerAction) => 
+        private bool BranchTerminatesCalculation(PlayerAction playerAction) =>
             PlayerActions.LastOrDefault(x => x.Index > playerAction.Index && x.Depth >= playerAction.Depth)?.Action.TerminatesCalculation ?? false;
     }
 }

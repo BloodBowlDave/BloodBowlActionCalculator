@@ -9,7 +9,7 @@ namespace ActionCalculator.Calculators
         private readonly ICalculator _calculator;
         private readonly ITwoD6 _twoD6;
         private const Skills SkillsAffectingArmour = Skills.Ram | Skills.MightyBlow | Skills.Slayer | Skills.CrushingBlow;
-        
+
         public ArmourBreakCalculator(ICalculator calculator, ITwoD6 twoD6)
         {
             _calculator = calculator;
@@ -22,52 +22,115 @@ namespace ActionCalculator.Calculators
             var action = playerAction.Action;
 
             var armourRoll = action.OriginalRoll;
+            var useOldPro = player.HasSkill(Skills.OldPro) && !usedSkills.Contains(Skills.Pro);
+
             if (player.HasSkill(Skills.Claw) && armourRoll >= 8)
             {
-                _calculator.Calculate(p * _twoD6.Success(8), r, playerAction, usedSkills);
+                var success = _twoD6.Success(8);
+                _calculator.Calculate(p * success, r, playerAction, usedSkills);
+
+                if (!useOldPro)
+                {
+                    return;
+                }
+                
+                var successWithOldPro = (decimal)GetSuccessesWithOldPro(new Dictionary<Skills, int> { { Skills.None, 8 } })[Skills.None] / 216;
+                _calculator.Calculate(p * (1 - success) * player.ProSuccess * successWithOldPro, r, playerAction, usedSkills | Skills.Pro);
+
+                return;
+            }
+
+            var skillsWithMinimumRoll = GetSkillsWithMinimumRoll(player, armourRoll);
+            var succeedWithPreviousSkills = 0m;
+
+            foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
+            {
+                var success = _twoD6.Success(minimumRoll) - succeedWithPreviousSkills;
+                _calculator.Calculate(p * success, r, playerAction, usedSkills | skills);
+                succeedWithPreviousSkills += success;
+            }
+
+            if (!useOldPro)
+            {
                 return;
             }
             
-            var skillsWithSuccessValue = GetSkillsWithSuccessValue(player, armourRoll);
-
-            foreach (var (skills, success) in skillsWithSuccessValue)
+            foreach (var (skills, successes) in GetSuccessesWithOldPro(skillsWithMinimumRoll))
             {
-                _calculator.Calculate(p * success, r, playerAction, usedSkills | skills);
+                _calculator.Calculate(p * player.ProSuccess * successes / 216, r, playerAction, usedSkills | skills | Skills.Pro);
             }
         }
 
-        private Dictionary<Skills, decimal> GetSkillsWithSuccessValue(Player player, int armourRoll)
+        private Dictionary<Skills, int> GetSuccessesWithOldPro(Dictionary<Skills, int> skillsWithMinimumRoll)
         {
-            var successUsingPreviousSkillCombination = 0m;
-            var skillsWithSuccessValue = new Dictionary<Skills, decimal>();
+            var successesWithOldPro = skillsWithMinimumRoll.ToDictionary(x => x.Key, _ => 0);
+
+            var lowestSuccessfulArmourRoll = skillsWithMinimumRoll.Last().Value;
+
+            for (var roll = lowestSuccessfulArmourRoll - 1; roll >= 2; roll--)
+            {
+                var combinations = _twoD6.GetCombinationsForRoll(roll);
+                var rollHasSuccessfulCombination = false;
+
+                foreach (var highestRoll in combinations.Select(x => x.Item1.ThisOrMinimum(x.Item2)))
+                {
+                    for (var newRoll = 6; newRoll >= 2; newRoll--)
+                    {
+                        var rerolledArmourRoll = newRoll + highestRoll;
+                        if (rerolledArmourRoll < lowestSuccessfulArmourRoll)
+                        {
+                            break;
+                        }
+
+                        rollHasSuccessfulCombination = true;
+
+                        var skills = skillsWithMinimumRoll.First(x => x.Value <= rerolledArmourRoll).Key;
+                    
+                        successesWithOldPro[skills]++;
+                    }
+                }
+
+                if (!rollHasSuccessfulCombination)
+                {
+                    break;
+                }
+            }
+            
+            return successesWithOldPro;
+        }
+
+        private static Dictionary<Skills, int> GetSkillsWithMinimumRoll(Player player, int armourRoll)
+        {
+            var previousMinimumRoll = 99;
+            var skillsWithMinimumRoll = new Dictionary<Skills, int>();
 
             foreach (var skillCombination in GetSkillCombinations(player))
             {
                 var modifier = skillCombination.Sum(x => x.Item2);
-                var successWithSkillCombination = _twoD6.Success(armourRoll - modifier) - successUsingPreviousSkillCombination;
+                var minimumRoll = armourRoll - modifier;
 
-                if (successWithSkillCombination <= 0)
+                if (minimumRoll >= previousMinimumRoll)
                 {
                     continue;
                 }
 
                 var skills = skillCombination.Select(x => x.Item1)
-                    .Aggregate(Skills.None, (current, skill) => 
+                    .Aggregate(Skills.None, (current, skill) =>
                         current | (skill == Skills.CrushingBlow ? Skills.None : skill));
 
-                if (skillsWithSuccessValue.ContainsKey(skills))
+                if (skillsWithMinimumRoll.ContainsKey(skills))
                 {
-                    skillsWithSuccessValue[skills] += successWithSkillCombination;
+                    skillsWithMinimumRoll[skills] = minimumRoll;
                 }
                 else
                 {
-                    skillsWithSuccessValue.Add(skills, successWithSkillCombination);
+                    skillsWithMinimumRoll.Add(skills, minimumRoll);
                 }
 
-                successUsingPreviousSkillCombination += successWithSkillCombination;
+                previousMinimumRoll = minimumRoll;
             }
 
-            return skillsWithSuccessValue;
+            return skillsWithMinimumRoll;
         }
 
         private static IEnumerable<Tuple<Skills, int>[]> GetSkillCombinations(Player player) =>

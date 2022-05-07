@@ -25,6 +25,11 @@ namespace ActionCalculator.Calculators
             var success = _twoD6.Success(action.OriginalRoll - modifier);
 
             _calculator.Calculate(p * success, r, playerAction, usedSkills, nonCriticalFailure);
+
+            if (player.HasSkill(Skills.SavageMauling))
+            {
+                _calculator.Calculate(p * (1 - success) * success, r, playerAction, usedSkills, nonCriticalFailure);
+            }
         }
 
         private static int GetModifier(Player player, Skills usedSkills)
@@ -32,7 +37,7 @@ namespace ActionCalculator.Calculators
             var modifier = 0;
 
             foreach (var skill in SkillsAffectingInjury.ToEnumerable(Skills.None)
-                         .Where(x => player.HasSkill(x) && !usedSkills.HasFlag(x)))
+                         .Where(x => player.HasSkill(x) && !usedSkills.Contains(x)))
             {
                 switch (skill)
                 {

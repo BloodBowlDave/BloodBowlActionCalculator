@@ -1,5 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Calculators.Movement
 {
@@ -24,21 +25,21 @@ namespace ActionCalculator.Calculators.Movement
 
             p *= failure * success;
 
-            if (player.HasSkill(Skills.SureFeet) && !usedSkills.HasFlag(Skills.SureFeet))
+            if (player.HasSkill(Skills.SureFeet) && !usedSkills.Contains(Skills.SureFeet))
             {
                 _calculator.Calculate(p, r, playerAction, usedSkills | Skills.SureFeet);
                 return;
             }
-            
+
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
-			{
-				_calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
+            {
+                _calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills | Skills.Pro);
                 return;
             }
 
             if (r > 0)
             {
-	            _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
+                _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
             }
         }
     }

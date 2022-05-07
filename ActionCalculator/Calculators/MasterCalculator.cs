@@ -11,11 +11,12 @@ namespace ActionCalculator.Calculators
         public MasterCalculator(ICalculatorFactory calculatorFactory)
         {
             _calculatorFactory = calculatorFactory;
+            _context = null!;
         }
 
         public void Initialise(CalculationContext context)
         {
-	        _context = context;
+            _context = context;
         }
 
         public void Calculate(decimal p, int r, PlayerAction previousPlayerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -42,7 +43,7 @@ namespace ActionCalculator.Calculators
 
             if (nonCriticalFailure)
             {
-                if (PlayerSentOff(previousActionType, playerAction.Action.ActionType) || !NonCriticalFailureSupported(previousActionType) 
+                if (PlayerSentOff(previousActionType, playerAction.Action.ActionType) || !NonCriticalFailureSupported(previousActionType)
                     && !playerAction.Action.RequiresNonCriticalFailure)
                 {
                     return;
@@ -83,7 +84,7 @@ namespace ActionCalculator.Calculators
             }
         }
 
-        private static bool IsStartOfBranch(PlayerAction previousPlayerAction, PlayerAction playerAction) => 
+        private static bool IsStartOfBranch(PlayerAction? previousPlayerAction, PlayerAction playerAction) =>
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
         private bool IsEndOfCalculation(PlayerAction playerAction) =>
@@ -93,20 +94,20 @@ namespace ActionCalculator.Calculators
             _context.Calculation.PlayerActions.FirstOrDefault(x =>
                 x.Index > playerAction.Index && x.BranchId > playerAction.BranchId);
 
-        private PlayerAction GetNextPlayerAction(int? previousPlayerActionIndex, bool nonCriticalFailure, ActionType? previousActionType) => 
+        private PlayerAction GetNextPlayerAction(int? previousPlayerActionIndex, bool nonCriticalFailure, ActionType? previousActionType) =>
             _context.Calculation.PlayerActions[previousPlayerActionIndex + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1) ?? 0];
 
-        private static bool IsEndOfBranch(PlayerAction previousPlayerAction, PlayerAction playerAction) => 
+        private static bool IsEndOfBranch(PlayerAction? previousPlayerAction, PlayerAction playerAction) =>
             playerAction.BranchId > 0 && previousPlayerAction?.BranchId > 0 && previousPlayerAction.BranchId != playerAction.BranchId;
 
-        private PlayerAction? GetNextNonBranchPlayerAction(PlayerAction playerAction) => 
+        private PlayerAction? GetNextNonBranchPlayerAction(PlayerAction playerAction) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index && x.BranchId == 0);
 
         private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
-            previousPlayerId != playerId ? usedSkills & Skills.DivingTackle : usedSkills;
-        
-        private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) => 
-            _context.Calculation.PlayerActions.FirstOrDefault(x => 
+            previousPlayerId != playerId ? usedSkills & Skills.DivingTackle & Skills.BlastIt : usedSkills;
+
+        private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
+            _context.Calculation.PlayerActions.FirstOrDefault(x =>
                 (x.Depth < playerAction.Depth || playerAction.Action.RequiresDauntlessFailure) && x.Index > playerAction.Index);
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>

@@ -4,32 +4,32 @@ using ActionCalculator.Abstractions.Calculators.Blocking;
 
 namespace ActionCalculator.Calculators.Blocking
 {
-	public class ThirdDieBlockCalculator : ICalculator
-	{
-		private readonly ICalculator _calculator;
-		private readonly IProCalculator _proCalculator;
-		private readonly IBrawlerCalculator _brawlerCalculator;
+    public class ThirdDieBlockCalculator : ICalculator
+    {
+        private readonly ICalculator _calculator;
+        private readonly IProCalculator _proCalculator;
+        private readonly IBrawlerCalculator _brawlerCalculator;
 
-		public ThirdDieBlockCalculator(ICalculator calculator, 
-			IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
-		{
-			_calculator = calculator;
-			_proCalculator = proCalculator;
-			_brawlerCalculator = brawlerCalculator;
-		}
+        public ThirdDieBlockCalculator(ICalculator calculator,
+            IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
+        {
+            _calculator = calculator;
+            _proCalculator = proCalculator;
+            _brawlerCalculator = brawlerCalculator;
+        }
 
-		public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
-		{
-			_calculator.Calculate(p * playerAction.Action.Success, r, playerAction, usedSkills);
+        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        {
+            _calculator.Calculate(p * playerAction.Action.Success, r, playerAction, usedSkills);
 
             CalculateOneDiceFails(p, r, playerAction, usedSkills);
             CalculateTwoDiceFail(p, r, playerAction, usedSkills);
             CalculateThreeDiceFail(p, r, playerAction, usedSkills);
-		}
+        }
 
         private void CalculateOneDiceFails(decimal p, int r, PlayerAction playerAction, Skills usedSkills)
-		{
-			var action = playerAction.Action;
+        {
+            var action = playerAction.Action;
             var player = playerAction.Player;
             var oneDieSuccess = action.SuccessOnOneDie;
             var oneDiceFails = oneDieSuccess * oneDieSuccess * (1 - oneDieSuccess) * 3;
@@ -51,11 +51,11 @@ namespace ActionCalculator.Calculators.Blocking
             {
                 _calculator.Calculate(p * (oneDiceFails - canUseBrawler) * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
             }
-		}
+        }
 
         private void CalculateTwoDiceFail(decimal p, int r, PlayerAction playerAction, Skills usedSkills)
-		{
-			var action = playerAction.Action;
+        {
+            var action = playerAction.Action;
             var player = playerAction.Player;
             var oneDieSuccess = action.SuccessOnOneDie;
             var twoFailures = oneDieSuccess * (1 - oneDieSuccess) * (1 - oneDieSuccess) * 3;
@@ -73,7 +73,7 @@ namespace ActionCalculator.Calculators.Blocking
             {
                 _calculator.Calculate(p * player.UseReroll * action.Success, r - 1, playerAction, usedSkills);
             }
-		}
+        }
 
         private void CalculateThreeDiceFail(decimal p, int r, PlayerAction playerAction, Skills usedSkills)
         {

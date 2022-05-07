@@ -2,8 +2,8 @@
 
 namespace ActionCalculator.Abstractions
 {
-	public interface IMasterCalculator : ICalculator
-	{
-		void Initialise(CalculationContext context);
-	}
+    public interface IMasterCalculator : ICalculator
+    {
+        void Initialise(CalculationContext context);
+    }
 }

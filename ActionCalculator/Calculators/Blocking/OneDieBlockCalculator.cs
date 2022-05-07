@@ -4,48 +4,48 @@ using ActionCalculator.Abstractions.Calculators.Blocking;
 
 namespace ActionCalculator.Calculators.Blocking
 {
-	public class OneDieBlockCalculator : ICalculator
-	{
-		private readonly ICalculator _calculator;
-		private readonly IProCalculator _proCalculator;
-		private readonly IBrawlerCalculator _brawlerCalculator;
-		
-		public OneDieBlockCalculator(ICalculator calculator, 
-			IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
-		{
-			_calculator = calculator;
-			_proCalculator = proCalculator;
-			_brawlerCalculator = brawlerCalculator;
-		}
+    public class OneDieBlockCalculator : ICalculator
+    {
+        private readonly ICalculator _calculator;
+        private readonly IProCalculator _proCalculator;
+        private readonly IBrawlerCalculator _brawlerCalculator;
 
-		public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
-		{
-			var player = playerAction.Player;
-			var action = playerAction.Action;
-			var success = action.Success;
+        public OneDieBlockCalculator(ICalculator calculator,
+            IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
+        {
+            _calculator = calculator;
+            _proCalculator = proCalculator;
+            _brawlerCalculator = brawlerCalculator;
+        }
 
-			_calculator.Calculate(p * success, r, playerAction, usedSkills);
+        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        {
+            var player = playerAction.Player;
+            var action = playerAction.Action;
+            var success = action.Success;
 
-			var failButRollBothDown = 0m;
+            _calculator.Calculate(p * success, r, playerAction, usedSkills);
 
-			if (_brawlerCalculator.UseBrawler(r, playerAction))
-			{
-				failButRollBothDown = _brawlerCalculator.ProbabilityCanUseBrawler(action);
-				_calculator.Calculate(p * failButRollBothDown * success, r, playerAction, usedSkills);
-			}
+            var failButRollBothDown = 0m;
 
-			p *= (action.Failure - failButRollBothDown) * success;
+            if (_brawlerCalculator.UseBrawler(r, playerAction))
+            {
+                failButRollBothDown = _brawlerCalculator.ProbabilityCanUseBrawler(action);
+                _calculator.Calculate(p * failButRollBothDown * success, r, playerAction, usedSkills);
+            }
 
-			if (_proCalculator.UsePro(playerAction, r, usedSkills))
-			{
-				_calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills);
-				return;
-			}
+            p *= (action.Failure - failButRollBothDown) * success;
 
-			if (r > 0)
-			{
-				_calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
-			}
-		}
-	}
+            if (_proCalculator.UsePro(playerAction, r, usedSkills))
+            {
+                _calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills);
+                return;
+            }
+
+            if (r > 0)
+            {
+                _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
+            }
+        }
+    }
 }

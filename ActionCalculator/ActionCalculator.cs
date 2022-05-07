@@ -2,27 +2,27 @@
 
 namespace ActionCalculator
 {
-	public class ActionCalculator : IActionCalculator
-	{
-		private readonly ICalculationBuilder _calculationBuilder;
+    public class ActionCalculator : IActionCalculator
+    {
+        private readonly ICalculationBuilder _calculationBuilder;
         private readonly IEqualityComparer<decimal> _probabilityComparer;
         private readonly IMasterCalculator _masterCalculator;
-        
+
         private const int MaximumRerolls = 8;
 
-		public ActionCalculator(
-            ICalculationBuilder calculationBuilder, 
+        public ActionCalculator(
+            ICalculationBuilder calculationBuilder,
             IEqualityComparer<decimal> probabilityComparer,
             IMasterCalculator masterCalculator)
-		{
-			_calculationBuilder = calculationBuilder;
+        {
+            _calculationBuilder = calculationBuilder;
             _probabilityComparer = probabilityComparer;
             _masterCalculator = masterCalculator;
         }
 
-		public CalculationResult Calculate(string calculationString)
-		{
-			var calculation = _calculationBuilder.Build(calculationString);
+        public CalculationResult Calculate(string calculationString)
+        {
+            var calculation = _calculationBuilder.Build(calculationString);
 
             var probabilityResults = new List<ProbabilityResult>();
 
@@ -43,21 +43,21 @@ namespace ActionCalculator
 
                 probabilityResults.Add(new ProbabilityResult(results));
             }
-			
+
             foreach (var probabilityResult in probabilityResults)
-			{
+            {
                 AggregateResults(probabilityResult.Probabilities);
             }
 
             return new CalculationResult(calculation, probabilityResults.ToList());
-		}
-        
+        }
+
         private static void AggregateResults(IList<decimal> result)
-		{
-			for (var i = 1; i < result.Count; i++)
-			{
-				result[i] += result[i - 1];
-			}
-		}
-	}
+        {
+            for (var i = 1; i < result.Count; i++)
+            {
+                result[i] += result[i - 1];
+            }
+        }
+    }
 }
