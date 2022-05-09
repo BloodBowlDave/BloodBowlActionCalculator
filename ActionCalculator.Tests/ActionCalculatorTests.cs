@@ -1,5 +1,6 @@
 using ActionCalculator.Abstractions;
-using ActionCalculator.Calculators;
+using ActionCalculator.Strategies;
+using ActionCalculator.Utilities;
 using Xunit;
 
 namespace ActionCalculator.Tests
@@ -16,7 +17,7 @@ namespace ActionCalculator.Tests
                     new PlayerBuilder()),
                 new ProbabilityComparer(),
                 new ActionMediator(
-                    new CalculatorFactory()));
+                    new ActionStrategyFactory()));
         }
 
         [Theory]

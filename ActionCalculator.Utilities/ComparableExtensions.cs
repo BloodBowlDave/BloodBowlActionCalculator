@@ -1,4 +1,4 @@
-﻿namespace ActionCalculator
+﻿namespace ActionCalculator.Utilities
 {
     public static class ComparableExtensions
     {
