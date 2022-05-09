@@ -15,7 +15,7 @@ namespace ActionCalculator.Strategies.Blocking
             _proHelper = proHelper;
         }
 
-        public decimal ProbabilityCanUseBrawler(Action action) =>
+        public decimal UseBrawler(Action action) =>
             action.NumberOfDice switch
             {
                 -3 => action.NumberOfSuccessfulResults switch
@@ -56,7 +56,7 @@ namespace ActionCalculator.Strategies.Blocking
                 _ => throw new ArgumentOutOfRangeException(nameof(action.NumberOfDice))
             };
 
-        public bool UseBrawler(int r, PlayerAction playerAction, Skills usedSkills)
+        public bool CanUseBrawler(int r, PlayerAction playerAction, Skills usedSkills)
         {
             var (player, action, _) = playerAction;
 
@@ -85,7 +85,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             return r == 0
                    || action.UseBrawler && action.UsePro
-                   || _proHelper.UsePro(playerAction, r, usedSkills, successAfterBrawlerAndPro, successAfterReroll);
+                   || _proHelper.CanUsePro(playerAction, r, usedSkills, successAfterBrawlerAndPro, successAfterReroll);
         }
 
         public decimal ProbabilityCanUseBrawlerAndPro(Action action) =>

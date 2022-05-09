@@ -9,13 +9,14 @@ namespace ActionCalculator.Strategies.Blocking
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
         private readonly IBrawlerHelper _brawlerHelper;
+        private readonly ITwoD6 _twoD6;
 
-        public TwoDiceBlockStrategy(IActionMediator actionMediator,
-            IProHelper proHelper, IBrawlerHelper brawlerHelper)
+        public TwoDiceBlockStrategy(IActionMediator actionMediator, IProHelper proHelper, IBrawlerHelper brawlerHelper, ITwoD6 twoD6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
             _brawlerHelper = brawlerHelper;
+            _twoD6 = twoD6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -26,16 +27,16 @@ namespace ActionCalculator.Strategies.Blocking
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
-            var failAndUseBrawler = 0m;
+            var useBrawler = 0m;
 
-            if (_brawlerHelper.UseBrawler(r, playerAction, usedSkills))
+            if (_brawlerHelper.CanUseBrawler(r, playerAction, usedSkills))
             {
-                failAndUseBrawler = _brawlerHelper.ProbabilityCanUseBrawler(action);
-                _actionMediator.Resolve(p * failAndUseBrawler * oneDieSuccess, r, i, usedSkills);
+                useBrawler = _brawlerHelper.UseBrawler(action);
+                _actionMediator.Resolve(p * useBrawler * oneDieSuccess, r, i, usedSkills);
 
-                var pBrawler = p * failAndUseBrawler * (1 - oneDieSuccess) * oneDieSuccess;
+                var pBrawler = p * useBrawler * (1 - oneDieSuccess) * oneDieSuccess;
 
-                if (_proHelper.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
+                if (_proHelper.CanUsePro(playerAction, r, usedSkills, oneDieSuccess, success))
                 {
                     _actionMediator.Resolve(pBrawler * proSuccess, r, i, usedSkills | Skills.Pro);
                     return;
@@ -48,9 +49,9 @@ namespace ActionCalculator.Strategies.Blocking
                 }
             }
 
-            p *= failure - failAndUseBrawler;
+            p *= failure - useBrawler;
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills, oneDieSuccess, success))
             {
                 usedSkills |= Skills.Pro;
                 _actionMediator.Resolve(p * proSuccess * oneDieSuccess, r, i, usedSkills);

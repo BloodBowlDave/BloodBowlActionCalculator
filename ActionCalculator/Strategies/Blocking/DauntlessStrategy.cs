@@ -27,39 +27,36 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 if (canUseSkill(Skills.BlindRage, usedSkills))
                 {
-                    _actionMediator.Resolve(p * success, r, i, usedSkills);
-                    _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
+                    ExecuteReroll(p, r, i, usedSkills | Skills.BlindRage, success, failure);
                     return;
                 }
 
-                if (_proHelper.UsePro(playerAction, r, usedSkills))
+                if (_proHelper.CanUsePro(playerAction, r, usedSkills))
                 {
-                    usedSkills |= Skills.Pro;
-                    _actionMediator.Resolve(p * proSuccess * success, r, i, usedSkills);
-                    _actionMediator.Resolve(p * (proSuccess * failure + (1 - proSuccess)), r, i, usedSkills, true);
+                    ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                     return;
                 }
 
                 if (r > 0)
                 {
-                    p *= rerollSuccess;
-                    _actionMediator.Resolve(p * success, r - 1, i, usedSkills);
-                    _actionMediator.Resolve(p * failure, r - 1, i, usedSkills, true);
-
+                    ExecuteReroll(p * rerollSuccess, r - 1, i, usedSkills, success, failure);
                     return;
                 }
             }
 
-            if (action.UsePro && _proHelper.UsePro(playerAction, r, usedSkills))
+            if (action.UsePro && _proHelper.CanUsePro(playerAction, r, usedSkills))
             {
-                usedSkills |= Skills.Pro;
-                _actionMediator.Resolve(p * proSuccess * success, r, i, usedSkills);
-                _actionMediator.Resolve(p * (proSuccess * failure + (1 - proSuccess)), r, i, usedSkills, true);
-
+                ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                 return;
             }
 
             _actionMediator.Resolve(p, r, i, usedSkills, true);
+        }
+
+        private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal success, decimal failure)
+        {
+            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
         }
     }
 }

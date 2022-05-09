@@ -2,6 +2,6 @@
 {
     public interface IProHelper
     {
-        bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie = null, decimal? successAfterReroll = null);
+        bool CanUsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie = null, decimal? successAfterReroll = null);
     }
 }

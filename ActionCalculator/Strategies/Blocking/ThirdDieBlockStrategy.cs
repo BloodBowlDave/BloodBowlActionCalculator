@@ -33,13 +33,13 @@ namespace ActionCalculator.Strategies.Blocking
             var oneDiceFails = oneDieSuccess * oneDieSuccess * (1 - oneDieSuccess) * 3;
             var canUseBrawler = 0m;
 
-            if (_brawlerHelper.UseBrawler(r, playerAction, usedSkills))
+            if (_brawlerHelper.CanUseBrawler(r, playerAction, usedSkills))
             {
-                canUseBrawler = _brawlerHelper.ProbabilityCanUseBrawler(action);
+                canUseBrawler = _brawlerHelper.UseBrawler(action);
                 _actionMediator.Resolve(p * canUseBrawler * oneDieSuccess, r, i, usedSkills);
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills, oneDieSuccess, action.Success))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills, oneDieSuccess, action.Success))
             {
                 _actionMediator.Resolve(p * (oneDiceFails - canUseBrawler) * proSuccess * oneDieSuccess, r, i, usedSkills | Skills.Pro);
                 return;
@@ -79,11 +79,11 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            var ((rerollSuccess, _, _), action, i) = playerAction;
+            var (player, action, i) = playerAction;
             var oneDieSuccess = action.SuccessOnOneDie;
             var threeFailures = (1 - oneDieSuccess) * (1 - oneDieSuccess) * (1 - oneDieSuccess);
 
-            _actionMediator.Resolve(p * threeFailures * rerollSuccess * action.Success, r - 1, i, usedSkills);
+            _actionMediator.Resolve(p * threeFailures * player.RerollSuccess * action.Success, r - 1, i, usedSkills);
         }
     }
 }

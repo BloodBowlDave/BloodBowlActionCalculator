@@ -67,33 +67,22 @@ namespace ActionCalculator.Strategies
             var successesWithOldPro = skillsWithMinimumRoll.ToDictionary(x => x.Key, _ => 0);
 
             var lowestSuccessfulArmourRoll = skillsWithMinimumRoll.Last().Value;
-
-            for (var roll = lowestSuccessfulArmourRoll - 1; roll >= 2; roll--)
+            
+            foreach (var roll in _twoD6.Rolls().Where(x => x.Sum() < lowestSuccessfulArmourRoll))
             {
-                var combinations = _twoD6.GetCombinationsForRoll(roll);
-                var rollHasSuccessfulCombination = false;
-
-                foreach (var highestRoll in combinations.Select(x => x.Item1.ThisOrMinimum(x.Item2)))
+                var highestRoll = roll.Max();
+            
+                for (var newRoll = 6; newRoll >= 2; newRoll--)
                 {
-                    for (var newRoll = 6; newRoll >= 2; newRoll--)
+                    var rerolledArmourRoll = newRoll + highestRoll;
+                    if (rerolledArmourRoll < lowestSuccessfulArmourRoll)
                     {
-                        var rerolledArmourRoll = newRoll + highestRoll;
-                        if (rerolledArmourRoll < lowestSuccessfulArmourRoll)
-                        {
-                            break;
-                        }
-
-                        rollHasSuccessfulCombination = true;
-
-                        var skills = skillsWithMinimumRoll.First(x => x.Value <= rerolledArmourRoll).Key;
-                    
-                        successesWithOldPro[skills]++;
+                        break;
                     }
-                }
-
-                if (!rollHasSuccessfulCombination)
-                {
-                    break;
+                    
+                    var skills = skillsWithMinimumRoll.First(x => x.Value <= rerolledArmourRoll).Key;
+                
+                    successesWithOldPro[skills]++;
                 }
             }
             

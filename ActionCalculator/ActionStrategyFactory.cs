@@ -25,7 +25,7 @@ namespace ActionCalculator
                     -3 => new ThirdDieBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
                     -2 => new HalfDieBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
                     1 => new OneDieBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
-                    2 => new TwoDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
+                    2 => new TwoDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new TwoD6()),
                     3 => new ThreeDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
                     _ => throw new ArgumentOutOfRangeException(nameof(action.NumberOfDice), action.NumberOfDice, null)
                 },

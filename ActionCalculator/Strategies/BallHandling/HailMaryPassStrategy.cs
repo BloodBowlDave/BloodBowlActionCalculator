@@ -25,7 +25,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             _actionMediator.Resolve(p * success, r, i, usedSkills, true);
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills))
             {
                 _actionMediator.Resolve(p * failure * proSuccess * success, r, i, usedSkills | Skills.Pro, true);
                 return;

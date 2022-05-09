@@ -27,14 +27,14 @@ namespace ActionCalculator.Strategies.Blocking
 
             var failButRollBothDown = 0m;
 
-            if (_brawlerHelper.UseBrawler(r, playerAction, usedSkills))
+            if (_brawlerHelper.CanUseBrawler(r, playerAction, usedSkills))
             {
-                failButRollBothDown = _brawlerHelper.ProbabilityCanUseBrawler(action);
+                failButRollBothDown = _brawlerHelper.UseBrawler(action);
                 _actionMediator.Resolve(p * failButRollBothDown * oneDieSuccess, r, i, usedSkills);
 
                 var pBrawler = p * failButRollBothDown * (1 - oneDieSuccess);
 
-                if (_proHelper.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
+                if (_proHelper.CanUsePro(playerAction, r, usedSkills, oneDieSuccess, success))
                 {
                     usedSkills |= Skills.Pro;
                     _actionMediator.Resolve(pBrawler * proSuccess * oneDieSuccess, r, i, usedSkills);
@@ -57,7 +57,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             p *= failure - failButRollBothDown;
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills, oneDieSuccess, success))
             {
                 usedSkills |= Skills.Pro;
                 _actionMediator.Resolve(p * proSuccess * oneDieSuccess, r, i, usedSkills);

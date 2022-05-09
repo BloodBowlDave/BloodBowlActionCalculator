@@ -28,7 +28,7 @@ namespace ActionCalculator.Strategies
                 ExecuteReroll(p, r, i, usedSkills, success, failure);
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills))
             {
                 ExecuteReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, success, failure);
                 return;

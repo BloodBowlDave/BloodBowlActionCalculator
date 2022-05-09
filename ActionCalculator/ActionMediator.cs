@@ -40,7 +40,7 @@ namespace ActionCalculator
                 return;
             }
 
-            var playerAction = GetNextPlayerAction(previousPlayerAction?.Index, nonCriticalFailure, previousActionType);
+            var playerAction = GetNextPlayerAction(i, nonCriticalFailure, previousActionType);
             var (player, action, _) = playerAction;
 
             if (nonCriticalFailure)
@@ -95,8 +95,8 @@ namespace ActionCalculator
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
 
-        private PlayerAction GetNextPlayerAction(int? previousPlayerActionIndex, bool nonCriticalFailure, ActionType? previousActionType) =>
-            _context.Calculation.PlayerActions[previousPlayerActionIndex + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1) ?? 0];
+        private PlayerAction GetNextPlayerAction(int i, bool nonCriticalFailure, ActionType? previousActionType) =>
+            _context.Calculation.PlayerActions[i + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1)];
 
         private static bool IsEndOfBranch(int? previousBranchId, int branchId) => branchId > 0 && previousBranchId > 0 && previousBranchId != branchId;
 

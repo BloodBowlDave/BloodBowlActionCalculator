@@ -2,8 +2,8 @@
 {
     public interface ITwoD6
     {
+        IEnumerable<List<int>> Rolls();
         decimal Success(int minimumRoll);
         decimal RollDouble(int minimumRoll);
-        IEnumerable<Tuple<int, int>> GetCombinationsForRoll(int roll);
     }
 }

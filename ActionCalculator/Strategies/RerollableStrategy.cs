@@ -22,7 +22,7 @@ namespace ActionCalculator.Strategies
 
             p *= failure * success;
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills))
             {
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;

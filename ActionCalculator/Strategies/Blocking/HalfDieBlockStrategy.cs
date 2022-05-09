@@ -34,13 +34,13 @@ namespace ActionCalculator.Strategies.Blocking
             var oneDiceFails = oneDieSuccess * (1 - oneDieSuccess) * 2;
             var canUseBrawler = 0m;
 
-            if (_brawlerHelper.UseBrawler(r, playerAction, usedSkills))
+            if (_brawlerHelper.CanUseBrawler(r, playerAction, usedSkills))
             {
-                canUseBrawler = _brawlerHelper.ProbabilityCanUseBrawler(action);
+                canUseBrawler = _brawlerHelper.UseBrawler(action);
                 _actionMediator.Resolve(p * canUseBrawler * oneDieSuccess, r, i, usedSkills);
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills, oneDieSuccess, success))
+            if (_proHelper.CanUsePro(playerAction, r, usedSkills, oneDieSuccess, success))
             {
                 _actionMediator.Resolve(p * (oneDiceFails - canUseBrawler) * proSuccess * oneDieSuccess, r, i, usedSkills | Skills.Pro);
                 return;
