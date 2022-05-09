@@ -3,12 +3,12 @@ using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Calculators
 {
-    public class MasterCalculator : IMasterCalculator
+    public class ActionMediator : IActionMediator
     {
         private readonly ICalculatorFactory _calculatorFactory;
         private CalculationContext _context;
 
-        public MasterCalculator(ICalculatorFactory calculatorFactory)
+        public ActionMediator(ICalculatorFactory calculatorFactory)
         {
             _calculatorFactory = calculatorFactory;
             _context = null!;
@@ -19,13 +19,14 @@ namespace ActionCalculator.Calculators
             _context = context;
         }
 
-        public void Calculate(decimal p, int r, PlayerAction previousPlayerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Resolve(decimal p, int r, int i, Skills usedSkills, bool nonCriticalFailure = false)
         {
             if (p == 0)
             {
                 return;
             }
 
+            var previousPlayerAction = _context.Calculation.PlayerActions.SingleOrDefault(x => x.Index == i);
             var previousActionType = previousPlayerAction?.Action.ActionType;
 
             if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction))
@@ -73,13 +74,13 @@ namespace ActionCalculator.Calculators
             if (!IsStartOfBranch(previousPlayerAction, playerAction))
             {
                 usedSkills = GetUsedSkills(previousPlayerAction?.Player.Id, playerAction.Player.Id, usedSkills);
-                Calculate(playerAction, p, r, usedSkills, nonCriticalFailure);
+                Execute(playerAction, p, r, usedSkills, nonCriticalFailure);
                 return;
             }
 
             while (playerAction != null)
             {
-                Calculate(playerAction, p, r, GetUsedSkills(previousPlayerAction?.Player.Id, playerAction.Player.Id, usedSkills), nonCriticalFailure);
+                Execute(playerAction, p, r, GetUsedSkills(previousPlayerAction?.Player.Id, playerAction.Player.Id, usedSkills), nonCriticalFailure);
                 playerAction = GetNextBranchStartPlayerAction(playerAction);
             }
         }
@@ -104,7 +105,7 @@ namespace ActionCalculator.Calculators
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index && x.BranchId == 0);
 
         private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
-            previousPlayerId != playerId ? usedSkills & Skills.DivingTackle & Skills.BlastIt : usedSkills;
+            previousPlayerId != playerId ? usedSkills & Skills.DivingTackle & Skills.BlastIt & Skills.CloudBurster : usedSkills;
 
         private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x =>
@@ -124,10 +125,10 @@ namespace ActionCalculator.Calculators
                 _ => false
             };
 
-        private void Calculate(PlayerAction playerAction, decimal p, int r, Skills usedSkills, bool nonCriticalFailure)
+        private void Execute(PlayerAction playerAction, decimal p, int r, Skills usedSkills, bool nonCriticalFailure)
         {
-            var calculator = _calculatorFactory.CreateProbabilityCalculator(playerAction.Action, this, nonCriticalFailure);
-            calculator.Calculate(p, r, playerAction, usedSkills, nonCriticalFailure);
+            var actionStrategy = _calculatorFactory.GetActionStrategy(playerAction.Action, this, nonCriticalFailure);
+            actionStrategy.Execute(p, r, playerAction, usedSkills, nonCriticalFailure);
         }
 
         private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)

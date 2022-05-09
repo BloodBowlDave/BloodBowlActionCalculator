@@ -6,18 +6,18 @@ namespace ActionCalculator
     {
         private readonly ICalculationBuilder _calculationBuilder;
         private readonly IEqualityComparer<decimal> _probabilityComparer;
-        private readonly IMasterCalculator _masterCalculator;
+        private readonly IActionMediator _actionMediator;
 
         private const int MaximumRerolls = 8;
 
         public ActionCalculator(
             ICalculationBuilder calculationBuilder,
             IEqualityComparer<decimal> probabilityComparer,
-            IMasterCalculator masterCalculator)
+            IActionMediator actionMediator)
         {
             _calculationBuilder = calculationBuilder;
             _probabilityComparer = probabilityComparer;
-            _masterCalculator = masterCalculator;
+            _actionMediator = actionMediator;
         }
 
         public CalculationResult Calculate(string calculationString)
@@ -26,17 +26,16 @@ namespace ActionCalculator
 
             var probabilityResults = new List<ProbabilityResult>();
 
-            for (var rerolls = 0; rerolls < MaximumRerolls; rerolls++)
+            for (var r = 0; r < MaximumRerolls; r++)
             {
-                var context = new CalculationContext(calculation, rerolls,
-                    new decimal[calculation.PlayerActions.Length * 2 + 1]);
+                var context = new CalculationContext(calculation, r, new decimal[calculation.PlayerActions.Length * 2 + 1]);
 
-                _masterCalculator.Initialise(context);
-                _masterCalculator.Calculate(1m, rerolls, null!, Skills.None);
+                _actionMediator.Initialise(context);
+                _actionMediator.Resolve(1m, r, -1, Skills.None);
 
                 var results = context.Results.Where(x => x > 0).ToArray();
 
-                if (rerolls > 0 && probabilityResults[rerolls - 1].Probabilities.SequenceEqual(results, _probabilityComparer))
+                if (r > 0 && probabilityResults[r - 1].Probabilities.SequenceEqual(results, _probabilityComparer))
                 {
                     break;
                 }

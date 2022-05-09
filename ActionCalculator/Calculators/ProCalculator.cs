@@ -1,6 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
-using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Calculators
 {
@@ -8,21 +7,20 @@ namespace ActionCalculator.Calculators
     {
         public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie, decimal? successAfterReroll)
         {
-            var player = playerAction.Player;
+            var ((rerollSuccess, proSuccess, hasSkill), action, _) = playerAction;
+            var success = action.Success;
 
-            if (!player.HasSkill(Skills.Pro) && !player.HasSkill(Skills.ConsummateProfessional) || usedSkills.Contains(Skills.Pro))
+            if (!hasSkill(Skills.Pro, usedSkills) && !hasSkill(Skills.ConsummateProfessional, usedSkills))
             {
                 return false;
             }
-
-            var action = playerAction.Action;
 
             if (action.UsePro)
             {
                 return true;
             }
 
-            return r == 0 || player.ProSuccess * (successOnOneDie ?? action.SuccessOnOneDie) >= player.UseReroll * (successAfterReroll ?? action.Success);
+            return r == 0 || proSuccess * (successOnOneDie ?? action.SuccessOnOneDie) >= rerollSuccess * (successAfterReroll ?? success);
         }
     }
 }

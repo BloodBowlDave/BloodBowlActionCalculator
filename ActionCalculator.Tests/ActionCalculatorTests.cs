@@ -15,7 +15,7 @@ namespace ActionCalculator.Tests
                     new ActionBuilder(new TwoD6()),
                     new PlayerBuilder()),
                 new ProbabilityComparer(),
-                new MasterCalculator(
+                new ActionMediator(
                     new CalculatorFactory()));
         }
 

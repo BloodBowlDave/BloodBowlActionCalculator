@@ -56,34 +56,32 @@ namespace ActionCalculator.Calculators.Blocking
                 _ => throw new ArgumentOutOfRangeException(nameof(action.NumberOfDice))
             };
 
-        public bool UseBrawler(int r, PlayerAction playerAction)
+        public bool UseBrawler(int r, PlayerAction playerAction, Skills usedSkills)
         {
-            var player = playerAction.Player;
+            var (player, action, _) = playerAction;
 
-            if (!player.HasSkill(Skills.Brawler))
+            if (!player.CanUseSkill(Skills.Brawler, usedSkills))
             {
                 return false;
             }
 
-            var action = playerAction.Action;
-
             return r == 0
                    || action.UseBrawler
-                   || action.SuccessOnOneDie >= action.Success * player.UseReroll;
+                   || action.SuccessOnOneDie >= action.Success * player.RerollSuccess;
         }
 
         public bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills)
         {
             var player = playerAction.Player;
 
-            if (!player.HasSkill(Skills.Brawler) || !player.HasSkill(Skills.Pro) || usedSkills.Contains(Skills.Pro))
+            if (!player.CanUseSkill(Skills.Brawler, usedSkills) || !player.CanUseSkill(Skills.Pro, usedSkills) || usedSkills.Contains(Skills.Pro))
             {
                 return false;
             }
 
             var action = playerAction.Action;
             var successAfterBrawlerAndPro = action.SuccessOnOneDie * player.ProSuccess * action.SuccessOnOneDie;
-            var successAfterReroll = action.Success * player.UseReroll;
+            var successAfterReroll = action.Success * player.RerollSuccess;
 
             return r == 0
                    || action.UseBrawler && action.UsePro

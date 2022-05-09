@@ -4,31 +4,30 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Calculators
 {
-    public class InjuryCalculator : ICalculator
+    public class InjuryStrategy : IActionStrategy
     {
-        private readonly ICalculator _calculator;
+        private readonly IActionMediator _actionMediator;
         private readonly ITwoD6 _twoD6;
         private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer | Skills.DirtyPlayer;
 
 
-        public InjuryCalculator(ICalculator calculator, ITwoD6 twoD6)
+        public InjuryStrategy(IActionMediator actionMediator, ITwoD6 twoD6)
         {
-            _calculator = calculator;
+            _actionMediator = actionMediator;
             _twoD6 = twoD6;
         }
 
-        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var player = playerAction.Player;
-            var action = playerAction.Action;
+            var (player, action, i) = playerAction;
             var modifier = GetModifier(player, usedSkills);
             var success = _twoD6.Success(action.OriginalRoll - modifier);
 
-            _calculator.Calculate(p * success, r, playerAction, usedSkills, nonCriticalFailure);
+            _actionMediator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
 
-            if (player.HasSkill(Skills.SavageMauling))
+            if (player.CanUseSkill(Skills.SavageMauling, usedSkills))
             {
-                _calculator.Calculate(p * (1 - success) * success, r, playerAction, usedSkills, nonCriticalFailure);
+                _actionMediator.Resolve(p * (1 - success) * success, r, i, usedSkills, nonCriticalFailure);
             }
         }
 
@@ -37,7 +36,7 @@ namespace ActionCalculator.Calculators
             var modifier = 0;
 
             foreach (var skill in SkillsAffectingInjury.ToEnumerable(Skills.None)
-                         .Where(x => player.HasSkill(x) && !usedSkills.Contains(x)))
+                         .Where(x => player.CanUseSkill(x, usedSkills) && !usedSkills.Contains(x)))
             {
                 switch (skill)
                 {

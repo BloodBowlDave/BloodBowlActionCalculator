@@ -1,6 +1,6 @@
 ﻿namespace ActionCalculator.Abstractions
 {
-    public class Action
+    public class Action : IAction
     {
         public Action(ActionType actionType, decimal success, decimal failure, decimal nonCriticalFailure, decimal successOnOneDie)
         {
@@ -21,11 +21,11 @@
         public bool UseBreakTackle { get; set; }
         public bool RerollNonCriticalFailure { get; set; }
         public bool UseDivingTackle { get; set; }
-        public int OriginalRoll { get; set; }
-        public int Modifier { get; set; }
-        public int NumberOfDice { get; set; }
-        public int NumberOfSuccessfulResults { get; set; }
-        public decimal SuccessOnTwoDice { get; set; }
+        public int OriginalRoll { get; init; }
+        public int Modifier { get; init; }
+        public int NumberOfDice { get; init; }
+        public int NumberOfSuccessfulResults { get; init; }
+        public decimal SuccessOnTwoDice { get; init; }
         public bool RequiresNonCriticalFailure { get; set; }
         public bool TerminatesCalculation { get; set; }
         public bool RequiresDauntlessFailure { get; set; }
@@ -47,5 +47,11 @@
             };
 
         private string GetModifier() => Modifier > 0 ? '+' + Modifier.ToString() : Modifier < 0 ? Modifier.ToString() : "";
+
+        public void Deconstruct(out decimal success, out decimal failure)
+        {
+            success = Success;
+            failure = Failure;
+        }
     }
 }

@@ -3,7 +3,7 @@
     public interface IBrawlerCalculator
     {
         decimal ProbabilityCanUseBrawler(Action action);
-        bool UseBrawler(int r, PlayerAction playerAction);
+        bool UseBrawler(int r, PlayerAction playerAction, Skills usedSkills);
         bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills);
         decimal ProbabilityCanUseBrawlerAndPro(Action action);
     }

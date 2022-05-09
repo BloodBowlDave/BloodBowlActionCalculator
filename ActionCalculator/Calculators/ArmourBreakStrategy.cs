@@ -4,49 +4,50 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Calculators
 {
-    public class ArmourBreakCalculator : ICalculator
+    public class ArmourBreakStrategy : IActionStrategy
     {
-        private readonly ICalculator _calculator;
+        private readonly IActionMediator _actionMediator;
         private readonly ITwoD6 _twoD6;
         private const Skills SkillsAffectingArmour = Skills.Ram | Skills.MightyBlow | Skills.Slayer | Skills.CrushingBlow;
 
-        public ArmourBreakCalculator(ICalculator calculator, ITwoD6 twoD6)
+        public ArmourBreakStrategy(IActionMediator actionMediator, ITwoD6 twoD6)
         {
-            _calculator = calculator;
+            _actionMediator = actionMediator;
             _twoD6 = twoD6;
         }
 
-        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var player = playerAction.Player;
-            var action = playerAction.Action;
+            var (player, action, i) = playerAction;
+            var (_, proSuccess, canUseSkill) = player;
 
             var armourRoll = action.OriginalRoll;
-            var useOldPro = player.HasSkill(Skills.OldPro) && !usedSkills.Contains(Skills.Pro);
+            var useOldPro = canUseSkill(Skills.OldPro, usedSkills);
 
-            if (player.HasSkill(Skills.Claw) && armourRoll >= 8)
+            if (canUseSkill(Skills.Claw, usedSkills) && armourRoll >= 8)
             {
                 var success = _twoD6.Success(8);
-                _calculator.Calculate(p * success, r, playerAction, usedSkills);
+                _actionMediator.Resolve(p * success, r, i, usedSkills);
 
                 if (!useOldPro)
                 {
                     return;
                 }
-                
-                var successWithOldPro = (decimal)GetSuccessesWithOldPro(new Dictionary<Skills, int> { { Skills.None, 8 } })[Skills.None] / 216;
-                _calculator.Calculate(p * (1 - success) * player.ProSuccess * successWithOldPro, r, playerAction, usedSkills | Skills.Pro);
+
+                var successesWithOldPro = GetSuccessesWithOldPro(new Dictionary<Skills, int> { { Skills.None, 8 } });
+                var successWithOldPro = (decimal)successesWithOldPro[Skills.None] / 216;
+                _actionMediator.Resolve(p * (1 - success) * proSuccess * successWithOldPro, r, i, usedSkills | Skills.Pro);
 
                 return;
             }
 
-            var skillsWithMinimumRoll = GetSkillsWithMinimumRoll(player, armourRoll);
+            var skillsWithMinimumRoll = GetSkillsWithMinimumRoll(player, usedSkills, armourRoll);
             var succeedWithPreviousSkills = 0m;
 
             foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
             {
                 var success = _twoD6.Success(minimumRoll) - succeedWithPreviousSkills;
-                _calculator.Calculate(p * success, r, playerAction, usedSkills | skills);
+                _actionMediator.Resolve(p * success, r, i, usedSkills | skills);
                 succeedWithPreviousSkills += success;
             }
 
@@ -57,7 +58,7 @@ namespace ActionCalculator.Calculators
             
             foreach (var (skills, successes) in GetSuccessesWithOldPro(skillsWithMinimumRoll))
             {
-                _calculator.Calculate(p * player.ProSuccess * successes / 216, r, playerAction, usedSkills | skills | Skills.Pro);
+                _actionMediator.Resolve(p * proSuccess * successes / 216, r, i, usedSkills | skills | Skills.Pro);
             }
         }
 
@@ -99,12 +100,12 @@ namespace ActionCalculator.Calculators
             return successesWithOldPro;
         }
 
-        private static Dictionary<Skills, int> GetSkillsWithMinimumRoll(Player player, int armourRoll)
+        private static Dictionary<Skills, int> GetSkillsWithMinimumRoll(Player player, Skills usedSkills, int armourRoll)
         {
             var previousMinimumRoll = 99;
             var skillsWithMinimumRoll = new Dictionary<Skills, int>();
 
-            foreach (var skillCombination in GetSkillCombinations(player))
+            foreach (var skillCombination in GetSkillCombinations(player, usedSkills))
             {
                 var modifier = skillCombination.Sum(x => x.Item2);
                 var minimumRoll = armourRoll - modifier;
@@ -133,9 +134,9 @@ namespace ActionCalculator.Calculators
             return skillsWithMinimumRoll;
         }
 
-        private static IEnumerable<Tuple<Skills, int>[]> GetSkillCombinations(Player player) =>
+        private static IEnumerable<Tuple<Skills, int>[]> GetSkillCombinations(Player player, Skills useSkills) =>
             SkillsAffectingArmour.ToEnumerable(Skills.None)
-                .Where(x => player.HasSkill(x))
+                .Where(x => player.CanUseSkill(x, useSkills))
                 .Select(x => new Tuple<Skills, int>(x, x == Skills.MightyBlow ? player.MightyBlowValue : 1))
                 .Combinations()
                 .OrderBy(x => x.Sum(y => y.Item2))

@@ -8,7 +8,7 @@ namespace ActionCalculator.Abstractions
         {
             Id = Guid.NewGuid();
             Skills = Skills.None;
-            UseReroll = 1;
+            RerollSuccess = 1;
             BreakTackleValue = 0;
             MightyBlowValue = 0;
             DirtyPlayerValue = 0;
@@ -19,7 +19,7 @@ namespace ActionCalculator.Abstractions
         {
             Id = Guid.NewGuid();
             Skills = skills;
-            UseReroll = (7m - lonerValue) / 6;
+            RerollSuccess = (7m - lonerValue) / 6;
             LonerValue = lonerValue;
             BreakTackleValue = skills.Contains(Skills.Incorporeal) ? incorporealValue : breakTackleValue;
             MightyBlowValue = mightyBlowValue;
@@ -30,14 +30,25 @@ namespace ActionCalculator.Abstractions
 
         public Guid Id { get; }
         private Skills Skills { get; }
-        public decimal UseReroll { get; }
+        public decimal RerollSuccess { get; }
         private int LonerValue { get; }
         public int BreakTackleValue { get; }
         public int MightyBlowValue { get; }
         public int DirtyPlayerValue { get; }
         public decimal ProSuccess { get; }
 
-        public bool HasSkill(Enum skill) => Skills.Contains(skill);
+        public bool CanUseSkill(Skills skill, Skills usedSkills)
+        {
+            var underlyingSkill = skill switch
+            {
+                Skills.OldPro => Skills.Pro,
+                Skills.Incorporeal => Skills.BreakTackle,
+                Skills.ConsummateProfessional => Skills.Pro,
+                _ => skill
+            };
+
+            return Skills.Contains(skill) && !usedSkills.Contains(underlyingSkill);
+        }
 
         public override string ToString() =>
             string.Join(',', Skills.ToEnumerable(Skills.None)
@@ -56,5 +67,12 @@ namespace ActionCalculator.Abstractions
             };
 
         public bool HasSkills() => Skills != Skills.None;
+
+        public void Deconstruct(out decimal useReroll, out decimal proSuccess, out Func<Skills, Skills, bool> canUseSkill)
+        {
+            useReroll = RerollSuccess;
+            proSuccess = ProSuccess;
+            canUseSkill = CanUseSkill;
+        }
     }
 }

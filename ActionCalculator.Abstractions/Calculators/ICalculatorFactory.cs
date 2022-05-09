@@ -2,6 +2,6 @@
 {
     public interface ICalculatorFactory
     {
-        ICalculator CreateProbabilityCalculator(Action action, ICalculator calculator, bool nonCriticalFailure);
+        IActionStrategy GetActionStrategy(Action action, IActionMediator actionMediator, bool nonCriticalFailure);
     }
 }

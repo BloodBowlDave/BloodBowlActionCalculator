@@ -15,5 +15,12 @@
         public int Index { get; set; }
         public int Depth { get; }
         public int BranchId { get; set; }
+
+        public void Deconstruct(out Player player, out Action action, out int index)
+        {
+            player = Player;
+            action = Action;
+            index = Index;
+        }
     }
 }

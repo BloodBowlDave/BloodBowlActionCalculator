@@ -4,47 +4,46 @@ using ActionCalculator.Abstractions.Calculators.Blocking;
 
 namespace ActionCalculator.Calculators.Blocking
 {
-    public class OneDieBlockCalculator : ICalculator
+    public class OneDieBlockStrategy : IActionStrategy
     {
-        private readonly ICalculator _calculator;
+        private readonly IActionMediator _actionMediator;
         private readonly IProCalculator _proCalculator;
         private readonly IBrawlerCalculator _brawlerCalculator;
 
-        public OneDieBlockCalculator(ICalculator calculator,
+        public OneDieBlockStrategy(IActionMediator actionMediator,
             IProCalculator proCalculator, IBrawlerCalculator brawlerCalculator)
         {
-            _calculator = calculator;
+            _actionMediator = actionMediator;
             _proCalculator = proCalculator;
             _brawlerCalculator = brawlerCalculator;
         }
 
-        public void Calculate(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var player = playerAction.Player;
-            var action = playerAction.Action;
+            var ((rerollSuccess, proSuccess, _), action, i) = playerAction;
             var success = action.Success;
 
-            _calculator.Calculate(p * success, r, playerAction, usedSkills);
+            _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             var failButRollBothDown = 0m;
 
-            if (_brawlerCalculator.UseBrawler(r, playerAction))
+            if (_brawlerCalculator.UseBrawler(r, playerAction, usedSkills))
             {
                 failButRollBothDown = _brawlerCalculator.ProbabilityCanUseBrawler(action);
-                _calculator.Calculate(p * failButRollBothDown * success, r, playerAction, usedSkills);
+                _actionMediator.Resolve(p * failButRollBothDown * success, r, i, usedSkills);
             }
 
             p *= (action.Failure - failButRollBothDown) * success;
 
             if (_proCalculator.UsePro(playerAction, r, usedSkills))
             {
-                _calculator.Calculate(p * player.ProSuccess, r, playerAction, usedSkills);
+                _actionMediator.Resolve(p * proSuccess, r, i, usedSkills);
                 return;
             }
 
             if (r > 0)
             {
-                _calculator.Calculate(p * player.UseReroll, r - 1, playerAction, usedSkills);
+                _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
             }
         }
     }
