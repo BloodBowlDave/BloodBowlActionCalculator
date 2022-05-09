@@ -16,7 +16,7 @@ namespace ActionCalculator.Calculators.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), action, i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
             var (success, failure) = action;
 
 
@@ -28,7 +28,7 @@ namespace ActionCalculator.Calculators.BallHandling
             var inaccuratePassAfterFailure = p * (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * inaccuratePass;
             var inaccuratePassWithoutReroll = p * (rerollInaccuratePass ? 0m : inaccuratePass);
 
-            if (hasSkill(Skills.Pass, usedSkills) && action.ActionType == ActionType.Pass || hasSkill(Skills.TheBallista, usedSkills))
+            if (canUseSkill(Skills.Pass, usedSkills) && action.ActionType == ActionType.Pass || canUseSkill(Skills.TheBallista, usedSkills))
             {
                 _actionMediator.Resolve(accuratePassAfterFailure, r, i, usedSkills);
                 _actionMediator.Resolve(inaccuratePassWithoutReroll + inaccuratePassAfterFailure, r, i, usedSkills, true);

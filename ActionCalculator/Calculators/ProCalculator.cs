@@ -7,10 +7,10 @@ namespace ActionCalculator.Calculators
     {
         public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie, decimal? successAfterReroll)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), action, _) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), action, _) = playerAction;
             var success = action.Success;
 
-            if (!hasSkill(Skills.Pro, usedSkills) && !hasSkill(Skills.ConsummateProfessional, usedSkills))
+            if (!canUseSkill(Skills.Pro, usedSkills) && !canUseSkill(Skills.ConsummateProfessional, usedSkills))
             {
                 return false;
             }

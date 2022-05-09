@@ -16,7 +16,7 @@ namespace ActionCalculator.Calculators
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), (success, failure), i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 

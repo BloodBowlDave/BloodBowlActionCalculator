@@ -16,9 +16,9 @@ namespace ActionCalculator.Calculators.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), (success, failure), i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
 
-            if (hasSkill(Skills.BlastIt, usedSkills))
+            if (canUseSkill(Skills.BlastIt, usedSkills))
             {
                 usedSkills |= Skills.BlastIt;
             }

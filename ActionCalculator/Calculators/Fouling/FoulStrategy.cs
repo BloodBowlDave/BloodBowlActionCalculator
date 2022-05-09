@@ -17,17 +17,17 @@ namespace ActionCalculator.Calculators.Fouling
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var (player, action, i) = playerAction;
-            var hasSkill = player.CanUseSkill;
+            var canUseSkill = player.CanUseSkill;
             var useDpOnArmour = 0m;
             var success = action.Success;
 
-            var hasDirtyPlayer = hasSkill(Skills.DirtyPlayer, usedSkills);
+            var hasDirtyPlayer = canUseSkill(Skills.DirtyPlayer, usedSkills);
             if (hasDirtyPlayer)
             {
                 useDpOnArmour = _twoD6.Success(action.OriginalRoll - player.DirtyPlayerValue) - action.Success;
             }
 
-            var doubleOnArmour = hasSkill(Skills.SneakyGit, usedSkills) ? 0 : _twoD6.RollDouble(action.OriginalRoll);
+            var doubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _twoD6.RollDouble(action.OriginalRoll);
             var doubleOnInjury = _twoD6.RollDouble(2);
             var noDouble = (1 - doubleOnArmour) * (1 - doubleOnInjury);
 

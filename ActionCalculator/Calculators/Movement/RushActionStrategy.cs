@@ -16,13 +16,13 @@ namespace ActionCalculator.Calculators.Movement
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), (success, failure), i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             p *= failure * success;
 
-            if (hasSkill(Skills.SureFeet, usedSkills))
+            if (canUseSkill(Skills.SureFeet, usedSkills))
             {
                 _actionMediator.Resolve(p, r, i, usedSkills | Skills.SureFeet);
                 return;

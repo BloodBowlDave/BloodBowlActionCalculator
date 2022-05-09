@@ -20,10 +20,10 @@ namespace ActionCalculator.Calculators.Movement
         {
             var (player, action, i) = playerAction;
             var (success, failure) = action;
-            var (rerollSuccess, proSuccess, hasSkill) = player;
+            var (rerollSuccess, proSuccess, canUseSkill) = player;
 
             var useDivingTackle = action.UseDivingTackle && !usedSkills.Contains(Skills.DivingTackle);
-            var useBreakTackleBeforeReroll = UseBreakTackleBeforeReroll(hasSkill, action, r, usedSkills);
+            var useBreakTackleBeforeReroll = UseBreakTackleBeforeReroll(canUseSkill, action, r, usedSkills);
             var successIncludingBreakTackle = SuccessAfterModifiers(playerAction, useDivingTackle, useBreakTackleBeforeReroll ? player.BreakTackleValue : 0);
             
             var failureWithDivingTackle = 0m;
@@ -42,13 +42,13 @@ namespace ActionCalculator.Calculators.Movement
             {
                 _actionMediator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | Skills.BreakTackle);
             }
-            else if (CanUseBreakTackle(hasSkill, usedSkills))
+            else if (CanUseBreakTackle(canUseSkill, usedSkills))
             {
                 successIncludingBreakTackle = SuccessAfterModifiers(playerAction, useDivingTackle, player.BreakTackleValue);
                 successUsingBreakTackle = successIncludingBreakTackle - success;
             }
 
-            if (hasSkill(Skills.Dodge, usedSkills))
+            if (canUseSkill(Skills.Dodge, usedSkills))
             {
                 DodgeReroll(p, r, i, usedSkills | Skills.Dodge, failure, success, successUsingBreakTackle, failureWithDivingTackle);
                 return;
@@ -71,9 +71,9 @@ namespace ActionCalculator.Calculators.Movement
         private static bool UseBreakTackleBeforeReroll(Func<Skills, Skills, bool> canUseSkill, Action action, int r, Skills usedSkills) =>
             CanUseBreakTackle(canUseSkill, usedSkills) && (action.UseBreakTackle || !PlayerCanRerollDodge(canUseSkill, usedSkills, r));
 
-        private static bool PlayerCanRerollDodge(Func<Skills, Skills, bool> hasSkill, Skills usedSkills, int r) =>
-            hasSkill(Skills.Dodge, usedSkills)
-                || hasSkill(Skills.Pro, usedSkills)
+        private static bool PlayerCanRerollDodge(Func<Skills, Skills, bool> canUseSkill, Skills usedSkills, int r) =>
+            canUseSkill(Skills.Dodge, usedSkills)
+                || canUseSkill(Skills.Pro, usedSkills)
                 || r > 0;
         
         private static bool CanUseBreakTackle(Func<Skills, Skills, bool> canUseSkill, Skills usedSkills) =>

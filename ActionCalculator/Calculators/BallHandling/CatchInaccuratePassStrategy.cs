@@ -109,13 +109,13 @@ namespace ActionCalculator.Calculators.BallHandling
         private void Catch(decimal p, int r, PlayerAction playerAction, Skills usedSkills,
             decimal successNoReroll, decimal successWithReroll)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), _, i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), _, i) = playerAction;
 
             _actionMediator.Resolve(p * successNoReroll, r, i, usedSkills);
 
             p *= successWithReroll;
             
-            if (hasSkill(Skills.Catch, usedSkills))
+            if (canUseSkill(Skills.Catch, usedSkills))
             {
                 _actionMediator.Resolve(p, r, i, usedSkills);
                 return;

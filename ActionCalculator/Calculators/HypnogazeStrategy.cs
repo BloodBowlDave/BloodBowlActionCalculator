@@ -16,14 +16,14 @@ namespace ActionCalculator.Calculators
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), action, i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
             var (success, failure) = action;
 
             _actionMediator.Resolve(p * action.Success, r, i, usedSkills);
 
             p *= action.Failure;
 
-            if (hasSkill(Skills.MesmerisingDance, usedSkills))
+            if (canUseSkill(Skills.MesmerisingDance, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills, success, failure);
             }

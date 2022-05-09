@@ -16,7 +16,7 @@ namespace ActionCalculator.Calculators.Blocking
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), action, i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
             var (success, failure) = action;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
@@ -25,7 +25,7 @@ namespace ActionCalculator.Calculators.Blocking
 
             if (action.RerollNonCriticalFailure)
             {
-                if (hasSkill(Skills.BlindRage, usedSkills))
+                if (canUseSkill(Skills.BlindRage, usedSkills))
                 {
                     _actionMediator.Resolve(p * success, r, i, usedSkills);
                     _actionMediator.Resolve(p * failure, r, i, usedSkills, true);

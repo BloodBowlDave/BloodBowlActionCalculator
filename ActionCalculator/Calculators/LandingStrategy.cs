@@ -15,7 +15,7 @@ namespace ActionCalculator.Calculators
         }
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, hasSkill), action, i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
             var success = nonCriticalFailure ? (7m - (action.OriginalRoll + 1).ThisOrMinimum(2).ThisOrMaximum(6)) / 6 : action.Success;
             var failure = 1m - success;
 
