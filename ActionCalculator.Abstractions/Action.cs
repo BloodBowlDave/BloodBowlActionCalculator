@@ -30,6 +30,7 @@
         public bool TerminatesCalculation { get; set; }
         public bool RequiresDauntlessFailure { get; set; }
         public bool EndOfBranch { get; set; }
+        public int NumberOfNonCriticalFailures { get; set; }
 
         public override string ToString() =>
             ActionType switch

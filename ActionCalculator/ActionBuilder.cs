@@ -6,11 +6,11 @@ namespace ActionCalculator
 {
     public class ActionBuilder : IActionBuilder
     {
-        private readonly ITwoD6 _twoD6;
+        private readonly Abstractions.ID6 _iD6;
 
-        public ActionBuilder(ITwoD6 twoD6)
+        public ActionBuilder(Abstractions.ID6 iD6)
         {
-            _twoD6 = twoD6;
+            _iD6 = iD6;
         }
 
         public Action Build(string input)
@@ -73,7 +73,7 @@ namespace ActionCalculator
         private Action FoulAction(string input)
         {
             var roll = int.Parse(input[1..]);
-            var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
+            var success = _iD6.Success(2, roll.ThisOrMinimum(2).ThisOrMaximum(12));
 
             var action = new Action(ActionType.Foul, success, 1 - success, 0, success)
             {
@@ -227,7 +227,7 @@ namespace ActionCalculator
         private Action ArmourBreakAction(string input)
         {
             var roll = int.Parse(input[1..]);
-            var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
+            var success = _iD6.Success(2, roll.ThisOrMinimum(2).ThisOrMaximum(12));
 
             var action = new Action(ActionType.ArmourBreak, success, 1 - success, 0, success)
             {
@@ -240,7 +240,7 @@ namespace ActionCalculator
         private Action InjuryAction(string input)
         {
             var roll = int.Parse(input[1..]);
-            var success = _twoD6.Success(roll.ThisOrMinimum(2).ThisOrMaximum(12));
+            var success = _iD6.Success(2, roll.ThisOrMinimum(2).ThisOrMaximum(12));
 
             var action = new Action(ActionType.Injury, success, 1 - success, 0, success)
             {

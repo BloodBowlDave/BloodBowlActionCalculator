@@ -7,13 +7,13 @@ namespace ActionCalculator.Strategies
     public class ArmourBreakStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly ITwoD6 _twoD6;
+        private readonly Abstractions.ID6 _iD6;
         private const Skills SkillsAffectingArmour = Skills.Ram | Skills.MightyBlow | Skills.Slayer | Skills.CrushingBlow;
 
-        public ArmourBreakStrategy(IActionMediator actionMediator, ITwoD6 twoD6)
+        public ArmourBreakStrategy(IActionMediator actionMediator, Abstractions.ID6 iD6)
         {
             _actionMediator = actionMediator;
-            _twoD6 = twoD6;
+            _iD6 = iD6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -26,7 +26,7 @@ namespace ActionCalculator.Strategies
 
             if (canUseSkill(Skills.Claw, usedSkills) && armourRoll >= 8)
             {
-                var success = _twoD6.Success(8);
+                var success = _iD6.Success(2, 8);
                 _actionMediator.Resolve(p * success, r, i, usedSkills);
 
                 if (!useOldPro)
@@ -46,7 +46,7 @@ namespace ActionCalculator.Strategies
 
             foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
             {
-                var success = _twoD6.Success(minimumRoll) - succeedWithPreviousSkills;
+                var success = _iD6.Success(2, minimumRoll) - succeedWithPreviousSkills;
                 _actionMediator.Resolve(p * success, r, i, usedSkills | skills);
                 succeedWithPreviousSkills += success;
             }
@@ -68,7 +68,7 @@ namespace ActionCalculator.Strategies
 
             var lowestSuccessfulArmourRoll = skillsWithMinimumRoll.Last().Value;
             
-            foreach (var roll in _twoD6.Rolls().Where(x => x.Sum() < lowestSuccessfulArmourRoll))
+            foreach (var roll in _iD6.Rolls(2).Where(x => x.Sum() < lowestSuccessfulArmourRoll))
             {
                 var highestRoll = roll.Max();
             

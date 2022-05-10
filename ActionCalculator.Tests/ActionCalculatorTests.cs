@@ -13,7 +13,7 @@ namespace ActionCalculator.Tests
         {
             _actionCalculator = new ActionCalculator(
                 new CalculationBuilder(
-                    new ActionBuilder(new TwoD6()),
+                    new ActionBuilder(new ID6()),
                     new PlayerBuilder()),
                 new ProbabilityComparer(),
                 new ActionMediator(
@@ -38,6 +38,15 @@ namespace ActionCalculator.Tests
         [InlineData("2D3,B8", 0, 0.31250)]
         [InlineData("2D3,B8,J8", 0, 0.13021)]
         [InlineData("2D5", 1, 0.97222, 0.99923)]
+        [InlineData("3D1", 1, 0.42130, 0.66510)]
+        [InlineData("P:3D1", 0, 0.48560)]
+        [InlineData("B,P:1D1", 0, 0.26852)]
+        [InlineData("B,P:1D1", 1, 0.19444, 0.30556)]
+        [InlineData("B,P:1D1^", 1, 0.19444, 0.30556)]
+        [InlineData("B,P:1D1^*", 0, 0.26852)]
+        [InlineData("B,P:3D2", 0, 0.81396)]
+        [InlineData("B,P:3D2", 1, 0.70370, 0.91221)]
+        [InlineData("B,P:3D2^*", 1, 0.81396, 0.89758)]
         //brawler
         [InlineData("B,P:-2D2", 0, 0.23663)]
         [InlineData("B,P:-2D2", 1, 0.22222, 0.27160)]
@@ -45,6 +54,8 @@ namespace ActionCalculator.Tests
         [InlineData("B:-2D2", 1, 0.14815, 0.23457)]
         [InlineData("B:1D1", 0, 0.19444)]
         [InlineData("B:1D1", 1, 0.19444, 0.30556)]
+        [InlineData("B:3D1", 0, 0.46836)]
+        [InlineData("B:3D1", 1, 0.42130, 0.66510)]
         //break tackle
         [InlineData("BT1:D3\",D4\"", 2, 0.16667, 0.38889, 0.44444)]
         [InlineData("BT1:D4\"", 1, 0.33333, 0.55556)]

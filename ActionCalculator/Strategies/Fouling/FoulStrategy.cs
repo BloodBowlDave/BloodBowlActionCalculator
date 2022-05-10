@@ -6,12 +6,12 @@ namespace ActionCalculator.Strategies.Fouling
     public class FoulStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly ITwoD6 _twoD6;
+        private readonly Abstractions.ID6 _iD6;
 
-        public FoulStrategy(IActionMediator actionMediator, ITwoD6 twoD6)
+        public FoulStrategy(IActionMediator actionMediator, Abstractions.ID6 iD6)
         {
             _actionMediator = actionMediator;
-            _twoD6 = twoD6;
+            _iD6 = iD6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -24,11 +24,11 @@ namespace ActionCalculator.Strategies.Fouling
             var hasDirtyPlayer = canUseSkill(Skills.DirtyPlayer, usedSkills);
             if (hasDirtyPlayer)
             {
-                useDpOnArmour = _twoD6.Success(action.OriginalRoll - player.DirtyPlayerValue) - action.Success;
+                useDpOnArmour = _iD6.Success(2, action.OriginalRoll - player.DirtyPlayerValue) - action.Success;
             }
 
-            var doubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _twoD6.RollDouble(action.OriginalRoll);
-            var doubleOnInjury = _twoD6.RollDouble(2);
+            var doubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _iD6.RollDouble(2, action.OriginalRoll);
+            var doubleOnInjury = _iD6.RollDouble(2, 2);
             var noDouble = (1 - doubleOnArmour) * (1 - doubleOnInjury);
 
             Foul(p * success * noDouble, p * success * (1 - noDouble), r, i, usedSkills);

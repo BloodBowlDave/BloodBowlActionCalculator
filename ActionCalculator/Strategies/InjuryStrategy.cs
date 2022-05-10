@@ -7,21 +7,21 @@ namespace ActionCalculator.Strategies
     public class InjuryStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly ITwoD6 _twoD6;
+        private readonly Abstractions.ID6 _iD6;
         private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer | Skills.DirtyPlayer;
 
 
-        public InjuryStrategy(IActionMediator actionMediator, ITwoD6 twoD6)
+        public InjuryStrategy(IActionMediator actionMediator, Abstractions.ID6 iD6)
         {
             _actionMediator = actionMediator;
-            _twoD6 = twoD6;
+            _iD6 = iD6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var (player, action, i) = playerAction;
             var modifier = GetModifier(player, usedSkills);
-            var success = _twoD6.Success(action.OriginalRoll - modifier);
+            var success = _iD6.Success(2, action.OriginalRoll - modifier);
 
             _actionMediator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
 
