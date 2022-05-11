@@ -26,7 +26,7 @@ namespace ActionCalculator.Strategies.Blocking
             
             var successfulValues = new[] { 6, 5, 4, 3, 2, 1 }.Take(action.NumberOfSuccessfulResults);
             var numberOfDice = action.NumberOfDice;
-            var rolls = _iD6.Rolls(Math.Abs(numberOfDice));
+            var rolls = _iD6.Rolls(numberOfDice);
             var successes = rolls.Where(x => x.Intersect(successfulValues).Any()).ToList();
             var failures = rolls.Where(x => !x.Intersect(successfulValues).Any()).ToList();
             var successCount = successes.Count;
@@ -41,9 +41,7 @@ namespace ActionCalculator.Strategies.Blocking
             
             if (_brawlerHelper.CanUseBrawler(r, playerAction, usedSkills))
             {
-                var brawlerCount = numberOfDice > 0 
-                    ? failures.Count(x => x.Contains(2))
-                    : failures.Count(x => x.All(y => successfulValues.Contains(y) || y == 2) && x.Count(y => y == 2) == 1);
+                var brawlerCount = failures.Count(x => x.Contains(2));
 
                 _actionMediator.Resolve(p * brawlerCount * successOnOneDie, r, i, usedSkills);
 
@@ -51,53 +49,43 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (_proHelper.CanUsePro(playerAction, r, usedSkills, successOnOneDie, success))
                 {
-                    var proCount = numberOfDice > 0
-                        ? failures.Count - brawlerCount
-                        : failures.Count(x => x.Count(y => !successfulValues.Contains(y)) == 1) - brawlerCount;
+                    var proCount = failures.Count - brawlerCount;
 
                     usedSkills |= Skills.Pro;
 
                     _actionMediator.Resolve(p * proSuccess * proCount * successOnOneDie, r, i, usedSkills);
 
-                    numberOfDice--;
-                    if (numberOfDice > 0)
+                    if (numberOfDice > 1)
                     {
                         _actionMediator.Resolve(p * brawlerFailure * proSuccess * successOnOneDie, r, i, usedSkills);
                     }
-
-                    if (r == 0 || numberOfDice < 1)
+                    else
                     {
                         return;
                     }
-                    
-                    var successAfterReroll = GetSuccessAfterReroll(successOnOneDie, numberOfDice);
+
+                    var successAfterReroll = GetSuccessAfterReroll(successOnOneDie, numberOfDice - 1);
 
                     p *= rerollSuccess;
 
                     _actionMediator.Resolve(p * proCount * successAfterReroll * (proSuccess * (1 - successOnOneDie) + (1 - proSuccess)), r - 1, i, usedSkills);
-
-                    numberOfDice--;
-                    if (numberOfDice > 0)
+                    
+                    if (numberOfDice > 2)
                     {
                         _actionMediator.Resolve(p * brawlerFailure * successOnOneDie * (proSuccess * (1 - successOnOneDie) + (1 - proSuccess)), r - 1, i, usedSkills);
                     }
 
                     return;
                 }
-
-                if (r == 0)
-                {
-                    return;
-                }
-
+                
                 var failureLessBrawlerCount = rollCount - successCount - brawlerCount;
                 _actionMediator.Resolve(p * failureLessBrawlerCount * success * rerollSuccess, r - 1, i, usedSkills);
-
-                numberOfDice--;
-                if (numberOfDice > 0)
+                
+                if (numberOfDice > 1)
                 {
                     _actionMediator.Resolve(p * brawlerFailure * successOnOneDie * rerollSuccess, r - 1, i, usedSkills);
                 }
+
                 return;
             }
 
@@ -107,21 +95,14 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 usedSkills |= Skills.Pro;
 
-                _actionMediator.Resolve(p * proSuccess * failureCount * successOnOneDie, r, i, usedSkills);
+                p *= failureCount * successOnOneDie;
+                _actionMediator.Resolve(p * proSuccess, r, i, usedSkills);
+                _actionMediator.Resolve(p * (1 - proSuccess + proSuccess * (1 - successOnOneDie)) * rerollSuccess, r - 1, i, usedSkills);
 
-                if (r == 0)
-                {
-                    return;
-                }
-
-                _actionMediator.Resolve(p * failureCount * (1 - proSuccess + proSuccess * (1 - successOnOneDie)) * successOnOneDie * rerollSuccess, r - 1, i, usedSkills);
                 return;
             }
-
-            if (r > 0)
-            {
-                _actionMediator.Resolve(p * failures.Count * rerollSuccess * success, r - 1, i, usedSkills);
-            }
+        
+            _actionMediator.Resolve(p * failures.Count * rerollSuccess * success, r - 1, i, usedSkills);
         }
 
         private static decimal GetSuccessAfterReroll(decimal successOnOneDie, int numberOfDice) => 

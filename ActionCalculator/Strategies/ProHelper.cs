@@ -5,7 +5,7 @@ namespace ActionCalculator.Strategies
 {
     public class ProHelper : IProHelper
     {
-        public bool CanUsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successOnOneDie, decimal? successAfterReroll)
+        public bool CanUsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successWithPro, decimal? successWithReroll)
         {
             var ((rerollSuccess, proSuccess, canUseSkill), action, _) = playerAction;
             var success = action.Success;
@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies
                 return true;
             }
 
-            return r == 0 || proSuccess * (successOnOneDie ?? action.SuccessOnOneDie) >= rerollSuccess * (successAfterReroll ?? success);
+            return r == 0 || proSuccess * (successWithPro ?? action.SuccessOnOneDie) >= rerollSuccess * (successWithReroll ?? success);
         }
     }
 }
