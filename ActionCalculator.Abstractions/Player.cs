@@ -68,9 +68,9 @@ namespace ActionCalculator.Abstractions
 
         public bool HasSkills() => Skills != Skills.None;
 
-        public void Deconstruct(out decimal useReroll, out decimal proSuccess, out Func<Skills, Skills, bool> canUseSkill)
+        public void Deconstruct(out decimal rerollSuccess, out decimal proSuccess, out Func<Skills, Skills, bool> canUseSkill)
         {
-            useReroll = RerollSuccess;
+            rerollSuccess = RerollSuccess;
             proSuccess = ProSuccess;
             canUseSkill = CanUseSkill;
         }

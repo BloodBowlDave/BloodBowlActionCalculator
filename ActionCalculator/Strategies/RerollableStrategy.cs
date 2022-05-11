@@ -27,11 +27,8 @@ namespace ActionCalculator.Strategies
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;
             }
-
-            if (r > 0)
-            {
-                _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
-            }
+        
+            _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
         }
     }
 }

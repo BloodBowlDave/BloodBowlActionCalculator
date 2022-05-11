@@ -50,13 +50,13 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            _actionMediator.Resolve(p, r, i, usedSkills, true);
+            _actionMediator.Resolve(p, r, i + 1, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal success, decimal failure)
         {
             _actionMediator.Resolve(p * success, r, i, usedSkills);
-            _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
+            _actionMediator.Resolve(p * failure, r, i + 1, usedSkills, true);
         }
     }
 }

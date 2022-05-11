@@ -21,7 +21,7 @@ namespace ActionCalculator
 
         public void Resolve(decimal p, int r, int i, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            if (p == 0)
+            if (p == 0 || r < 0)
             {
                 return;
             }
@@ -40,7 +40,7 @@ namespace ActionCalculator
                 return;
             }
 
-            var playerAction = GetNextPlayerAction(i, nonCriticalFailure, previousActionType);
+            var playerAction = _context.Calculation.PlayerActions[i + 1];
             var (player, action, _) = playerAction;
 
             if (nonCriticalFailure)
@@ -94,10 +94,7 @@ namespace ActionCalculator
 
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
-
-        private PlayerAction GetNextPlayerAction(int i, bool nonCriticalFailure, ActionType? previousActionType) =>
-            _context.Calculation.PlayerActions[i + (nonCriticalFailure && previousActionType == ActionType.Dauntless ? 2 : 1)];
-
+        
         private static bool IsEndOfBranch(int? previousBranchId, int branchId) => branchId > 0 && previousBranchId > 0 && previousBranchId != branchId;
 
         private PlayerAction? GetNextNonBranchPlayerAction(int i) =>

@@ -59,12 +59,7 @@ namespace ActionCalculator.Strategies.Movement
                 DodgeReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, failure, success, successUsingBreakTackle, failureWithDivingTackle);
                 return;
             }
-
-            if (r == 0)
-            {
-                return;
-            }
-
+            
             DodgeReroll(p * rerollSuccess, r - 1, i, usedSkills, failure, success, successUsingBreakTackle, failureWithDivingTackle);
         }
 

@@ -20,15 +20,9 @@ namespace ActionCalculator
                 ActionType.PickUp => new PickUpStrategy(actionMediator, new ProHelper()),
                 ActionType.Pass => new PassStrategy(actionMediator, new ProHelper()),
                 ActionType.ThrowTeamMate => new PassStrategy(actionMediator, new ProHelper()),
-                ActionType.Block => action.NumberOfDice switch
-                {
-                    -3 => new ThirdDieBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
-                    -2 => new HalfDieBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper())),
-                    1 => new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6()),
-                    2 => new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6()),
-                    3 => new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6()),
-                    _ => throw new ArgumentOutOfRangeException(nameof(action.NumberOfDice), action.NumberOfDice, null)
-                },
+                ActionType.Block => action.NumberOfDice > 0 
+                    ? new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6())
+                    : new RedDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6()),
                 ActionType.Catch => nonCriticalFailure
                     ? new CatchInaccuratePassStrategy(actionMediator, new ProHelper())
                     : new CatchStrategy(actionMediator, new ProHelper()),

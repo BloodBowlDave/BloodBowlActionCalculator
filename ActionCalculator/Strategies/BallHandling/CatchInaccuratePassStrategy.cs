@@ -11,7 +11,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
         private const decimal ScatterToTarget = 24m / 512;
         private const decimal ScatterToTargetOrAdjacent = 240m / 512;
-        private const decimal ScatterThenBounceToTarget = (ScatterToTargetOrAdjacent - ScatterToTarget) / 8;
+        private const decimal ScatterThenBounce = (ScatterToTargetOrAdjacent - ScatterToTarget) / 8;
 
         public CatchInaccuratePassStrategy(IActionMediator actionMediator, IProHelper proHelper)
         {
@@ -25,90 +25,71 @@ namespace ActionCalculator.Strategies.BallHandling
 
             var roll = action.OriginalRoll + 1 + (player.CanUseSkill(Skills.DivingCatch, usedSkills) ? 1 : 0);
 
-            var catchSuccess = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
-            var catchFailure = 1 - catchSuccess;
+            var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+            var failure = 1 - success;
 
-            CatchScatteredPass(p, r, playerAction, usedSkills, catchSuccess, catchFailure);
-            CatchBouncingBall(p, r, playerAction, usedSkills, catchSuccess, catchFailure);
+            CatchScatteredPass(p, r, playerAction, usedSkills, success, failure);
+            CatchBouncingBall(p, r, playerAction, usedSkills, success, failure);
         }
 
-        private void CatchScatteredPass(decimal p, int r, PlayerAction playerAction, Skills usedSkills,
-            decimal catchSuccess, decimal catchFailure)
+        private void CatchScatteredPass(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal success, decimal failure)
         {
-            var player = playerAction.Player;
-            var successfulScatter = player.CanUseSkill(Skills.DivingCatch, usedSkills)
+            var scatter = playerAction.Player.CanUseSkill(Skills.DivingCatch, usedSkills)
                 ? ScatterToTargetOrAdjacent
                 : ScatterToTarget;
 
-            Catch(p, r, playerAction, usedSkills, successfulScatter * catchSuccess,
-                successfulScatter * catchFailure * catchSuccess);
+            Catch(p, r, playerAction, usedSkills, scatter * success, scatter * failure * success);
         }
 
-        private void CatchBouncingBall(decimal p, int r, PlayerAction playerAction, Skills usedSkills,
-            decimal catchSuccess, decimal catchFailure)
+        private void CatchBouncingBall(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal success, decimal failure)
         {
-            var player = playerAction.Player;
-
-            if (player.CanUseSkill(Skills.DivingCatch, usedSkills))
+            if (playerAction.Player.CanUseSkill(Skills.DivingCatch, usedSkills))
             {
-                DivingCatch(p, r, playerAction, usedSkills, catchSuccess, catchFailure);
+                DivingCatch(p, r, playerAction, usedSkills, success, failure);
                 return;
             }
 
-            Catch(p, r, playerAction, usedSkills, ScatterThenBounceToTarget * catchSuccess,
-                ScatterThenBounceToTarget * catchFailure * catchSuccess);
+            Catch(p, r, playerAction, usedSkills, ScatterThenBounce * success, ScatterThenBounce * failure * success);
         }
 
-        private void DivingCatch(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal catchSuccess, decimal catchFailure)
+        private void DivingCatch(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal success, decimal failure)
         {
-            var failDivingCatch = catchFailure * catchFailure;
+            var failDivingCatch = failure * failure;
 
-            var (player, _, i) = playerAction;
+            var ((rerollSuccess, proSuccess, canUseSkill), _, i) = playerAction;
 
-            if (player.CanUseSkill(Skills.Catch, usedSkills))
+            if (canUseSkill(Skills.Catch, usedSkills))
             {
-                _actionMediator.Resolve(p * failDivingCatch * ScatterThenBounceToTarget * (catchFailure * catchSuccess + catchSuccess),
-                    r, i, usedSkills);
+                _actionMediator.Resolve(p * failDivingCatch * ScatterThenBounce * (failure * success + success), r, i, usedSkills);
 
                 return;
             }
 
             if (_proHelper.CanUsePro(playerAction, r, usedSkills))
             {
-                _actionMediator.Resolve(
-                    p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchSuccess, r, i,
-                    usedSkills | Skills.Pro);
+                p *= failDivingCatch * proSuccess * ScatterThenBounce;
+                usedSkills |= Skills.Pro;
 
-                if (r > 0)
-                {
-                    _actionMediator.Resolve(p * failDivingCatch * player.ProSuccess * ScatterThenBounceToTarget * catchFailure * player.RerollSuccess * catchSuccess,
-                        r - 1, i, usedSkills | Skills.Pro);
-                }
+                _actionMediator.Resolve(p * success, r, i, usedSkills);
+                _actionMediator.Resolve(p * failure * rerollSuccess * success, r - 1, i, usedSkills);
 
                 return;
             }
 
             if (r > 0)
             {
-                _actionMediator.Resolve(p * failDivingCatch * player.RerollSuccess * ScatterThenBounceToTarget * catchSuccess,
-                    r - 1, i, usedSkills);
+                p *= failDivingCatch * rerollSuccess * ScatterThenBounce;
 
-                if (r > 1)
-                {
-                    _actionMediator.Resolve(p * failDivingCatch * player.RerollSuccess * ScatterThenBounceToTarget
-                                                     * catchFailure * player.RerollSuccess * catchSuccess, r - 2, i,
-                        usedSkills);
-                }
+                _actionMediator.Resolve(p * success, r - 1, i, usedSkills);
+                _actionMediator.Resolve(p * failure * rerollSuccess * success, r - 2, i, usedSkills);
 
                 return;
             }
 
-            _actionMediator.Resolve(p * catchFailure * ScatterThenBounceToTarget * catchSuccess, r, i,
-                usedSkills);
+            _actionMediator.Resolve(p * failure * ScatterThenBounce * success, r, i, usedSkills);
         }
 
-        private void Catch(decimal p, int r, PlayerAction playerAction, Skills usedSkills,
-            decimal successNoReroll, decimal successWithReroll)
+        private void Catch(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal successNoReroll, decimal successWithReroll)
         {
             var ((rerollSuccess, proSuccess, canUseSkill), _, i) = playerAction;
 
@@ -127,11 +108,8 @@ namespace ActionCalculator.Strategies.BallHandling
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;
             }
-
-            if (r > 0)
-            {
-                _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
-            }
+            
+            _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
         }
     }
 }

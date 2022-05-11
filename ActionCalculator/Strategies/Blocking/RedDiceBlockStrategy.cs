@@ -4,14 +4,14 @@ using ActionCalculator.Abstractions.Calculators.Blocking;
 
 namespace ActionCalculator.Strategies.Blocking
 {
-    public class BlockStrategy : IActionStrategy
+    public class RedDiceBlockStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
         private readonly IBrawlerHelper _brawlerHelper;
         private readonly Abstractions.ID6 _iD6;
 
-        public BlockStrategy(IActionMediator actionMediator, IProHelper proHelper, IBrawlerHelper brawlerHelper, Abstractions.ID6 iD6)
+        public RedDiceBlockStrategy(IActionMediator actionMediator, IProHelper proHelper, IBrawlerHelper brawlerHelper, Abstractions.ID6 iD6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
@@ -26,9 +26,9 @@ namespace ActionCalculator.Strategies.Blocking
             
             var successfulValues = new[] { 6, 5, 4, 3, 2, 1 }.Take(action.NumberOfSuccessfulResults);
             var numberOfDice = action.NumberOfDice;
-            var rolls = _iD6.Rolls(Math.Abs(numberOfDice));
-            var successes = rolls.Where(x => x.Intersect(successfulValues).Any()).ToList();
-            var failures = rolls.Where(x => !x.Intersect(successfulValues).Any()).ToList();
+            var rolls = _iD6.Rolls(-numberOfDice);
+            var successes = rolls.Where(x => x.All(y => successfulValues.Contains(y))).ToList();
+            var failures = rolls.Where(x => !x.All(y => successfulValues.Contains(y))).ToList();
             var successCount = successes.Count;
             var rollCount = rolls.Count;
 
@@ -38,52 +38,53 @@ namespace ActionCalculator.Strategies.Blocking
 
             var successOnOneDie = action.SuccessOnOneDie;
             var success = (decimal)successCount / rollCount;
-            
+
+            if (_brawlerHelper.UseBrawlerAndPro(r, playerAction, usedSkills))
+            {
+                //var brawlerAndProCount = failures.Where(x => )
+            }
+
             if (_brawlerHelper.CanUseBrawler(r, playerAction, usedSkills))
             {
-                var brawlerCount = numberOfDice > 0 
-                    ? failures.Count(x => x.Contains(2))
-                    : failures.Count(x => x.All(y => successfulValues.Contains(y) || y == 2) && x.Count(y => y == 2) == 1);
+                var brawlerCount = failures.Count(x => x.All(y => successfulValues.Contains(y) || y == 2) && x.Count(y => y == 2) == 1);
 
                 _actionMediator.Resolve(p * brawlerCount * successOnOneDie, r, i, usedSkills);
 
                 var brawlerFailure = brawlerCount * (1 - successOnOneDie);
 
-                if (_proHelper.CanUsePro(playerAction, r, usedSkills, successOnOneDie, success))
-                {
-                    var proCount = numberOfDice > 0
-                        ? failures.Count - brawlerCount
-                        : failures.Count(x => x.Count(y => !successfulValues.Contains(y)) == 1) - brawlerCount;
+                //if (_proHelper.CanUsePro(playerAction, r, usedSkills, successOnOneDie, success))
+                //{
+                //    var proCount = failures.Count(x => x.Count(y => !successfulValues.Contains(y)) == 1) - brawlerCount;
 
-                    usedSkills |= Skills.Pro;
+                //    usedSkills |= Skills.Pro;
 
-                    _actionMediator.Resolve(p * proSuccess * proCount * successOnOneDie, r, i, usedSkills);
+                //    _actionMediator.Resolve(p * proSuccess * proCount * successOnOneDie, r, i, usedSkills);
 
-                    numberOfDice--;
-                    if (numberOfDice > 0)
-                    {
-                        _actionMediator.Resolve(p * brawlerFailure * proSuccess * successOnOneDie, r, i, usedSkills);
-                    }
+                //    numberOfDice--;
+                //    if (numberOfDice > 0)
+                //    {
+                //        _actionMediator.Resolve(p * brawlerFailure * proSuccess * successOnOneDie, r, i, usedSkills);
+                //    }
 
-                    if (r == 0 || numberOfDice < 1)
-                    {
-                        return;
-                    }
-                    
-                    var successAfterReroll = GetSuccessAfterReroll(successOnOneDie, numberOfDice);
+                //    if (r == 0 || numberOfDice < 1)
+                //    {
+                //        return;
+                //    }
 
-                    p *= rerollSuccess;
+                //    var successAfterReroll = GetSuccessAfterReroll(successOnOneDie, numberOfDice);
 
-                    _actionMediator.Resolve(p * proCount * successAfterReroll * (proSuccess * (1 - successOnOneDie) + (1 - proSuccess)), r - 1, i, usedSkills);
+                //    p *= rerollSuccess;
 
-                    numberOfDice--;
-                    if (numberOfDice > 0)
-                    {
-                        _actionMediator.Resolve(p * brawlerFailure * successOnOneDie * (proSuccess * (1 - successOnOneDie) + (1 - proSuccess)), r - 1, i, usedSkills);
-                    }
+                //    _actionMediator.Resolve(p * proCount * successAfterReroll * (proSuccess * (1 - successOnOneDie) + (1 - proSuccess)), r - 1, i, usedSkills);
 
-                    return;
-                }
+                //    numberOfDice--;
+                //    if (numberOfDice > 0)
+                //    {
+                //        _actionMediator.Resolve(p * brawlerFailure * successOnOneDie * (proSuccess * (1 - successOnOneDie) + (1 - proSuccess)), r - 1, i, usedSkills);
+                //    }
+
+                //    return;
+                //}
 
                 if (r == 0)
                 {

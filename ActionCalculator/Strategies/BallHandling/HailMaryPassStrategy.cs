@@ -30,12 +30,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 _actionMediator.Resolve(p * failure * proSuccess * success, r, i, usedSkills | Skills.Pro, true);
                 return;
             }
-
-            if (r == 0)
-            {
-                return;
-            }
-
+            
             _actionMediator.Resolve(p * failure * rerollSuccess * success, r - 1, i, usedSkills, true);
         }
     }
