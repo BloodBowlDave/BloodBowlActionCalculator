@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies.Movement
 
             p *= action.Failure;
 
-            if (_proHelper.CanUsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(playerAction, r, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess, success, failure);
                 return;

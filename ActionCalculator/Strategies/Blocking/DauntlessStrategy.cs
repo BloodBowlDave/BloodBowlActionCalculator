@@ -31,7 +31,7 @@ namespace ActionCalculator.Strategies.Blocking
                     return;
                 }
 
-                if (_proHelper.CanUsePro(playerAction, r, usedSkills))
+                if (_proHelper.UsePro(playerAction, r, usedSkills))
                 {
                     ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                     return;
@@ -44,7 +44,7 @@ namespace ActionCalculator.Strategies.Blocking
                 }
             }
 
-            if (action.UsePro && _proHelper.CanUsePro(playerAction, r, usedSkills))
+            if (action.UsePro && _proHelper.UsePro(playerAction, r, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                 return;

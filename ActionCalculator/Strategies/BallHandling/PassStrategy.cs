@@ -21,7 +21,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
-            var inaccuratePass = action.NonCriticalFailure;
+            var inaccuratePass = action.NonCriticalFailureOnOneDie;
             var rerollInaccuratePass = action.RerollNonCriticalFailure;
             var accuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * success;
             var inaccuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * inaccuratePass;
@@ -33,7 +33,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.CanUsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(playerAction, r, usedSkills))
             {
                 _actionMediator.Resolve(inaccuratePassWithoutReroll, r, i, usedSkills, true);
 

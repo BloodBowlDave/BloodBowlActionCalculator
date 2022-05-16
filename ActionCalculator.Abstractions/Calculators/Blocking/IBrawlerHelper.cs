@@ -2,7 +2,7 @@
 {
     public interface IBrawlerHelper
     {
-        bool CanUseBrawler(int r, PlayerAction playerAction, Skills usedSkills);
-        bool CanUseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills);
+        bool UseBrawler(int r, PlayerAction playerAction, Skills usedSkills);
+        bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills);
     }
 }

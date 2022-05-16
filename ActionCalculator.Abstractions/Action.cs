@@ -2,19 +2,19 @@
 {
     public class Action : IAction
     {
-        public Action(ActionType actionType, decimal success, decimal failure, decimal nonCriticalFailure, decimal successOnOneDie)
+        public Action(ActionType actionType, decimal success, decimal failure, decimal nonCriticalFailureOnOneDie, decimal successOnOneDie)
         {
             ActionType = actionType;
             Success = success;
             Failure = failure;
-            NonCriticalFailure = nonCriticalFailure;
+            NonCriticalFailureOnOneDie = nonCriticalFailureOnOneDie;
             SuccessOnOneDie = successOnOneDie;
         }
 
         public ActionType ActionType { get; }
         public decimal Success { get; }
         public decimal Failure { get; }
-        public decimal NonCriticalFailure { get; }
+        public decimal NonCriticalFailureOnOneDie { get; }
         public decimal SuccessOnOneDie { get; }
         public bool UsePro { get; set; }
         public bool UseBrawler { get; set; }
@@ -25,17 +25,16 @@
         public int Modifier { get; init; }
         public int NumberOfDice { get; init; }
         public int NumberOfSuccessfulResults { get; init; }
-        public decimal SuccessOnTwoDice { get; init; }
         public bool RequiresNonCriticalFailure { get; set; }
         public bool TerminatesCalculation { get; set; }
         public bool RequiresDauntlessFailure { get; set; }
         public bool EndOfBranch { get; set; }
-        public int NumberOfNonCriticalFailures { get; set; }
+        public int NumberOfNonCriticalFailures { get; init; }
 
         public override string ToString() =>
             ActionType switch
             {
-                ActionType.Block => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(UseBrawler ? "^" : "")}{(UsePro ? "*" : "")}",
+                ActionType.Block => $@"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}",
                 ActionType.Rerollable => OriginalRoll.ToString(),
                 ActionType.Bribe => ((char)ActionType).ToString(),
                 ActionType.Shadowing => $"{(char)ActionType}{GetModifier()}{(!RerollNonCriticalFailure ? "'" : "")}",

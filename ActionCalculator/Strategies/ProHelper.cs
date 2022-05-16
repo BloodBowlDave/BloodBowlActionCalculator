@@ -5,7 +5,7 @@ namespace ActionCalculator.Strategies
 {
     public class ProHelper : IProHelper
     {
-        public bool CanUsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successWithPro, decimal? successWithReroll)
+        public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successWithPro, decimal? successWithReroll)
         {
             var ((rerollSuccess, proSuccess, canUseSkill), action, _) = playerAction;
             var success = action.Success;

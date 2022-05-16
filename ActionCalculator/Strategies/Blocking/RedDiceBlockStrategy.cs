@@ -47,19 +47,19 @@ namespace ActionCalculator.Strategies.Blocking
 
         private int GetBrawlerAndProCount(int r, PlayerAction playerAction, Skills usedSkills, IEnumerable<List<int>> failures, 
             IEnumerable<int> successfulValues, int numberOfDice) =>
-            _brawlerHelper.CanUseBrawlerAndPro(r, playerAction, usedSkills) 
+            _brawlerHelper.UseBrawlerAndPro(r, playerAction, usedSkills) 
                 ? failures.Count(x => x.Count(successfulValues.Contains) == numberOfDice - 2 && x.Contains(2)) 
                 : 0;
 
         private int GetBrawlerCount(int r, PlayerAction playerAction, Skills usedSkills, 
             IEnumerable<List<int>> failures, ICollection<int> successfulValues, int numberOfDice) =>
-            _brawlerHelper.CanUseBrawler(r, playerAction, usedSkills) 
+            _brawlerHelper.UseBrawler(r, playerAction, usedSkills) 
                 ? failures.Count(x => x.Count(successfulValues.Contains) == numberOfDice - 1 && x.Contains(2)) 
                 : 0;
 
         private int GetProCount(int r, PlayerAction playerAction, Skills usedSkills, decimal successOnOneDie,
             IEnumerable<List<int>> failures, ICollection<int> successfulValues, int numberOfDice, int brawlerCount) =>
-            _proHelper.CanUsePro(playerAction, r, usedSkills, successOnOneDie, playerAction.Action.Success)
+            _proHelper.UsePro(playerAction, r, usedSkills, successOnOneDie, playerAction.Action.Success)
                 ? failures.Count(x => x.Count(successfulValues.Contains) == numberOfDice - 1) - brawlerCount
                 : 0;
     }

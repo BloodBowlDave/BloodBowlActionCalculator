@@ -14,7 +14,7 @@ namespace ActionCalculator.Strategies.Blocking
             _proHelper = proHelper;
         }
 
-        public bool CanUseBrawler(int r, PlayerAction playerAction, Skills usedSkills)
+        public bool UseBrawler(int r, PlayerAction playerAction, Skills usedSkills)
         {
             var (player, action, _) = playerAction;
 
@@ -28,7 +28,7 @@ namespace ActionCalculator.Strategies.Blocking
                    || action.SuccessOnOneDie >= action.Success * player.RerollSuccess;
         }
 
-        public bool CanUseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills)
+        public bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills)
         {
             var player = playerAction.Player;
 
@@ -43,7 +43,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             return r == 0
                    || action.UseBrawler && action.UsePro
-                   || _proHelper.CanUsePro(playerAction, r, usedSkills, successAfterBrawlerAndPro, successAfterReroll);
+                   || _proHelper.UsePro(playerAction, r, usedSkills, successAfterBrawlerAndPro, successAfterReroll);
         }
     }
 }

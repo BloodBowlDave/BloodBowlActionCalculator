@@ -65,9 +65,11 @@ namespace ActionCalculator
         {
             var split = input.Split('D');
             var numberOfDice = int.Parse(split[0]);
-            var numberOfSuccessfulResults = int.Parse(split[1]);
+            var resultsSplit = split[1].Split('!');
+            var successes = int.Parse(resultsSplit[0]);
+            var nonCriticalFailures = resultsSplit.Length > 1 ? int.Parse(resultsSplit[1]) : 0;
 
-            return BuildBlockAction(numberOfDice, numberOfSuccessfulResults);
+            return BuildBlockAction(numberOfDice, successes, nonCriticalFailures);
         }
 
         private Action FoulAction(string input)
@@ -83,64 +85,36 @@ namespace ActionCalculator
             return action;
         }
 
-        private static Action BuildBlockAction(int numberOfDice, int numberOfSuccessfulResults)
+        private static Action BuildBlockAction(int numberOfDice, int successes, int nonCriticalFailures)
         {
-            var successOnOneDie = (decimal)numberOfSuccessfulResults / 6;
-            decimal success, failure, successOnTwoDice;
+            var successOnOneDie = (decimal)successes / 6;
+            var (success, failure) = GetBlockSuccessAndFailure(numberOfDice, successOnOneDie);
+            var nonCriticalFailureOnOneDie = (decimal)nonCriticalFailures / 6;
 
+            return new Action(ActionType.Block, success, failure, nonCriticalFailureOnOneDie, successOnOneDie)
+            {
+                NumberOfDice = numberOfDice,
+                NumberOfSuccessfulResults = successes,
+                NumberOfNonCriticalFailures = nonCriticalFailures
+            };
+        }
+
+        private static Tuple<decimal, decimal> GetBlockSuccessAndFailure(int numberOfDice, decimal successOnOneDie)
+        {
             switch (numberOfDice)
             {
-                case -3:
-                    success = (decimal)Math.Pow((double)successOnOneDie, 3);
-                    failure = 1 - success;
-                    successOnTwoDice = (decimal)Math.Pow((double)successOnOneDie, 2);
-
-                    return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
-                    {
-                        NumberOfDice = numberOfDice,
-                        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-                        SuccessOnTwoDice = successOnTwoDice
-                    };
-                case -2:
-                    success = (decimal)Math.Pow((double)successOnOneDie, 2);
-                    failure = 1 - success;
-
-                    return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
-                    {
-                        NumberOfDice = numberOfDice,
-                        NumberOfSuccessfulResults = numberOfSuccessfulResults
-                    };
                 case 1:
-                    success = successOnOneDie;
-                    failure = 1 - success;
-
-                    return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
-                    {
-                        NumberOfDice = numberOfDice,
-                        NumberOfSuccessfulResults = numberOfSuccessfulResults
-                    };
-                case 2:
-                    failure = (decimal)Math.Pow(1 - (double)successOnOneDie, 2);
-                    success = 1 - failure;
-
-                    return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
-                    {
-                        NumberOfDice = numberOfDice,
-                        NumberOfSuccessfulResults = numberOfSuccessfulResults
-                    };
-                case 3:
-                    failure = (decimal)Math.Pow(1 - (double)successOnOneDie, 3);
-                    success = 1 - failure;
-                    successOnTwoDice = 1 - (decimal)Math.Pow(1 - (double)successOnOneDie, 2);
-
-                    return new Action(ActionType.Block, success, failure, 0, successOnOneDie)
-                    {
-                        NumberOfDice = numberOfDice,
-                        NumberOfSuccessfulResults = numberOfSuccessfulResults,
-                        SuccessOnTwoDice = successOnTwoDice
-                    };
+                    return new Tuple<decimal, decimal>(successOnOneDie, 1 - successOnOneDie);
+                case < 0:
+                {
+                    var success = (decimal) Math.Pow((double) successOnOneDie, -numberOfDice);
+                    return new Tuple<decimal, decimal>(success, 1 - success);
+                }
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(numberOfDice));
+                {
+                    var failure = (decimal) Math.Pow(1 - (double) successOnOneDie, numberOfDice);
+                    return new Tuple<decimal, decimal>(1 - failure, failure);
+                }
             }
         }
 

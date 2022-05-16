@@ -47,6 +47,10 @@ namespace ActionCalculator.Tests
         [InlineData("B,P:3D2", 0, 0.81396)]
         [InlineData("B,P:3D2", 1, 0.70370, 0.91221)]
         [InlineData("B,P:3D2^*", 1, 0.81396, 0.89758)]
+        //frenzy
+        [InlineData("1D3!2{1D3}", 0, 0.66667)]
+        [InlineData("1D3!2{1D3}", 1, 0.50000, 0.83333)]
+        [InlineData("1D3!2'{1D3}", 1, 0.66667, 0.86111)]
         //brawler
         [InlineData("B,P:-2D2", 0, 0.23663)]
         [InlineData("B,P:-2D2", 1, 0.22222, 0.27160)]

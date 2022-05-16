@@ -19,7 +19,7 @@ namespace ActionCalculator.Strategies.Fouling
             if (nonCriticalFailure)
             {
                 _actionMediator.Resolve(p * action.Success, r, i, usedSkills);
-                _actionMediator.Resolve(p * action.NonCriticalFailure, r, i, usedSkills, true);
+                _actionMediator.Resolve(p * action.NonCriticalFailureOnOneDie, r, i, usedSkills, true);
                 return;
             }
 
