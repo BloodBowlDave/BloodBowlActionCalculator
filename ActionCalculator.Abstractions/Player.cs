@@ -8,7 +8,7 @@ namespace ActionCalculator.Abstractions
         {
             Id = Guid.NewGuid();
             Skills = Skills.None;
-            RerollSuccess = 1;
+            LonerSuccess = 1;
             BreakTackleValue = 0;
             MightyBlowValue = 0;
             DirtyPlayerValue = 0;
@@ -19,7 +19,7 @@ namespace ActionCalculator.Abstractions
         {
             Id = Guid.NewGuid();
             Skills = skills;
-            RerollSuccess = (7m - lonerValue) / 6;
+            LonerSuccess = (7m - lonerValue) / 6;
             LonerValue = lonerValue;
             BreakTackleValue = skills.Contains(Skills.Incorporeal) ? incorporealValue : breakTackleValue;
             MightyBlowValue = mightyBlowValue;
@@ -30,7 +30,7 @@ namespace ActionCalculator.Abstractions
 
         public Guid Id { get; }
         private Skills Skills { get; }
-        public decimal RerollSuccess { get; }
+        public decimal LonerSuccess { get; }
         private int LonerValue { get; }
         public int BreakTackleValue { get; }
         public int MightyBlowValue { get; }
@@ -68,9 +68,9 @@ namespace ActionCalculator.Abstractions
 
         public bool HasSkills() => Skills != Skills.None;
 
-        public void Deconstruct(out decimal rerollSuccess, out decimal proSuccess, out Func<Skills, Skills, bool> canUseSkill)
+        public void Deconstruct(out decimal lonerSuccess, out decimal proSuccess, out Func<Skills, Skills, bool> canUseSkill)
         {
-            rerollSuccess = RerollSuccess;
+            lonerSuccess = LonerSuccess;
             proSuccess = ProSuccess;
             canUseSkill = CanUseSkill;
         }

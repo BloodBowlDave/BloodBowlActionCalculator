@@ -16,7 +16,7 @@ namespace ActionCalculator.Strategies
         }
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
+            var ((lonerSuccess, proSuccess, _), action, i) = playerAction;
             var success = nonCriticalFailure ? (7m - (action.OriginalRoll + 1).ThisOrMinimum(2).ThisOrMaximum(6)) / 6 : action.Success;
             var failure = 1m - success;
 
@@ -28,7 +28,7 @@ namespace ActionCalculator.Strategies
                 return;
             }
         
-            _actionMediator.Resolve(p * failure * rerollSuccess * success, r - 1, i, usedSkills);
+            _actionMediator.Resolve(p * failure * lonerSuccess * success, r - 1, i, usedSkills);
         }
     }
 }

@@ -10,57 +10,64 @@ namespace ActionCalculator.Strategies.Blocking
         private readonly IProHelper _proHelper;
         private readonly IBrawlerHelper _brawlerHelper;
         private readonly Abstractions.ID6 _iD6;
+        private readonly IRollOutcomeHelper _rollOutcomeHelper;
 
-        public RedDiceBlockStrategy(IActionMediator actionMediator, IProHelper proHelper, IBrawlerHelper brawlerHelper, Abstractions.ID6 iD6)
+        public RedDiceBlockStrategy(IActionMediator actionMediator, IProHelper proHelper, IBrawlerHelper brawlerHelper, 
+            Abstractions.ID6 iD6, IRollOutcomeHelper rollOutcomeHelper)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
             _brawlerHelper = brawlerHelper;
             _iD6 = iD6;
+            _rollOutcomeHelper = rollOutcomeHelper;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, _), action, i) = playerAction;
-            
-            var successfulValues = new[] { 6, 5, 4, 3, 2, 1 }.Take(action.NumberOfSuccessfulResults).ToList();
+            var ((lonerSuccess, proSuccess, _), action, i) = playerAction;
+
+            var d6 = new[] { 6, 5, 4, 3, 2, 1 };
+            var numberOfSuccessfulResults = action.NumberOfSuccessfulResults;
+            var successfulValues = d6.Take(numberOfSuccessfulResults).ToList();
+            var nonCriticalFailureValues = d6.Skip(numberOfSuccessfulResults).Take(action.NumberOfNonCriticalFailures).ToList();
             var numberOfDice = -action.NumberOfDice;
             var rolls = _iD6.Rolls(numberOfDice);
-            var failures = rolls.Where(x => !x.All(y => successfulValues.Contains(y))).ToList();
-            var successCount = rolls.Count(x => x.All(y => successfulValues.Contains(y)));
             var rollCount = rolls.Count;
             
             var successOnOneDie = action.SuccessOnOneDie;
 
-            var brawlerAndProCount = GetBrawlerAndProCount(r, playerAction, usedSkills, failures, successfulValues, numberOfDice);
-            var brawlerCount = GetBrawlerCount(r, playerAction, usedSkills, failures, successfulValues, numberOfDice);
-            var proCount = GetProCount(r, playerAction, usedSkills, successOnOneDie, failures, successfulValues, numberOfDice, brawlerCount);
+            var useBrawler = _brawlerHelper.UseBrawler(r, playerAction, usedSkills);
+            var success = action.Success;
+            var usePro = _proHelper.UsePro(playerAction, r, usedSkills, successOnOneDie, success);
 
-            var brawlerAndProSuccess = brawlerAndProCount * proSuccess * successOnOneDie * successOnOneDie;
-            var successAfterPro = proCount * proSuccess * successOnOneDie;
-
+            var rollOutcomes = _rollOutcomeHelper.GetRollOutcomesForRedDice(rolls, successfulValues, nonCriticalFailureValues, numberOfDice, useBrawler, usePro);
+            
             p /= rollCount;
+
+            var nonCriticalFailures = rollOutcomes.NonCriticalFailures;
+            var nonCriticalFailureAfterReroll = (decimal)nonCriticalFailures / rollCount;
+            var failures = rollOutcomes.Failures;
+            
+            _actionMediator.Resolve(p * (rollOutcomes.Successes + rollOutcomes.BrawlerRolls * successOnOneDie), r, i, usedSkills);
+            _actionMediator.Resolve(p * failures * lonerSuccess * success, r - 1, i, usedSkills);
+            _actionMediator.Resolve(p * failures * lonerSuccess * nonCriticalFailureAfterReroll, r - 1, i, usedSkills, true);
+
+            var brawlerAndProSuccess = rollOutcomes.BrawlerAndProRolls * proSuccess * successOnOneDie * successOnOneDie;
+            var successAfterPro = rollOutcomes.ProRolls * proSuccess * successOnOneDie;
             _actionMediator.Resolve(p * (brawlerAndProSuccess + successAfterPro), r, i, usedSkills | Skills.Pro);
-            _actionMediator.Resolve(p * (successCount + brawlerCount * successOnOneDie), r, i, usedSkills);
-            _actionMediator.Resolve(p * (failures.Count - brawlerCount - proCount - brawlerAndProCount) * rerollSuccess * action.Success, r - 1, i, usedSkills);
+
+            var rerollFailure = 1 - lonerSuccess;
+
+            if (action.RerollNonCriticalFailure && r > 0)
+            {
+                _actionMediator.Resolve(p * nonCriticalFailures * lonerSuccess * success, r - 1, i, usedSkills);
+                _actionMediator.Resolve(p * nonCriticalFailures * rerollFailure, r - 1, i, usedSkills, true);
+                _actionMediator.Resolve(p * nonCriticalFailures * lonerSuccess * nonCriticalFailureAfterReroll, r - 1, i, usedSkills, true);
+            }
+            else
+            {
+                _actionMediator.Resolve(p * nonCriticalFailures, r, i, usedSkills, true);
+            }
         }
-
-        private int GetBrawlerAndProCount(int r, PlayerAction playerAction, Skills usedSkills, IEnumerable<List<int>> failures, 
-            IEnumerable<int> successfulValues, int numberOfDice) =>
-            _brawlerHelper.UseBrawlerAndPro(r, playerAction, usedSkills) 
-                ? failures.Count(x => x.Count(successfulValues.Contains) == numberOfDice - 2 && x.Contains(2)) 
-                : 0;
-
-        private int GetBrawlerCount(int r, PlayerAction playerAction, Skills usedSkills, 
-            IEnumerable<List<int>> failures, ICollection<int> successfulValues, int numberOfDice) =>
-            _brawlerHelper.UseBrawler(r, playerAction, usedSkills) 
-                ? failures.Count(x => x.Count(successfulValues.Contains) == numberOfDice - 1 && x.Contains(2)) 
-                : 0;
-
-        private int GetProCount(int r, PlayerAction playerAction, Skills usedSkills, decimal successOnOneDie,
-            IEnumerable<List<int>> failures, ICollection<int> successfulValues, int numberOfDice, int brawlerCount) =>
-            _proHelper.UsePro(playerAction, r, usedSkills, successOnOneDie, playerAction.Action.Success)
-                ? failures.Count(x => x.Count(successfulValues.Contains) == numberOfDice - 1) - brawlerCount
-                : 0;
     }
 }

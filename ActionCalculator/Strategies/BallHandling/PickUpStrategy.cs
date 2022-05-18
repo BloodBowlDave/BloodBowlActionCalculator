@@ -16,7 +16,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
+            var ((lonerSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
@@ -34,7 +34,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
         
-            _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
+            _actionMediator.Resolve(p * lonerSuccess, r - 1, i, usedSkills);
         }
     }
 }

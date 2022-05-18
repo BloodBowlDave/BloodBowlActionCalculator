@@ -56,7 +56,7 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var failDivingCatch = failure * failure;
 
-            var ((rerollSuccess, proSuccess, canUseSkill), _, i) = playerAction;
+            var ((lonerSuccess, proSuccess, canUseSkill), _, i) = playerAction;
 
             if (canUseSkill(Skills.Catch, usedSkills))
             {
@@ -71,17 +71,17 @@ namespace ActionCalculator.Strategies.BallHandling
                 usedSkills |= Skills.Pro;
 
                 _actionMediator.Resolve(p * success, r, i, usedSkills);
-                _actionMediator.Resolve(p * failure * rerollSuccess * success, r - 1, i, usedSkills);
+                _actionMediator.Resolve(p * failure * lonerSuccess * success, r - 1, i, usedSkills);
 
                 return;
             }
 
             if (r > 0)
             {
-                p *= failDivingCatch * rerollSuccess * ScatterThenBounce;
+                p *= failDivingCatch * lonerSuccess * ScatterThenBounce;
 
                 _actionMediator.Resolve(p * success, r - 1, i, usedSkills);
-                _actionMediator.Resolve(p * failure * rerollSuccess * success, r - 2, i, usedSkills);
+                _actionMediator.Resolve(p * failure * lonerSuccess * success, r - 2, i, usedSkills);
 
                 return;
             }
@@ -91,7 +91,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
         private void Catch(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal successNoReroll, decimal successWithReroll)
         {
-            var ((rerollSuccess, proSuccess, canUseSkill), _, i) = playerAction;
+            var ((lonerSuccess, proSuccess, canUseSkill), _, i) = playerAction;
 
             _actionMediator.Resolve(p * successNoReroll, r, i, usedSkills);
 
@@ -109,7 +109,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
             
-            _actionMediator.Resolve(p * rerollSuccess, r - 1, i, usedSkills);
+            _actionMediator.Resolve(p * lonerSuccess, r - 1, i, usedSkills);
         }
     }
 }

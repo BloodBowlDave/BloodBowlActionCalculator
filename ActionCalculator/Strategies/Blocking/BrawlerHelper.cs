@@ -25,7 +25,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             return r == 0
                    || action.UseBrawler
-                   || action.SuccessOnOneDie >= action.Success * player.RerollSuccess;
+                   || action.SuccessOnOneDie >= action.Success * player.LonerSuccess;
         }
 
         public bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills)

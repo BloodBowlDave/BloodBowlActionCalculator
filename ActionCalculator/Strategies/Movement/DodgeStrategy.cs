@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies.Movement
         {
             var (player, action, i) = playerAction;
             var (success, failure) = action;
-            var (rerollSuccess, proSuccess, canUseSkill) = player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
 
             var useDivingTackle = action.UseDivingTackle && !usedSkills.Contains(Skills.DivingTackle);
             var useBreakTackleBeforeReroll = UseBreakTackleBeforeReroll(canUseSkill, action, r, usedSkills);
@@ -60,7 +60,7 @@ namespace ActionCalculator.Strategies.Movement
                 return;
             }
             
-            DodgeReroll(p * rerollSuccess, r - 1, i, usedSkills, failure, success, successUsingBreakTackle, failureWithDivingTackle);
+            DodgeReroll(p * lonerSuccess, r - 1, i, usedSkills, failure, success, successUsingBreakTackle, failureWithDivingTackle);
         }
 
         private static bool UseBreakTackleBeforeReroll(Func<Skills, Skills, bool> canUseSkill, Action action, int r, Skills usedSkills) =>

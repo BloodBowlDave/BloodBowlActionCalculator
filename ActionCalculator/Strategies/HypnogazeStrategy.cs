@@ -16,7 +16,7 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
         {
-            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
+            var ((lonerSuccess, proSuccess, canUseSkill), action, i) = playerAction;
             var (success, failure) = action;
 
             _actionMediator.Resolve(p * action.Success, r, i, usedSkills);
@@ -36,7 +36,8 @@ namespace ActionCalculator.Strategies
 
             if (r > 0 && action.RerollNonCriticalFailure)
             {
-                ExecuteReroll(p * rerollSuccess, r - 1, i, usedSkills, success, failure);
+                ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills, success, failure);
+                _actionMediator.Resolve(p * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                 return;
             }
 

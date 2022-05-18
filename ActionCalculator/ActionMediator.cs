@@ -31,7 +31,7 @@ namespace ActionCalculator
 
             if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction))
             {
-                if (previousActionType == ActionType.Tentacles && nonCriticalFailure)
+                if (previousActionType is ActionType.Tentacles or ActionType.Block && nonCriticalFailure)
                 {
                     return;
                 }

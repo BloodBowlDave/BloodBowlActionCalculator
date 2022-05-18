@@ -16,7 +16,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((rerollSuccess, proSuccess, canUseSkill), action, i) = playerAction;
+            var ((lonerSuccess, proSuccess, canUseSkill), action, i) = playerAction;
             var (success, failure) = action;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
@@ -44,7 +44,8 @@ namespace ActionCalculator.Strategies.BallHandling
 
             if (r > 0 && rerollInaccuratePass)
             {
-                ExecuteReroll(p * rerollSuccess, r - 1, i, usedSkills | Skills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
+                ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills | Skills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
+                _actionMediator.Resolve(p * inaccuratePass * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                 return;
             }
 
