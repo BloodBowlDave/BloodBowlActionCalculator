@@ -38,16 +38,18 @@ namespace ActionCalculator.Strategies.Blocking
                 
                 if (usePro)
                 {
-                    rollOutcomes.ProRolls++;
-
-                    if (nonCriticalFailureCount > 0)
+                    if (nonCriticalFailureCount == 0)
+                    {
+                        rollOutcomes.ProRolls++;
+                    }
+                    else
                     {
                         rollOutcomes.ProNonCriticalFailures++;
-                    }
 
-                    if (nonCriticalFailureCount > 1)
-                    {
-                        rollOutcomes.ProMultipleNonCriticalFailures++;
+                        if (numberOfDice > 1)
+                        {
+                            rollOutcomes.ProMultipleDiceNonCriticalFailures++;
+                        }
                     }
 
                     continue;

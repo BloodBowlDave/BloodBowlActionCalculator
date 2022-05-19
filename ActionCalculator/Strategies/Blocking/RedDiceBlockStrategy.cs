@@ -9,11 +9,11 @@ namespace ActionCalculator.Strategies.Blocking
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
         private readonly IBrawlerHelper _brawlerHelper;
-        private readonly Abstractions.ID6 _iD6;
+        private readonly ID6 _iD6;
         private readonly IRollOutcomeHelper _rollOutcomeHelper;
 
         public RedDiceBlockStrategy(IActionMediator actionMediator, IProHelper proHelper, IBrawlerHelper brawlerHelper, 
-            Abstractions.ID6 iD6, IRollOutcomeHelper rollOutcomeHelper)
+            ID6 iD6, IRollOutcomeHelper rollOutcomeHelper)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
@@ -25,11 +25,10 @@ namespace ActionCalculator.Strategies.Blocking
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var ((lonerSuccess, proSuccess, _), action, i) = playerAction;
-
-            var d6 = new[] { 6, 5, 4, 3, 2, 1 };
+            
             var numberOfSuccessfulResults = action.NumberOfSuccessfulResults;
-            var successfulValues = d6.Take(numberOfSuccessfulResults).ToList();
-            var nonCriticalFailureValues = d6.Skip(numberOfSuccessfulResults).Take(action.NumberOfNonCriticalFailures).ToList();
+            var successfulValues = _iD6.Rolls().Take(numberOfSuccessfulResults).ToList();
+            var nonCriticalFailureValues = _iD6.Rolls().Skip(numberOfSuccessfulResults).Take(action.NumberOfNonCriticalFailures).ToList();
             var numberOfDice = -action.NumberOfDice;
             var rolls = _iD6.Rolls(numberOfDice);
             var rollCount = rolls.Count;

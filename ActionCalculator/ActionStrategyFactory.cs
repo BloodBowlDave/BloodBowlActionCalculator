@@ -21,13 +21,13 @@ namespace ActionCalculator
                 ActionType.Pass => new PassStrategy(actionMediator, new ProHelper()),
                 ActionType.ThrowTeamMate => new PassStrategy(actionMediator, new ProHelper()),
                 ActionType.Block => action.NumberOfDice > 0 
-                    ? new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6(), new RollOutcomeHelper())
-                    : new RedDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new ID6(), new RollOutcomeHelper()),
+                    ? new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new D6(), new RollOutcomeHelper())
+                    : new RedDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new D6(), new RollOutcomeHelper()),
                 ActionType.Catch => nonCriticalFailure
                     ? new CatchInaccuratePassStrategy(actionMediator, new ProHelper())
                     : new CatchStrategy(actionMediator, new ProHelper()),
-                ActionType.Foul => new FoulStrategy(actionMediator, new ID6()),
-                ActionType.ArmourBreak => new ArmourBreakStrategy(actionMediator, new ID6()),
+                ActionType.Foul => new FoulStrategy(actionMediator, new D6()),
+                ActionType.ArmourBreak => new ArmourBreakStrategy(actionMediator, new D6()),
                 ActionType.NonRerollable => new NonRerollableStrategy(actionMediator),
                 ActionType.Dauntless => new DauntlessStrategy(actionMediator, new ProHelper()),
                 ActionType.Interception => new InterceptionStrategy(actionMediator),
@@ -35,7 +35,7 @@ namespace ActionCalculator
                 ActionType.Shadowing => new ShadowingActionStrategy(actionMediator, new ProHelper()),
                 ActionType.ArgueTheCall => new ArgueTheCallStrategy(actionMediator),
                 ActionType.Bribe => new BribeStrategy(actionMediator),
-                ActionType.Injury => new InjuryStrategy(actionMediator, new ID6()),
+                ActionType.Injury => new InjuryStrategy(actionMediator, new D6()),
                 ActionType.Landing => new LandingStrategy(actionMediator, new ProHelper()),
                 ActionType.HailMaryPass => new HailMaryPassStrategy(actionMediator, new ProHelper()),
                 ActionType.Hypnogaze => new HypnogazeStrategy(actionMediator, new ProHelper()),

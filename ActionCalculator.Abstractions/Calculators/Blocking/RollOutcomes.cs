@@ -9,7 +9,7 @@
         public int BrawlerAndProRolls { get; set; }
         public int NonCriticalFailures { get; set; }
         public int ProNonCriticalFailures { get; set; }
-        public int ProMultipleNonCriticalFailures { get; set; }
+        public int ProMultipleDiceNonCriticalFailures { get; set; }
     }
 
 }

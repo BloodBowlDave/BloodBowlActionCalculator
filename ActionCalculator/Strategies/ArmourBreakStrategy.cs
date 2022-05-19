@@ -7,10 +7,10 @@ namespace ActionCalculator.Strategies
     public class ArmourBreakStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly Abstractions.ID6 _iD6;
+        private readonly ID6 _iD6;
         private const Skills SkillsAffectingArmour = Skills.Ram | Skills.MightyBlow | Skills.Slayer | Skills.CrushingBlow;
 
-        public ArmourBreakStrategy(IActionMediator actionMediator, Abstractions.ID6 iD6)
+        public ArmourBreakStrategy(IActionMediator actionMediator, ID6 iD6)
         {
             _actionMediator = actionMediator;
             _iD6 = iD6;

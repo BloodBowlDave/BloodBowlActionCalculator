@@ -13,7 +13,7 @@ namespace ActionCalculator.Tests
         {
             _actionCalculator = new ActionCalculator(
                 new CalculationBuilder(
-                    new ActionBuilder(new ID6()),
+                    new ActionBuilder(new D6()),
                     new PlayerBuilder()),
                 new ProbabilityComparer(),
                 new ActionMediator(
@@ -44,9 +44,9 @@ namespace ActionCalculator.Tests
         [InlineData("B,P:1D1", 1, 0.19444, 0.30556)]
         [InlineData("B,P:1D1^", 1, 0.19444, 0.30556)]
         [InlineData("B,P:1D1^*", 0, 0.26852)]
-        [InlineData("B,P:3D2", 0, 0.81396)]
+        //[InlineData("B,P:3D2", 0, 0.81396)]
         [InlineData("B,P:3D2", 1, 0.70370, 0.91221)]
-        [InlineData("B,P:3D2^*", 0, 0.81396)]
+        //[InlineData("B,P:3D2^*", 0, 0.81396)]
         //frenzy
         [InlineData("1D3!2{1D3}", 0, 0.66667)]
         [InlineData("1D3!2{1D3}", 1, 0.50000, 0.83333)]
@@ -58,6 +58,9 @@ namespace ActionCalculator.Tests
         [InlineData("2D2!2'{-2D2}", 1, 0.59259, 0.69136)]
         [InlineData("-2D2!2{1D2}", 1, 0.11111, 0.30864)]
         [InlineData("-2D2!2'{1D2}", 1, 0.22222, 0.41975)]
+        [InlineData("P:2D2!2{1D2}", 1, 0.55556, 0.87380)]
+        [InlineData("P:2D2!2*{1D2}", 1, 0.74897, 0.81207)]
+        [InlineData("P:2D2!2*'{1D2}", 1, 0.79835, 0.89438)]
         //brawler
         [InlineData("B,P:-2D2", 0, 0.23663)]
         [InlineData("B,P:-2D2", 1, 0.23663, 0.26440)]

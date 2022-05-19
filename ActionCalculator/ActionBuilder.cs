@@ -6,9 +6,9 @@ namespace ActionCalculator
 {
     public class ActionBuilder : IActionBuilder
     {
-        private readonly Abstractions.ID6 _iD6;
+        private readonly ID6 _iD6;
 
-        public ActionBuilder(Abstractions.ID6 iD6)
+        public ActionBuilder(ID6 iD6)
         {
             _iD6 = iD6;
         }

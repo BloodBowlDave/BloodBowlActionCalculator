@@ -6,9 +6,9 @@ namespace ActionCalculator.Strategies.Fouling
     public class FoulStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly Abstractions.ID6 _iD6;
+        private readonly ID6 _iD6;
 
-        public FoulStrategy(IActionMediator actionMediator, Abstractions.ID6 iD6)
+        public FoulStrategy(IActionMediator actionMediator, ID6 iD6)
         {
             _actionMediator = actionMediator;
             _iD6 = iD6;

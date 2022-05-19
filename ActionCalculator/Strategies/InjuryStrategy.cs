@@ -7,11 +7,11 @@ namespace ActionCalculator.Strategies
     public class InjuryStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly Abstractions.ID6 _iD6;
+        private readonly ID6 _iD6;
         private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer | Skills.DirtyPlayer;
 
 
-        public InjuryStrategy(IActionMediator actionMediator, Abstractions.ID6 iD6)
+        public InjuryStrategy(IActionMediator actionMediator, ID6 iD6)
         {
             _actionMediator = actionMediator;
             _iD6 = iD6;

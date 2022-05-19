@@ -2,16 +2,17 @@
 
 namespace ActionCalculator
 {
-    public class ID6 : Abstractions.ID6
+    public class D6 : Abstractions.ID6
     {
         private readonly List<List<int>>[] _rolls;
+        private static readonly List<int> D6Rolls = new() {6, 5, 4, 3, 2, 1};
 
-        public ID6()
+        public D6()
         {
             _rolls = GenerateRolls().ToArray();
         }
 
-        private static IEnumerable<List<List<int>>> GenerateRolls()
+        private IEnumerable<List<List<int>>> GenerateRolls()
         {
             for (var i = 1; i <= 3; i++)
             {
@@ -19,12 +20,14 @@ namespace ActionCalculator
 
                 for (var j = 0; j < i; j++)
                 {
-                    rolls.Add(new List<int> { 1, 2, 3, 4, 5, 6 });
+                    rolls.Add(D6Rolls);
                 }
 
                 yield return rolls.GetCombinationsOfLists().ToList();
             }
         }
+
+        public IEnumerable<int> Rolls() => D6Rolls;
 
         public List<List<int>> Rolls(int numberOfDice) => _rolls[numberOfDice - 1];
 

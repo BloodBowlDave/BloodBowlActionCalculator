@@ -16,7 +16,7 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
+            var ((lonerSuccess, proSuccess, _), (success, failure), i) = playerAction;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
