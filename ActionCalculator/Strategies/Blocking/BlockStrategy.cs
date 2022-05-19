@@ -69,24 +69,22 @@ namespace ActionCalculator.Strategies.Blocking
 
             var failureOnOnDie = 1 - successOnOneDie - nonCriticalFailureOnOneDie;
             var proRolls = rollOutcomes.ProRolls;
-            var proRollsAfterBrawler = rollOutcomes.BrawlerAndProRolls;
+            var brawlerAndProRolls = rollOutcomes.BrawlerAndProRolls;
 
             _actionMediator.Resolve(p * proRolls * proSuccess * successOnOneDie, r, i, usedSkills);
             _actionMediator.Resolve(p * proRolls * proSuccess * nonCriticalFailureOnOneDie, r, i, usedSkills, true);
-            //_actionMediator.Resolve(p * proRollsAfterBrawler * failureOnOnDie * proSuccess * successOnOneDie, r, i, usedSkills);
-            //_actionMediator.Resolve(p * proRollsAfterBrawler * failureOnOnDie * proSuccess * nonCriticalFailureOnOneDie, r, i, usedSkills, true);
-            //_actionMediator.Resolve(p * proRollsAfterBrawler * nonCriticalFailureOnOneDie * proSuccess * failureOnOnDie, r, i, usedSkills, true);
-            //_actionMediator.Resolve(p * proRollsAfterBrawler * nonCriticalFailureOnOneDie * proSuccess * nonCriticalFailureOnOneDie, r, i, usedSkills, true);
+            _actionMediator.Resolve(p * brawlerAndProRolls * failureOnOnDie * proSuccess * successOnOneDie, r, i, usedSkills);
 
             var proFailure = 1 - proSuccess;
             var proNonCriticalFailures = rollOutcomes.ProNonCriticalFailures;
 
             if (rerollNonCriticalFailure)
             {
+                var proMultipleDiceNonCriticalFailures = rollOutcomes.ProMultipleDiceNonCriticalFailures;
                 _actionMediator.Resolve(p * proNonCriticalFailures * proSuccess * successOnOneDie, r, i, usedSkills);
                 _actionMediator.Resolve(p * proNonCriticalFailures * proFailure, r, i, usedSkills, true);
                 _actionMediator.Resolve(p * proNonCriticalFailures * proSuccess * nonCriticalFailureOnOneDie, r, i, usedSkills, true);
-                _actionMediator.Resolve(p * rollOutcomes.ProMultipleDiceNonCriticalFailures * proSuccess * failureOnOnDie, r, i, usedSkills, true);
+                _actionMediator.Resolve(p * proMultipleDiceNonCriticalFailures * proSuccess * failureOnOnDie, r, i, usedSkills, true);
             }
             else
             {

@@ -1,4 +1,5 @@
-﻿using ActionCalculator.Abstractions.Calculators.Blocking;
+﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Calculators.Blocking;
 
 namespace ActionCalculator.Strategies.Blocking
 {
@@ -11,6 +12,8 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 throw new ArgumentOutOfRangeException(nameof(numberOfDice));
             }
+
+            var outcomes = new Dictionary<Tuple<int, Skills>, List<Tuple<decimal, List<int>>>>();
 
             var rollOutcomes = new RollOutcomes();
 
@@ -99,6 +102,11 @@ namespace ActionCalculator.Strategies.Blocking
                     else if (usePro)
                     {
                         rollOutcomes.ProRolls++;
+
+                        if (nonCriticalFailureCount == 1)
+                        {
+                            rollOutcomes.ProNonCriticalFailures++;
+                        }
                     }
                     else if (nonCriticalFailureCount == 1)
                     {
