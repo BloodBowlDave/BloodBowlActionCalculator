@@ -63,7 +63,7 @@ namespace ActionCalculator.Tests
         [InlineData("P:2D2!2*'{1D2}", 1, 0.69959, 0.77915)]
         //brawler
         [InlineData("B,P:-2D2", 0, 0.23663)]
-        [InlineData("B,P:-2D2", 1, 0.23663, 0.26440)]
+        [InlineData("B,P:-2D2", 1, 0.22222, 0.27160)]
         [InlineData("B,P:-2D2^*", 1, 0.23663, 0.26440)]
         [InlineData("B,P:-3D3", 1, 0.30556, 0.34201)]
         [InlineData("B:-2D2", 1, 0.14815, 0.23457)]

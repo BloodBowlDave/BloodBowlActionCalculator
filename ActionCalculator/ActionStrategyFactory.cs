@@ -21,8 +21,8 @@ namespace ActionCalculator
                 ActionType.Pass => new PassStrategy(actionMediator, new ProHelper()),
                 ActionType.ThrowTeamMate => new PassStrategy(actionMediator, new ProHelper()),
                 ActionType.Block => action.NumberOfDice > 0 
-                    ? new BlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new D6(), new RollOutcomeHelper())
-                    : new RedDiceBlockStrategy(actionMediator, new ProHelper(), new BrawlerHelper(new ProHelper()), new D6(), new RollOutcomeHelper()),
+                    ? new BlockStrategy(actionMediator, new RollOutcomeHelper(new BrawlerHelper(new ProHelper()), new ProHelper(), new D6()))
+                    : new RedDiceBlockStrategy(actionMediator, new RollOutcomeHelper(new BrawlerHelper(new ProHelper()), new ProHelper(), new D6())),
                 ActionType.Catch => nonCriticalFailure
                     ? new CatchInaccuratePassStrategy(actionMediator, new ProHelper())
                     : new CatchStrategy(actionMediator, new ProHelper()),
