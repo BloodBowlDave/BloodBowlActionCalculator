@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Utilities;
 
@@ -15,12 +16,15 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var (player, action, i) = playerAction;
-            var (success, failure) = action;
+            var player = playerAction.Player;
+            var action = (NonRerollableAction) playerAction.Action;
+            var success = action.Success;
+            var failure = action.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * action.Success, r, i, usedSkills, nonCriticalFailure);
 
-            if (player.CanUseSkill(Skills.WhirlingDervish, usedSkills) && !usedSkills.Contains(Skills.WhirlingDervish) && action.Modifier == 6)
+            if (player.CanUseSkill(Skills.WhirlingDervish, usedSkills) && !usedSkills.Contains(Skills.WhirlingDervish) && action.Denominator == 6)
             {
                 _actionMediator.Resolve(p * failure * success, r, i, usedSkills | Skills.WhirlingDervish);
             }

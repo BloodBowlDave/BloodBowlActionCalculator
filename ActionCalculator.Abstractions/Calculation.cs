@@ -22,8 +22,8 @@ namespace ActionCalculator.Abstractions
                 var player = playerAction.Player;
                 var action = playerAction.Action;
                 var currentPlayerId = player.Id;
-                var requiresNonCriticalFailure = action.RequiresNonCriticalFailure;
-                var requiresDauntlessFailure = action.RequiresDauntlessFailure;
+                var requiresNonCriticalFailure = playerAction.RequiresNonCriticalFailure;
+                var requiresDauntlessFailure = false;
                 var branchTerminatesCalculation = BranchTerminatesCalculation(playerAction);
                 var isStartOfAlternateBranch = IsStartOfAlternateBranch(playerAction);
 
@@ -95,13 +95,13 @@ namespace ActionCalculator.Abstractions
 
                 var isEndOfAlternateBranches = IsEndOfAlternateBranches(playerAction);
 
-                if (action.EndOfBranch)
+                if (playerAction.EndOfBranch)
                 {
                     var depthDifference = playerAction.Depth - DepthOfNextAction(playerAction);
 
                     for (var i = 0; i < depthDifference; i++)
                     {
-                        sb.Append(action.TerminatesCalculation ? ']' : '}');
+                        sb.Append(playerAction.TerminatesCalculation ? ']' : '}');
                     }
                 }
                 else if (isEndOfAlternateBranches)
@@ -134,6 +134,6 @@ namespace ActionCalculator.Abstractions
             playerAction.BranchId > 0 && !PlayerActions.Any(x => x.BranchId == playerAction.BranchId && x.Index < playerAction.Index);
 
         private bool BranchTerminatesCalculation(PlayerAction playerAction) =>
-            PlayerActions.LastOrDefault(x => x.Index > playerAction.Index && x.Depth >= playerAction.Depth)?.Action.TerminatesCalculation ?? false;
+            PlayerActions.LastOrDefault(x => x.Index > playerAction.Index && x.Depth >= playerAction.Depth)?.TerminatesCalculation ?? false;
     }
 }

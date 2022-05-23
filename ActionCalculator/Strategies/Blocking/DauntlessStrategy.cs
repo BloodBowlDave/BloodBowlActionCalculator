@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies.Blocking
@@ -16,14 +17,18 @@ namespace ActionCalculator.Strategies.Blocking
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), action, i) = playerAction;
-            var (success, failure) = action;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var dauntless = (Dauntless) playerAction.Action;
+            var success = dauntless.Success;
+            var failure = dauntless.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             p *= failure;
 
-            if (action.RerollNonCriticalFailure)
+            if (dauntless.RerollFailure)
             {
                 if (canUseSkill(Skills.BlindRage, usedSkills))
                 {
@@ -31,7 +36,7 @@ namespace ActionCalculator.Strategies.Blocking
                     return;
                 }
 
-                if (_proHelper.UsePro(playerAction, r, usedSkills))
+                if (_proHelper.UsePro(player, dauntless, r, usedSkills, success, success))
                 {
                     ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                     return;
@@ -45,7 +50,7 @@ namespace ActionCalculator.Strategies.Blocking
                 }
             }
 
-            if (action.UsePro && _proHelper.UsePro(playerAction, r, usedSkills))
+            if (dauntless.UsePro && _proHelper.UsePro(player, dauntless, r, usedSkills, success, success))
             {
                 ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                 return;

@@ -2,6 +2,6 @@
 {
     public interface IProHelper
     {
-        bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successWithPro = null, decimal? successWithReroll = null);
+        bool UsePro(Player player, Action action, int r, Skills usedSkills, decimal successWithPro, decimal successWithReroll);
     }
 }

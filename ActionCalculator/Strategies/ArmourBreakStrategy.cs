@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Utilities;
 
@@ -18,13 +19,15 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var (player, action, i) = playerAction;
+            var player = playerAction.Player;
             var (_, proSuccess, canUseSkill) = player;
+            var armourBreak = (ArmourBreak) playerAction.Action;
+            var i = playerAction.Index;
 
-            var armourRoll = action.OriginalRoll;
+            var roll = armourBreak.Roll;
             var useOldPro = canUseSkill(Skills.OldPro, usedSkills);
 
-            if (canUseSkill(Skills.Claw, usedSkills) && armourRoll >= 8)
+            if (canUseSkill(Skills.Claw, usedSkills) && roll >= 8)
             {
                 var success = _iD6.Success(2, 8);
                 _actionMediator.Resolve(p * success, r, i, usedSkills);
@@ -41,7 +44,7 @@ namespace ActionCalculator.Strategies
                 return;
             }
 
-            var skillsWithMinimumRoll = GetSkillsWithMinimumRoll(player, usedSkills, armourRoll);
+            var skillsWithMinimumRoll = GetSkillsWithMinimumRoll(player, usedSkills, roll);
             var succeedWithPreviousSkills = 0m;
 
             foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
@@ -89,7 +92,7 @@ namespace ActionCalculator.Strategies
             return successesWithOldPro;
         }
 
-        private static Dictionary<Skills, int> GetSkillsWithMinimumRoll(Player player, Skills usedSkills, int armourRoll)
+        private static Dictionary<Skills, int> GetSkillsWithMinimumRoll(Player player, Skills usedSkills, int roll)
         {
             var previousMinimumRoll = 99;
             var skillsWithMinimumRoll = new Dictionary<Skills, int>();
@@ -97,7 +100,7 @@ namespace ActionCalculator.Strategies
             foreach (var skillCombination in GetSkillCombinations(player, usedSkills))
             {
                 var modifier = skillCombination.Sum(x => x.Item2);
-                var minimumRoll = armourRoll - modifier;
+                var minimumRoll = roll - modifier;
 
                 if (minimumRoll >= previousMinimumRoll)
                 {

@@ -5,13 +5,13 @@ namespace ActionCalculator
 {
     public class CalculationBuilder : ICalculationBuilder
     {
-        private readonly IActionBuilder _actionBuilder;
+        private readonly IActionBuilderFactory _actionBuilderFactory;
         private readonly IPlayerBuilder _playerBuilder;
         private readonly List<PlayerAction> _playerActions = new();
 
-        public CalculationBuilder(IActionBuilder actionBuilder, IPlayerBuilder playerBuilder)
+        public CalculationBuilder(IActionBuilderFactory actionBuilderFactory, IPlayerBuilder playerBuilder)
         {
-            _actionBuilder = actionBuilder;
+            _actionBuilderFactory = actionBuilderFactory;
             _playerBuilder = playerBuilder;
         }
 
@@ -99,12 +99,12 @@ namespace ActionCalculator
 
             if (branchLength > 0)
             {
-                _playerActions[calculationLength].Action.RequiresNonCriticalFailure = true;
-                _playerActions[calculationLength + branchLength - 1].Action.EndOfBranch = true;
+                _playerActions[calculationLength].RequiresNonCriticalFailure = true;
+                _playerActions[calculationLength + branchLength - 1].EndOfBranch = true;
 
                 if (terminatesCalculation)
                 {
-                    _playerActions[calculationLength + branchLength - 1].Action.TerminatesCalculation = true;
+                    _playerActions[calculationLength + branchLength - 1].TerminatesCalculation = true;
                 }
             }
 
@@ -148,16 +148,16 @@ namespace ActionCalculator
             {
                 var actionSplit = actionString.Split('|');
 
-                yield return _actionBuilder.Build(actionSplit[0]);
+                yield return _actionBuilderFactory.GetActionBuilder(actionSplit[0]).Build(actionSplit[0]);
 
                 if (actionSplit.Length == 1)
                 {
                     continue;
                 }
 
-                var action = _actionBuilder.Build(actionSplit[1]);
-                action.RequiresNonCriticalFailure = true;
-                action.RequiresDauntlessFailure = true;
+                var action = _actionBuilderFactory.GetActionBuilder(actionSplit[1]).Build(actionSplit[0]);
+                //action.RequiresNonCriticalFailure = true;
+                //action.RequiresDauntlessFailure = true;
 
                 yield return action;
             }

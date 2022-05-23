@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies.Movement
@@ -16,20 +17,24 @@ namespace ActionCalculator.Strategies.Movement
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, _), action, i) = playerAction;
-            var (success, failure) = action;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, _) = player;
+            var action = (Shadowing) playerAction.Action;
+            var success = action.Success;
+            var failure = action.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             p *= action.Failure;
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, action, r, usedSkills, success, success))
             {
                 ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess, success, failure);
                 return;
             }
 
-            if (r > 0 && action.RerollNonCriticalFailure)
+            if (r > 0 && action.RerollFailure)
             {
                 ExecuteReroll(p, r - 1, i, usedSkills, lonerSuccess, success, failure);
                 return;

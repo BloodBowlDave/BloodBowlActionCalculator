@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies
@@ -16,25 +17,29 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), action, i) = playerAction;
-            var (success, failure) = action;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var hypnogaze = (Hypnogaze) playerAction.Action;
+            var success = hypnogaze.Success;
+            var failure = hypnogaze.Failure;
+            var i = playerAction.Index;
 
-            _actionMediator.Resolve(p * action.Success, r, i, usedSkills);
+            _actionMediator.Resolve(p * hypnogaze.Success, r, i, usedSkills);
 
-            p *= action.Failure;
+            p *= hypnogaze.Failure;
 
             if (canUseSkill(Skills.MesmerisingDance, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills, success, failure);
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, hypnogaze, r, usedSkills, success, success))
             {
                 ExecuteReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, success, failure);
                 return;
             }
 
-            if (r > 0 && action.RerollNonCriticalFailure)
+            if (r > 0 && hypnogaze.RerollFailure)
             {
                 ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills, success, failure);
                 _actionMediator.Resolve(p * (1 - lonerSuccess), r - 1, i, usedSkills, true);

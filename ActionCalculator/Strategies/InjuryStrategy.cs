@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Utilities;
 
@@ -19,9 +20,11 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var (player, action, i) = playerAction;
+            var player = playerAction.Player;
+            var action = (Injury) playerAction.Action;
+            var i = playerAction.Index;
             var modifier = GetModifier(player, usedSkills);
-            var success = _iD6.Success(2, action.OriginalRoll - modifier);
+            var success = _iD6.Success(2, action.Roll - modifier);
 
             _actionMediator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
 

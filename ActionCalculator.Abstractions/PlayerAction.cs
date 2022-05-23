@@ -9,18 +9,13 @@
             Depth = depth;
         }
 
-
         public Player Player { get; }
         public Action Action { get; }
         public int Index { get; set; }
         public int Depth { get; }
         public int BranchId { get; set; }
-
-        public void Deconstruct(out Player player, out Action action, out int index)
-        {
-            player = Player;
-            action = Action;
-            index = Index;
-        }
+        public bool RequiresNonCriticalFailure { get; set; }
+        public bool EndOfBranch { get; set; }
+        public bool TerminatesCalculation { get; set; }
     }
 }

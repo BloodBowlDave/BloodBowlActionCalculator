@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies.BallHandling
@@ -16,7 +17,12 @@ namespace ActionCalculator.Strategies.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var pickUp = playerAction.Action;
+            var success = pickUp.Success;
+            var failure = pickUp.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
@@ -28,7 +34,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, pickUp, r, usedSkills, success, success))
             {
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;

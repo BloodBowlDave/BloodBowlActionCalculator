@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies.Fouling
@@ -12,14 +13,15 @@ namespace ActionCalculator.Strategies.Fouling
             _actionMediator = actionMediator;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool doubleOnFoul = false)
         {
-            var (_, action, i) = playerAction;
+            var argueTheCall = (ArgueTheCall) playerAction.Action;
+            var i = playerAction.Index;
 
-            if (nonCriticalFailure)
+            if (doubleOnFoul)
             {
-                _actionMediator.Resolve(p * action.Success, r, i, usedSkills);
-                _actionMediator.Resolve(p * action.NonCriticalFailureOnOneDie, r, i, usedSkills, true);
+                _actionMediator.Resolve(p * argueTheCall.Success, r, i, usedSkills);
+                _actionMediator.Resolve(p * argueTheCall.Failure, r, i, usedSkills, true);
                 return;
             }
 

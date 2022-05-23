@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies.Movement
@@ -16,7 +17,12 @@ namespace ActionCalculator.Strategies.Movement
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), (success, failure), i) = playerAction;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var rush = (Rush) playerAction.Action;
+            var success = rush.Success;
+            var failure = rush.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
@@ -28,7 +34,7 @@ namespace ActionCalculator.Strategies.Movement
                 return;
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, rush, r, usedSkills, success, success))
             {
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;

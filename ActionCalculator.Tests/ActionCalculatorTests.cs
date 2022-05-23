@@ -1,5 +1,4 @@
 using ActionCalculator.Abstractions;
-using ActionCalculator.Strategies;
 using ActionCalculator.Utilities;
 using Xunit;
 
@@ -13,7 +12,7 @@ namespace ActionCalculator.Tests
         {
             _actionCalculator = new ActionCalculator(
                 new CalculationBuilder(
-                    new ActionBuilder(new D6()),
+                    new ActionBuilderFactory(new D6()),
                     new PlayerBuilder()),
                 new ProbabilityComparer(),
                 new ActionMediator(

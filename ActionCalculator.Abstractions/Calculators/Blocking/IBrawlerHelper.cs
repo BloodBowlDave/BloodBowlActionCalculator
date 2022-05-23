@@ -1,8 +1,10 @@
-﻿namespace ActionCalculator.Abstractions.Calculators.Blocking
+﻿using ActionCalculator.Abstractions.Actions;
+
+namespace ActionCalculator.Abstractions.Calculators.Blocking
 {
     public interface IBrawlerHelper
     {
-        bool UseBrawler(int r, PlayerAction playerAction, Skills usedSkills);
-        bool UseBrawlerAndPro(int r, PlayerAction playerAction, Skills usedSkills);
+        bool UseBrawler(Player player, Block block, int r, Skills usedSkills, decimal successOnOneDie, decimal success);
+        bool UseBrawlerAndPro(Player player, Block block, int r, Skills usedSkills, decimal successOnOneDie, decimal success);
     }
 }

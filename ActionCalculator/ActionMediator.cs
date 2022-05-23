@@ -41,17 +41,18 @@ namespace ActionCalculator
             }
 
             var playerAction = _context.Calculation.PlayerActions[i + 1];
-            var (player, action, _) = playerAction;
+            var player = playerAction.Player;
+            var action = playerAction.Action;
 
             if (nonCriticalFailure)
             {
                 if (PlayerSentOff(previousActionType, action.ActionType) || !NonCriticalFailureSupported(previousActionType)
-                    && !action.RequiresNonCriticalFailure)
+                    && !playerAction.RequiresNonCriticalFailure)
                 {
                     return;
                 }
             }
-            else if (action.RequiresNonCriticalFailure)
+            else if (playerAction.RequiresNonCriticalFailure)
             {
                 playerAction = GetNextValidPlayerAction(playerAction);
 
@@ -90,7 +91,7 @@ namespace ActionCalculator
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
         private bool IsEndOfCalculation(PlayerAction playerAction) =>
-            playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.Action.TerminatesCalculation;
+            playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.TerminatesCalculation;
 
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
@@ -105,7 +106,7 @@ namespace ActionCalculator
 
         private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x =>
-                (x.Depth < playerAction.Depth || playerAction.Action.RequiresDauntlessFailure) && x.Index > playerAction.Index);
+                (x.Depth < playerAction.Depth /*|| playerAction.Action.RequiresDauntlessFailure*/) && x.Index > playerAction.Index);
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
             previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass

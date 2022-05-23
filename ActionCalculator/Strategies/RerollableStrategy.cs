@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies
@@ -16,13 +17,18 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, _), (success, failure), i) = playerAction;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, _) = player;
+            var action = (RerollableAction) playerAction.Action;
+            var success = action.Success;
+            var failure = action.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             p *= failure * success;
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, action, r, usedSkills, success, success))
             {
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;

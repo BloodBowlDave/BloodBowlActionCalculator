@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 
 namespace ActionCalculator.Strategies.BallHandling
@@ -16,24 +17,28 @@ namespace ActionCalculator.Strategies.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), action, i) = playerAction;
-            var (success, failure) = action;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var pass = (Pass) playerAction.Action;
+            var success = pass.Success;
+            var failure = pass.Failure;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
-            var inaccuratePass = action.NonCriticalFailureOnOneDie;
-            var rerollInaccuratePass = action.RerollNonCriticalFailure;
+            var inaccuratePass = pass.InaccuratePass;
+            var rerollInaccuratePass = pass.RerollInaccuratePass;
             var accuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * success;
             var inaccuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * inaccuratePass;
             var inaccuratePassWithoutReroll = rerollInaccuratePass ? 0m : inaccuratePass;
 
-            if (canUseSkill(Skills.Pass, usedSkills) && action.ActionType == ActionType.Pass || canUseSkill(Skills.TheBallista, usedSkills))
+            if (canUseSkill(Skills.Pass, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills, accuratePassAfterFailure, inaccuratePassWithoutReroll + inaccuratePassAfterFailure);
                 return;
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, pass, r, usedSkills, success, success))
             {
                 _actionMediator.Resolve(inaccuratePassWithoutReroll, r, i, usedSkills, true);
 

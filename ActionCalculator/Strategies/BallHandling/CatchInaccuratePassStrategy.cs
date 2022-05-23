@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Utilities;
 
@@ -21,9 +22,10 @@ namespace ActionCalculator.Strategies.BallHandling
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var (player, action, _) = playerAction;
+            var player = playerAction.Player;
+            var @catch = (Catch) playerAction.Action;
 
-            var roll = action.OriginalRoll + 1 + (player.CanUseSkill(Skills.DivingCatch, usedSkills) ? 1 : 0);
+            var roll = @catch.Roll + 1 + (player.CanUseSkill(Skills.DivingCatch, usedSkills) ? 1 : 0);
 
             var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
             var failure = 1 - success;
@@ -56,7 +58,9 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var failDivingCatch = failure * failure;
 
-            var ((lonerSuccess, proSuccess, canUseSkill), _, i) = playerAction;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var i = playerAction.Index;
 
             if (canUseSkill(Skills.Catch, usedSkills))
             {
@@ -65,7 +69,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
             {
                 p *= failDivingCatch * proSuccess * ScatterThenBounce;
                 usedSkills |= Skills.Pro;
@@ -91,7 +95,10 @@ namespace ActionCalculator.Strategies.BallHandling
 
         private void Catch(decimal p, int r, PlayerAction playerAction, Skills usedSkills, decimal successNoReroll, decimal successWithReroll)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), _, i) = playerAction;
+            var player = playerAction.Player;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
+            var success = playerAction.Action.Success;
+            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * successNoReroll, r, i, usedSkills);
 
@@ -103,7 +110,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(playerAction, r, usedSkills))
+            if (_proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
             {
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;

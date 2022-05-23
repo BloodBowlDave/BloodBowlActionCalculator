@@ -1,4 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Strategies;
 using ActionCalculator.Strategies.BallHandling;
@@ -20,9 +21,9 @@ namespace ActionCalculator
                 ActionType.PickUp => new PickUpStrategy(actionMediator, new ProHelper()),
                 ActionType.Pass => new PassStrategy(actionMediator, new ProHelper()),
                 ActionType.ThrowTeamMate => new PassStrategy(actionMediator, new ProHelper()),
-                ActionType.Block => action.NumberOfDice > 0 
-                    ? new BlockStrategy(actionMediator, new RollOutcomeHelper(new BrawlerHelper(new ProHelper()), new ProHelper(), new D6()))
-                    : new RedDiceBlockStrategy(actionMediator, new RollOutcomeHelper(new BrawlerHelper(new ProHelper()), new ProHelper(), new D6())),
+                ActionType.Block => ((Block)action).NumberOfDice > 0 
+                    ? new BlockStrategy(actionMediator, new BrawlerHelper(new ProHelper()), new ProHelper(), new D6())
+                    : new RedDiceBlockStrategy(actionMediator, new BrawlerHelper(new ProHelper()), new ProHelper(), new D6()),
                 ActionType.Catch => nonCriticalFailure
                     ? new CatchInaccuratePassStrategy(actionMediator, new ProHelper())
                     : new CatchStrategy(actionMediator, new ProHelper()),

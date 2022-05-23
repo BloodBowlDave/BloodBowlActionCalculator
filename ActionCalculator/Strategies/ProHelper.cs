@@ -1,14 +1,14 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
+using Action = ActionCalculator.Abstractions.Action;
 
 namespace ActionCalculator.Strategies
 {
     public class ProHelper : IProHelper
     {
-        public bool UsePro(PlayerAction playerAction, int r, Skills usedSkills, decimal? successWithPro, decimal? successWithReroll)
+        public bool UsePro(Player player, Action action, int r, Skills usedSkills, decimal successWithPro, decimal successWithReroll)
         {
-            var ((lonerSuccess, proSuccess, canUseSkill), action, _) = playerAction;
-            var success = action.Success;
+            var (lonerSuccess, proSuccess, canUseSkill) = player;
 
             if (!canUseSkill(Skills.Pro, usedSkills) && !canUseSkill(Skills.ConsummateProfessional, usedSkills))
             {
@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies
                 return true;
             }
 
-            return r == 0 || proSuccess * (successWithPro ?? action.SuccessOnOneDie) >= lonerSuccess * (successWithReroll ?? success);
+            return r == 0 || proSuccess * successWithPro >= lonerSuccess * successWithReroll;
         }
     }
 }
