@@ -1,12 +1,13 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
+using ActionCalculator.Models.Actions;
 using ActionCalculator.Strategies;
 using ActionCalculator.Strategies.BallHandling;
 using ActionCalculator.Strategies.Blocking;
 using ActionCalculator.Strategies.Fouling;
 using ActionCalculator.Strategies.Movement;
-using Action = ActionCalculator.Abstractions.Action;
+using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator
 {
@@ -20,7 +21,7 @@ namespace ActionCalculator
                 ActionType.Rush => new RushActionStrategy(actionMediator, new ProHelper()),
                 ActionType.PickUp => new PickUpStrategy(actionMediator, new ProHelper()),
                 ActionType.Pass => new PassStrategy(actionMediator, new ProHelper()),
-                ActionType.ThrowTeamMate => new PassStrategy(actionMediator, new ProHelper()),
+                ActionType.ThrowTeamMate => new ThrowTeamMateStrategy(actionMediator, new ProHelper()),
                 ActionType.Block => ((Block)action).NumberOfDice > 0 
                     ? new BlockStrategy(actionMediator, new BrawlerHelper(new ProHelper()), new ProHelper(), new D6())
                     : new RedDiceBlockStrategy(actionMediator, new BrawlerHelper(new ProHelper()), new ProHelper(), new D6()),

@@ -1,6 +1,6 @@
-﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Calculators;
-using Action = ActionCalculator.Abstractions.Action;
+﻿using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
+using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Strategies
 {

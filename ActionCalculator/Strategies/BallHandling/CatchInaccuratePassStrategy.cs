@@ -1,6 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
 using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.BallHandling
@@ -23,9 +23,9 @@ namespace ActionCalculator.Strategies.BallHandling
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
-            var @catch = (Catch) playerAction.Action;
+            var action = playerAction.Action;
 
-            var roll = @catch.Roll + 1 + (player.CanUseSkill(Skills.DivingCatch, usedSkills) ? 1 : 0);
+            var roll = action.Roll + 1 + (player.CanUseSkill(Skills.DivingCatch, usedSkills) ? 1 : 0);
 
             var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
             var failure = 1 - success;

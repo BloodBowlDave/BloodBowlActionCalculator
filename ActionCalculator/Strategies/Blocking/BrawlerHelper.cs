@@ -1,7 +1,7 @@
-﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
-using ActionCalculator.Abstractions.Calculators;
+﻿using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Abstractions.Calculators.Blocking;
+using ActionCalculator.Models;
+using ActionCalculator.Models.Actions;
 using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Blocking
@@ -35,11 +35,10 @@ namespace ActionCalculator.Strategies.Blocking
             }
             
             var successAfterBrawlerAndPro = successOnOneDie * successOnOneDie;
-            var successAfterReroll = block.Success;
 
             return r == 0
                    || block.UseBrawler && block.UsePro
-                   || _proHelper.UsePro(player, block, r, usedSkills, successAfterBrawlerAndPro, successAfterReroll);
+                   || _proHelper.UsePro(player, block, r, usedSkills, successAfterBrawlerAndPro, success);
         }
     }
 }

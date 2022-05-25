@@ -1,6 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
+using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Blocking
 {
@@ -25,7 +26,7 @@ namespace ActionCalculator.Strategies.Blocking
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
-
+            
             p *= failure;
 
             if (dauntless.RerollFailure)
@@ -44,25 +45,25 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (r > 0)
                 {
+                    _actionMediator.Resolve(p * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                     ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills, success, failure);
-                    _actionMediator.Resolve(p * (1 - lonerSuccess), r - 1, i, usedSkills);
                     return;
                 }
             }
 
-            if (dauntless.UsePro && _proHelper.UsePro(player, dauntless, r, usedSkills, success, success))
+            if (_proHelper.UsePro(player, dauntless, r, usedSkills, success, success))
             {
                 ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                 return;
             }
 
-            _actionMediator.Resolve(p, r, i + 1, usedSkills, true);
+            _actionMediator.Resolve(p, r, i, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal success, decimal failure)
         {
             _actionMediator.Resolve(p * success, r, i, usedSkills);
-            _actionMediator.Resolve(p * failure, r, i + 1, usedSkills, true);
+            _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
         }
     }
 }

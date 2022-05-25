@@ -1,7 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
+using ActionCalculator.Models.Actions;
 using ActionCalculator.Utilities;
-using Action = ActionCalculator.Abstractions.Action;
+using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 

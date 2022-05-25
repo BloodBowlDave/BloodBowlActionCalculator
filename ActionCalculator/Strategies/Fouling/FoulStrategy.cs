@@ -1,6 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
+using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Fouling
 {
@@ -27,7 +28,7 @@ namespace ActionCalculator.Strategies.Fouling
             var hasDirtyPlayer = canUseSkill(Skills.DirtyPlayer, usedSkills);
             if (hasDirtyPlayer)
             {
-                useDpOnArmour = _d6.Success(2, foul.Roll - player.DirtyPlayerValue) - foul.Success;
+                useDpOnArmour = _d6.Success(2, foul.Roll - player.DirtyPlayerValue) - success;
             }
 
             var doubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _d6.RollDouble(2, foul.Roll);

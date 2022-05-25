@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Abstractions.Calculators
+﻿using ActionCalculator.Models;
+
+namespace ActionCalculator.Abstractions.Calculators
 {
     public interface IActionStrategy
     {

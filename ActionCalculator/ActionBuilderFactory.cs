@@ -1,18 +1,11 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.ActionBuilders;
-using ActionCalculator.Utilities;
+using ActionCalculator.Models;
 
 namespace ActionCalculator
 {
     public class ActionBuilderFactory : IActionBuilderFactory
     {
-        private readonly ID6 _iD6;
-
-        public ActionBuilderFactory(ID6 iD6)
-        {
-            _iD6 = iD6;
-        }
-
         public IActionBuilder GetActionBuilder(string input) =>
             GetActionType(input) switch
             {

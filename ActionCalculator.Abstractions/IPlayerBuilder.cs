@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Abstractions
+﻿using ActionCalculator.Models;
+
+namespace ActionCalculator.Abstractions
 {
     public interface IPlayerBuilder
     {

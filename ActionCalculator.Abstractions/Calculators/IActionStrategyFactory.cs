@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Abstractions.Calculators
+﻿using Action = ActionCalculator.Models.Actions.Action;
+
+namespace ActionCalculator.Abstractions.Calculators
 {
     public interface IActionStrategyFactory
     {

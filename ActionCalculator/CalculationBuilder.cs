@@ -1,5 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
-using Action = ActionCalculator.Abstractions.Action;
+using ActionCalculator.Models;
+using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator
 {
@@ -18,7 +19,7 @@ namespace ActionCalculator
         public Calculation Build(string calculation)
         {
             BuildPlayerActions(calculation, new Player(), 0);
-
+            
             return new Calculation(_playerActions.ToArray());
         }
 
@@ -154,12 +155,8 @@ namespace ActionCalculator
                 {
                     continue;
                 }
-
-                var action = _actionBuilderFactory.GetActionBuilder(actionSplit[1]).Build(actionSplit[0]);
-                //action.RequiresNonCriticalFailure = true;
-                //action.RequiresDauntlessFailure = true;
-
-                yield return action;
+                
+                yield return _actionBuilderFactory.GetActionBuilder(actionSplit[1]).Build(actionSplit[1]);
             }
         }
     }

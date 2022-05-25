@@ -1,7 +1,8 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Abstractions.Calculators.Blocking;
+using ActionCalculator.Models;
+using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Blocking
 {
@@ -33,18 +34,17 @@ namespace ActionCalculator.Strategies.Blocking
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var rollOutcomes = GetRollOutcomes(r, playerAction, usedSkills);
             var i = playerAction.Index;
             
-            foreach (var rollOutcome in rollOutcomes)
+            foreach (var outcome in GetOutcomes(r, playerAction, usedSkills))
             {
-                var ((asdas, rerollsRemaining, usedSkillsForRollOutcome), hello) = rollOutcome;
+                var ((outcomeNonCriticalFailure, rerollsRemaining, outcomeSkillsUsed), pOutcome) = outcome;
                 
-                _actionMediator.Resolve(p * hello, rerollsRemaining, i, usedSkillsForRollOutcome, asdas);
+                _actionMediator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
             }
         }
         
-        private Dictionary<Tuple<bool, int, Skills>, decimal> GetRollOutcomes(int r, PlayerAction playerAction, Skills usedSkills)
+        private Dictionary<Tuple<bool, int, Skills>, decimal> GetOutcomes(int r, PlayerAction playerAction, Skills usedSkills)
         {
             var player = playerAction.Player;
             _proSuccess = player.ProSuccess;
@@ -156,12 +156,14 @@ namespace ActionCalculator.Strategies.Blocking
                 }
 
                 var brawlerReroll = new List<int>(roll) { [indexOfBothDown] = i };
-                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerReroll);
 
-                if (_usePro)
+                if (!_usePro)
                 {
-                    ProAfterBrawler(brawlerReroll, r, indexOfBothDown);
+                    continue;
                 }
+
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerReroll);
+                ProAfterBrawler(brawlerReroll, r, indexOfBothDown);
             }
         }
 

@@ -2,6 +2,6 @@
 {
     public interface IActionBuilder
     {
-        public Action Build(string input);
+        public Models.Actions.Action Build(string input);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
@@ -19,9 +19,9 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var @catch = (Catch) playerAction.Action;
-            var success = @catch.Success;
-            var failure = @catch.Failure;
+            var action = playerAction.Action;
+            var success = action.Success;
+            var failure = action.Failure;
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
@@ -34,7 +34,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(player, @catch, r, usedSkills, success, success))
+            if (_proHelper.UsePro(player, action, r, usedSkills, success, success))
             {
                 _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;

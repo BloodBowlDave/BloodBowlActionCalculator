@@ -1,5 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
 
 namespace ActionCalculator
 {
@@ -29,7 +30,9 @@ namespace ActionCalculator
             var previousPlayerAction = _context.Calculation.PlayerActions.SingleOrDefault(x => x.Index == i);
             var previousActionType = previousPlayerAction?.Action.ActionType;
 
-            if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction))
+            var skipPlayerAction = SkipPlayerAction(nonCriticalFailure, previousPlayerAction);
+
+            if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction, skipPlayerAction))
             {
                 if (previousActionType is ActionType.Tentacles or ActionType.Block && nonCriticalFailure)
                 {
@@ -39,8 +42,8 @@ namespace ActionCalculator
                 WriteResult(p, r, usedSkills, previousActionType);
                 return;
             }
-
-            var playerAction = _context.Calculation.PlayerActions[i + 1];
+            
+            var playerAction = GetNextPlayerAction(i, skipPlayerAction);
             var player = playerAction.Player;
             var action = playerAction.Action;
 
@@ -87,11 +90,21 @@ namespace ActionCalculator
             }
         }
 
+        private bool SkipPlayerAction(bool nonCriticalFailure, PlayerAction? previousPlayerAction) =>
+            previousPlayerAction != null && _context.Calculation.PlayerActions.SingleOrDefault(x 
+                => x.Index == previousPlayerAction.Index - 1)?.Action.ActionType == ActionType.Dauntless
+            || previousPlayerAction?.Action.ActionType == ActionType.Dauntless && nonCriticalFailure;
+
+        private PlayerAction GetNextPlayerAction(int i, bool skipPlayerAction) => _context.Calculation.PlayerActions[i + (skipPlayerAction ? 2 : 1)];
+
         private static bool IsStartOfBranch(PlayerAction? previousPlayerAction, PlayerAction playerAction) =>
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
-        private bool IsEndOfCalculation(PlayerAction playerAction) =>
-            playerAction.Index + 1 == _context.Calculation.PlayerActions.Length || playerAction.TerminatesCalculation;
+        private bool IsEndOfCalculation(PlayerAction playerAction, bool skipPlayerAction)
+        {
+            return playerAction.Index + (skipPlayerAction ? 2 : 1) == _context.Calculation.PlayerActions.Length ||
+                   playerAction.TerminatesCalculation;
+        }
 
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
@@ -106,11 +119,11 @@ namespace ActionCalculator
 
         private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x =>
-                (x.Depth < playerAction.Depth /*|| playerAction.Action.RequiresDauntlessFailure*/) && x.Index > playerAction.Index);
+                x.Depth < playerAction.Depth && x.Index > playerAction.Index);
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
             previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass
-                or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception or ActionType.NonRerollable;
+                or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception or ActionType.NonRerollable or ActionType.Dauntless;
 
         private static bool PlayerSentOff(ActionType? previousActionType, ActionType actionType) =>
             previousActionType switch

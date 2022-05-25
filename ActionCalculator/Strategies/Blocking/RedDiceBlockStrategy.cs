@@ -1,7 +1,8 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Abstractions.Calculators.Blocking;
+using ActionCalculator.Models;
+using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Blocking
 {
@@ -33,18 +34,17 @@ namespace ActionCalculator.Strategies.Blocking
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var rollOutcomes = GetRollOutcomesForRedDice(r, playerAction, usedSkills);
             var i = playerAction.Index;
 
-            foreach (var rollOutcome in rollOutcomes)
+            foreach (var outcome in GetOutcomes(r, playerAction, usedSkills))
             {
-                var ((asdas, rerollsRemaining, usedSkillsForRollOutcome), hello) = rollOutcome;
+                var ((outcomeNonCriticalFailure, rerollsRemaining, outcomeSkillsUsed), pOutcome) = outcome;
 
-                _actionMediator.Resolve(p * hello, rerollsRemaining, i, usedSkillsForRollOutcome, asdas);
+                _actionMediator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
             }
         }
 
-        private Dictionary<Tuple<bool, int, Skills>, decimal> GetRollOutcomesForRedDice(int r, PlayerAction playerAction, Skills usedSkills)
+        private Dictionary<Tuple<bool, int, Skills>, decimal> GetOutcomes(int r, PlayerAction playerAction, Skills usedSkills)
         {
             var player = playerAction.Player;
             _proSuccess = player.ProSuccess;
@@ -98,23 +98,77 @@ namespace ActionCalculator.Strategies.Blocking
 
             foreach (var reroll in rolls)
             {
-                AddRedDiceOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, Skills.None, reroll);
+                AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, Skills.None, reroll);
             }
 
             return _outcomes;
         }
 
-        private void ThreeFailures(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount)
+        private void OneFailure(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
         {
-            if (nonCriticalFailureCount == 3 && !_rerollNonCriticalFailure)
+            if (nonCriticalFailureCount == 1 && !_rerollNonCriticalFailure)
             {
                 AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
                 return;
             }
 
-            AddRedDiceOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+            if (_useBrawler && indexOfBothDown != -1)
+            {
+                Brawler(r);
+                return;
+            }
+
+            if (_usePro)
+            {
+                Pro(roll, r);
+                return;
+            }
+
+            if (r == 0)
+            {
+                AddOutcome(1m / _rollsCount, r, Skills.None, roll);
+                return;
+            }
+
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
 
             _rerollCount++;
+        }
+
+        private void Brawler(int r)
+        {
+            for (var i = 2; i <= 6; i++)
+            {
+                if (_successfulValues.Contains(i))
+                {
+                    AddSuccess(1m / _rollsCount / 6, r, Skills.None);
+                    continue;
+                }
+
+                if (_nonCriticalFailureValues.Contains(i))
+                {
+                    AddNonCriticalFailure(1m / _rollsCount / 6, r, Skills.None);
+                }
+            }
+        }
+
+        private void Pro(IReadOnlyCollection<int> roll, int r)
+        {
+            AddOutcome((1 - _proSuccess) / _rollsCount, r, Skills.Pro, roll);
+
+            for (var i = 2; i <= 6; i++)
+            {
+                if (_successfulValues.Contains(i))
+                {
+                    AddSuccess(_proSuccess / _rollsCount / 6, r, Skills.Pro);
+                    continue;
+                }
+
+                if (_nonCriticalFailureValues.Contains(i))
+                {
+                    AddNonCriticalFailure(_proSuccess / _rollsCount / 6, r, Skills.Pro);
+                }
+            }
         }
 
         private void TwoFailures(IReadOnlyList<int> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
@@ -133,10 +187,23 @@ namespace ActionCalculator.Strategies.Blocking
 
             if (r == 0)
             {
-                AddRedDiceOutcome(1m / _rollsCount, r, Skills.None, roll);
+                AddOutcome(1m / _rollsCount, r, Skills.None, roll);
             }
 
-            AddRedDiceOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+
+            _rerollCount++;
+        }
+        
+        private void ThreeFailures(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount)
+        {
+            if (nonCriticalFailureCount == 3 && !_rerollNonCriticalFailure)
+            {
+                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
+                return;
+            }
+
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
 
             _rerollCount++;
         }
@@ -157,7 +224,7 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (rolledNonCriticalFailure)
                 {
-                    AddRedDiceOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerRoll);
+                    AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerRoll);
                     continue;
                 }
 
@@ -182,85 +249,17 @@ namespace ActionCalculator.Strategies.Blocking
 
             foreach (var brawlerRoll in brawlerRolls)
             {
-                AddRedDiceOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerRoll);
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerRoll);
 
                 for (var i = 2; i <= 6; i++)
                 {
                     var proAndBrawlerRoll = new List<int>(brawlerRoll) { [indexOfLowestValue] = i };
-                    AddRedDiceOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proAndBrawlerRoll);
+                    AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proAndBrawlerRoll);
                 }
             }
         }
-
-        private void OneFailure(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
-        {
-            if (nonCriticalFailureCount == 1 && !_rerollNonCriticalFailure)
-            {
-                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
-                return;
-            }
-
-            if (_useBrawler && indexOfBothDown != -1)
-            {
-                Brawler(r);
-                return;
-            }
-
-            if (_usePro)
-            {
-                RedDicePro(roll, r);
-                return;
-            }
-
-            if (r == 0)
-            {
-                AddRedDiceOutcome(1m / _rollsCount, r, Skills.None, roll);
-                return;
-            }
-
-            AddRedDiceOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
-
-            _rerollCount++;
-        }
-
-        private void RedDicePro(IReadOnlyCollection<int> roll, int r)
-        {
-            AddRedDiceOutcome((1 - _proSuccess) / _rollsCount, r, Skills.Pro, roll);
-
-            for (var i = 2; i <= 6; i++)
-            {
-                if (_successfulValues.Contains(i))
-                {
-                    AddSuccess(_proSuccess / _rollsCount / 6, r, Skills.Pro);
-                    continue;
-                }
-
-                if (_nonCriticalFailureValues.Contains(i))
-                {
-                    AddNonCriticalFailure(_proSuccess / _rollsCount / 6, r, Skills.Pro);
-                }
-            }
-        }
-
-        private void Brawler(int r)
-        {
-            for (var i = 2; i <= 6; i++)
-            {
-                if (_successfulValues.Contains(i))
-                {
-                    AddSuccess(1m / _rollsCount / 6, r, Skills.None);
-                    continue;
-                }
-
-                if (_nonCriticalFailureValues.Contains(i))
-                {
-                    AddNonCriticalFailure(1m / _rollsCount / 6, r, Skills.None);
-                }
-            }
-        }
-
-
-        private void AddRedDiceOutcome(decimal p, int r, Skills usedSkills, IReadOnlyCollection<int> roll)
+        
+        private void AddOutcome(decimal p, int r, Skills usedSkills, IReadOnlyCollection<int> roll)
         {
             if (p == 0)
             {

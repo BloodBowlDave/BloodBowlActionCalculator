@@ -1,6 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Actions;
 using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Models;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
