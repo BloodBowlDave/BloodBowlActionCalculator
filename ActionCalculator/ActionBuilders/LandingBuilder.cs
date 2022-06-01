@@ -5,7 +5,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class HailMaryPassActionBuilder : IActionBuilder
+public class LandingBuilder : IActionBuilder
 {
     public Action Build(string input)
     {
@@ -16,6 +16,6 @@ public class HailMaryPassActionBuilder : IActionBuilder
         var roll = int.Parse(input.Length == 2 ? input[1..] : input);
         var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 
-        return new HailMaryPass(success, 1 - success, roll, usePro);
+        return new Landing(success, 1 - success, roll, usePro);
     }
 }

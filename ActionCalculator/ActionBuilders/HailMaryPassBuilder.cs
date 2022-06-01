@@ -5,13 +5,17 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class InterceptionActionBuilder : IActionBuilder
+public class HailMaryPassBuilder : IActionBuilder
 {
     public Action Build(string input)
     {
+        var usePro = input.Contains("*");
+
+        input = input.Replace("*", "");
+
         var roll = int.Parse(input.Length == 2 ? input[1..] : input);
         var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 
-        return new Interception(1 - success, roll);
+        return new HailMaryPass(success, 1 - success, roll, usePro);
     }
 }

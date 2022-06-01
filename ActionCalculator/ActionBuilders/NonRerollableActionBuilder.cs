@@ -7,6 +7,13 @@ namespace ActionCalculator.ActionBuilders;
 
 public class NonRerollableActionBuilder : IActionBuilder
 {
+    private readonly ID6 _d6;
+
+    public NonRerollableActionBuilder(ID6 d6)
+    {
+        _d6 = d6;
+    }
+
     public Action Build(string input)
     {
         if (input.Contains("/"))
@@ -14,8 +21,16 @@ public class NonRerollableActionBuilder : IActionBuilder
             var split = input.Split('/');
             var numerator = int.Parse(split[0][1..]);
             var denominator = int.Parse(split[1]);
-            var success = (decimal)numerator / denominator;
 
+            if (denominator == 12)
+            {
+                var twoD6Success = _d6.Success(2, numerator);
+
+                return new NonRerollableAction(twoD6Success, 1 - twoD6Success, numerator, denominator);
+            }
+
+            var success = (decimal)numerator / denominator;
+            
             return new NonRerollableAction(success, 1 - success, numerator, denominator);
         }
         else

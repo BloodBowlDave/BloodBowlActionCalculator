@@ -4,7 +4,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class FoulActionBuilder : IActionBuilder
+public class BribeBuilder : IActionBuilder
 {
-    public Action Build(string input) => new Foul(int.Parse(input[1..]));
+    public Action Build(string input) => new Bribe(5m / 6, 1m / 6);
 }

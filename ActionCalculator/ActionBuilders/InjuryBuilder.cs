@@ -4,7 +4,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class ArmourBreakActionBuilder : IActionBuilder
+public class InjuryBuilder : IActionBuilder
 {
-    public Action Build(string input) => new ArmourBreak(int.Parse(input[1..]));
+    public Action Build(string input) => new Injury(int.Parse(input[1..]));
 }

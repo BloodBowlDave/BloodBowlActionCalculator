@@ -12,7 +12,7 @@
         Foul = 'F',
         ArmourBreak = 'B',
         NonRerollable = 'X',
-        ThrowTeamMate = 'T',
+        ThrowTeamMate = 'H',
         Dauntless = 'L',
         Interception = 'I',
         Tentacles = 'N',
@@ -22,6 +22,8 @@
         Injury = 'J',
         Landing = 'G',
         HailMaryPass = 'M',
-        Hypnogaze = 'Y'
+        Hypnogaze = 'Y',
+        Stab = 'T',
+        Chainsaw = 'W'
     }
 }

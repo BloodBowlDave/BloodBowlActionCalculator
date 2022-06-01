@@ -143,12 +143,12 @@ namespace ActionCalculator.Tests
         [InlineData("L3:2,2,2,2", 4, 0.48225, 0.69659, 0.73231, 0.73496, 0.73503)]
         [InlineData("L4:2,2", 2, 0.69444, 0.81019, 0.81501)]
         //throw team mate
-        [InlineData("L3:T4-1';(X27/512,G4)(X54/512,G4,R2)(X117/512,G4,R2,R2)", 0, 0.08314)]
-        [InlineData("L3:T4-1';G4", 1, 0.27778, 0.43519)]
-        [InlineData("L3:T4-1;G4", 1, 0.16667, 0.41049)]
-        [InlineData("L3:T5;G4", 0, 0.33333)]
-        [InlineData("L4,TB:T5';G4", 0, 0.38889)]
-        [InlineData("L4,TB:T5;G4", 0, 0.38889)]
+        [InlineData("L3:H4-1';(X27/512,G4)(X54/512,G4,R2)(X117/512,G4,R2,R2)", 0, 0.08314)]
+        [InlineData("L3:H4-1';G4", 1, 0.27778, 0.43519)]
+        [InlineData("L3:H4-1;G4", 1, 0.16667, 0.41049)]
+        [InlineData("L3:H5;G4", 0, 0.33333)]
+        [InlineData("L4,TB:H5';G4", 0, 0.38889)]
+        [InlineData("L4,TB:H5;G4", 0, 0.38889)]
         //hail mary pass
         [InlineData("M2;C,DC:C1", 1, 0.35156, 0.41016)]
         [InlineData("M2;C,DC:C2", 1, 0.30121, 0.35141)]
@@ -178,17 +178,23 @@ namespace ActionCalculator.Tests
         [InlineData("R:2D3,B8,J8", 0, 0.23438)]
         [InlineData("SF,SH:U2,R2,R2,R2", 2, 0.84394, 0.89083, 0.89343)]
         //hypnogaze
-        [InlineData("Y2';{D2}", 1, 0.97222, 0.99537)]
+        [InlineData("Y2'[:D2]", 1, 0.97222, 0.99537)]
         [InlineData("Y2';{D2}U2", 2, 0.81019, 0.96451, 0.96772)]
         [InlineData("Y2;U2", 0, 0.69444)]
-        [InlineData("Y2;{D2}", 0, 0.97222)]
-        [InlineData("Y2;{D2}", 2, 0.83333, 0.99537, 0.99923)]
+        [InlineData("Y2[D2]", 0, 0.97222)]
+        [InlineData("Y2[D2]", 2, 0.83333, 0.99537, 0.99923)]
         [InlineData("Y2;{D2}U2", 0, 0.81019)]
         [InlineData("MD:Y2;{D2}U2", 0, 0.94522)]
         //old pro
         [InlineData("OP:2D2,B8", 0, 0.32922)]
         [InlineData("MB1,OP:2D2,B8", 0, 0.40638)]
         [InlineData("MB2,OP:2D2,B8", 0, 0.46468)]
+        //stab
+        [InlineData("T8", 0, 0.41667)]
+        [InlineData("T8[:2D2]", 0, 0.74074)]
+        //chainsaw
+        [InlineData("W8", 0, 0.41667)]
+        [InlineData("W8[:2D2]", 0, 0.74074)]
         public void ActionCalculatorReturnsExpectedResult(string calculation, int rerolls, params double[] expected)
         {
             var result = _actionCalculator.Calculate(calculation);

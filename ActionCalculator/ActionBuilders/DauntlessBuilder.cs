@@ -5,7 +5,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class DauntlessActionBuilder : IActionBuilder
+public class DauntlessBuilder : IActionBuilder
 {
     public Action Build(string input)
     {

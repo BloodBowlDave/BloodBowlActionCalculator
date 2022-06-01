@@ -4,7 +4,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class InjuryActionBuilder : IActionBuilder
+public class ChainsawBuilder : IActionBuilder
 {
-    public Action Build(string input) => new Injury(int.Parse(input[1..]));
+    public Action Build(string input) => new Chainsaw(int.Parse(input[1..]));
 }

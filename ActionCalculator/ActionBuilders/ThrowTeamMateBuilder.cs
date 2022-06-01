@@ -5,7 +5,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class ThrowTeamMateActionBuilder : IActionBuilder
+public class ThrowTeamMateBuilder : IActionBuilder
 {
     public Action Build(string input)
     {

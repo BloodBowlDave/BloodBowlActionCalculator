@@ -4,7 +4,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class BlockActionBuilder : IActionBuilder
+public class BlockBuilder : IActionBuilder
 {
     public Action Build(string input)
     {

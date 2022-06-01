@@ -41,6 +41,8 @@ namespace ActionCalculator
                 ActionType.Landing => new LandingStrategy(actionMediator, new ProHelper()),
                 ActionType.HailMaryPass => new HailMaryPassStrategy(actionMediator, new ProHelper()),
                 ActionType.Hypnogaze => new HypnogazeStrategy(actionMediator, new ProHelper()),
+                ActionType.Stab => new StabStrategy(actionMediator, new D6()),
+                ActionType.Chainsaw => new ChainsawStrategy(actionMediator, new D6()),
                 _ => throw new ArgumentOutOfRangeException(nameof(action.ActionType), action.ActionType, null)
             };
     }

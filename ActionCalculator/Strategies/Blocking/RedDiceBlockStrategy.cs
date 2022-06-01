@@ -194,19 +194,6 @@ namespace ActionCalculator.Strategies.Blocking
 
             _rerollCount++;
         }
-        
-        private void ThreeFailures(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount)
-        {
-            if (nonCriticalFailureCount == 3 && !_rerollNonCriticalFailure)
-            {
-                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
-                return;
-            }
-
-            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
-
-            _rerollCount++;
-        }
 
         private void BrawlerAndPro(IReadOnlyList<int> roll, int r, int indexOfBothDown)
         {
@@ -257,6 +244,19 @@ namespace ActionCalculator.Strategies.Blocking
                     AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proAndBrawlerRoll);
                 }
             }
+        }
+
+        private void ThreeFailures(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount)
+        {
+            if (nonCriticalFailureCount == 3 && !_rerollNonCriticalFailure)
+            {
+                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
+                return;
+            }
+
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+
+            _rerollCount++;
         }
         
         private void AddOutcome(decimal p, int r, Skills usedSkills, IReadOnlyCollection<int> roll)

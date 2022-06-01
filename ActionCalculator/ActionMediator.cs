@@ -34,7 +34,7 @@ namespace ActionCalculator
 
             if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction, skipPlayerAction))
             {
-                if (previousActionType is ActionType.Tentacles or ActionType.Block && nonCriticalFailure)
+                if (previousActionType is ActionType.Tentacles or ActionType.Block or ActionType.Stab or ActionType.Chainsaw && nonCriticalFailure)
                 {
                     return;
                 }
@@ -100,11 +100,9 @@ namespace ActionCalculator
         private static bool IsStartOfBranch(PlayerAction? previousPlayerAction, PlayerAction playerAction) =>
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
-        private bool IsEndOfCalculation(PlayerAction playerAction, bool skipPlayerAction)
-        {
-            return playerAction.Index + (skipPlayerAction ? 2 : 1) == _context.Calculation.PlayerActions.Length ||
-                   playerAction.TerminatesCalculation;
-        }
+        private bool IsEndOfCalculation(PlayerAction playerAction, bool skipPlayerAction) =>
+            playerAction.Index + (skipPlayerAction ? 2 : 1) == _context.Calculation.PlayerActions.Length 
+            || playerAction.TerminatesCalculation;
 
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);

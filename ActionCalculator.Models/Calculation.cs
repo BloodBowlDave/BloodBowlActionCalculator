@@ -23,8 +23,7 @@ namespace ActionCalculator.Models
                 var action = playerAction.Action;
                 var currentPlayerId = player.Id;
                 var requiresNonCriticalFailure = playerAction.RequiresNonCriticalFailure;
-                var requiresDauntlessFailure = PlayerActions.SingleOrDefault(x => 
-                    x.Index == playerAction.Index - 2)?.Action.ActionType == ActionType.Dauntless;
+                var requiresDauntlessFailure = RequiresDauntlessFailure(playerAction);
                 var branchTerminatesCalculation = BranchTerminatesCalculation(playerAction);
                 var isStartOfAlternateBranch = IsStartOfAlternateBranch(playerAction);
 
@@ -34,10 +33,11 @@ namespace ActionCalculator.Models
 
                     var previousPlayerHasSubsequentAction = PreviousPlayerHasSubsequentAction(previousPlayerId, playerAction);
                     var currentPlayerHasPreviousAction = CurrentPlayerHasPreviousAction(currentPlayerId, playerAction);
+                    var endPlayer = !previousPlayerHasSubsequentAction && !branchTerminatesCalculation;
 
                     if (requiresNonCriticalFailure)
                     {
-                        if (!previousPlayerHasSubsequentAction)
+                        if (endPlayer)
                         {
                             sb.Append(";");
                         }
@@ -58,7 +58,7 @@ namespace ActionCalculator.Models
                     {
                         sb.Append(player);
 
-                        if (player.HasSkills() || requiresNonCriticalFailure && previousPlayerHasSubsequentAction)
+                        if (player.HasSkills() || requiresNonCriticalFailure && !endPlayer)
                         {
                             sb.Append(':');
                         }
@@ -116,6 +116,12 @@ namespace ActionCalculator.Models
             return sb.ToString();
         }
 
+        private bool RequiresDauntlessFailure(PlayerAction playerAction)
+        {
+            return PlayerActions.SingleOrDefault(x => 
+                x.Index == playerAction.Index - 2)?.Action.ActionType == ActionType.Dauntless;
+        }
+
         private int DepthOfNextAction(PlayerAction playerAction) =>
             PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index)?.Depth ?? 0;
 
@@ -135,6 +141,6 @@ namespace ActionCalculator.Models
             playerAction.BranchId > 0 && !PlayerActions.Any(x => x.BranchId == playerAction.BranchId && x.Index < playerAction.Index);
 
         private bool BranchTerminatesCalculation(PlayerAction playerAction) =>
-            PlayerActions.LastOrDefault(x => x.Index > playerAction.Index && x.Depth >= playerAction.Depth)?.TerminatesCalculation ?? false;
+            PlayerActions.LastOrDefault(x => x.Index >= playerAction.Index && x.Depth >= playerAction.Depth)?.TerminatesCalculation ?? false;
     }
 }

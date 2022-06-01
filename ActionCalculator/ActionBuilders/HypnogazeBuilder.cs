@@ -5,7 +5,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders;
 
-public class ShadowingActionBuilder : IActionBuilder
+public class HypnogazeBuilder : IActionBuilder
 {
     public Action Build(string input)
     {
@@ -14,9 +14,9 @@ public class ShadowingActionBuilder : IActionBuilder
 
         input = input.Replace("*", "").Replace("'", "");
 
-        var difference = int.Parse(input[1..]);
-        var failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+        var roll = int.Parse(input.Length == 2 ? input[1..] : input);
+        var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
 
-        return new Shadowing(1 - failure, failure, usePro, rerollFailure, difference);
+        return new Hypnogaze(success, 1 - success, roll, usePro, rerollFailure);
     }
 }
