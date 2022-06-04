@@ -7,6 +7,13 @@ namespace ActionCalculator.ActionBuilders;
 
 public class DauntlessBuilder : IActionBuilder
 {
+    private readonly ID6 _d6;
+
+    public DauntlessBuilder(ID6 d6)
+    {
+        _d6 = d6;
+    }
+
     public Action Build(string input)
     {
         var usePro = input.Contains("*");
@@ -15,7 +22,7 @@ public class DauntlessBuilder : IActionBuilder
         input = input.Replace("*", "").Replace("'", "");
 
         var roll = int.Parse(input.Length == 2 ? input[1..] : input);
-        var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+        var success = _d6.Success(1, roll);
 
         return new Dauntless(success, 1 - success, rerollFailure, roll, usePro);
     }

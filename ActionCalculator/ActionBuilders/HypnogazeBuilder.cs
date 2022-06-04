@@ -7,6 +7,13 @@ namespace ActionCalculator.ActionBuilders;
 
 public class HypnogazeBuilder : IActionBuilder
 {
+    private readonly ID6 _d6;
+
+    public HypnogazeBuilder(ID6 d6)
+    {
+        _d6 = d6;
+    }
+
     public Action Build(string input)
     {
         var usePro = input.Contains("*");
@@ -15,7 +22,7 @@ public class HypnogazeBuilder : IActionBuilder
         input = input.Replace("*", "").Replace("'", "");
 
         var roll = int.Parse(input.Length == 2 ? input[1..] : input);
-        var success = (7m - roll.ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+        var success = _d6.Success(1, roll);
 
         return new Hypnogaze(success, 1 - success, roll, usePro, rerollFailure);
     }

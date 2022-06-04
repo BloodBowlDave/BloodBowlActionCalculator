@@ -154,6 +154,12 @@ namespace ActionCalculator.Tests
         [InlineData("M2;C,DC:C2", 1, 0.30121, 0.35141)]
         [InlineData("M2;C2", 0, 0.05534)]
         [InlineData("M2;DC:C2", 1, 0.19531, 0.33285)]
+        [InlineData("BI:M2;C2", 0, 0.12639)]
+        [InlineData("BI:M2;C2", 1, 0.12639, 0.17519)]
+        [InlineData("BI:M2;DC:C2", 0, 0.43509)]
+        [InlineData("BI:M2;C,DC:C2", 0, 0.57135)]
+        [InlineData("BI:M2;C,DC:C1", 0, 0.61852)]
+        [InlineData("BI:M2;C,DC:C1", 1, 0.61852, 0.72161)]
         //mighty blow
         [InlineData("MB1,R:B9", 0, 0.58333)]
         [InlineData("MB1,R,S:B9", 0, 0.72222)]
@@ -199,14 +205,31 @@ namespace ActionCalculator.Tests
         {
             var result = _actionCalculator.Calculate(calculation);
 
-            Assert.Equal(expected.Length, result.ProbabilityResults[rerolls].Probabilities.Length);
+            Assert.Equal(expected.Length, result.Results[rerolls].Length);
 
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal((decimal)expected[i], result.ProbabilityResults[rerolls].Probabilities[i], 5);
+                Assert.Equal((decimal)expected[i], result.Results[rerolls][i], 5);
             }
 
             Assert.Equal(calculation, result.Calculation.ToString());
+        }
+        
+        [Theory]
+        [InlineData("F2", 0, 0.30556)]
+        [InlineData("F2,E", 0, 0.18519)]
+        [InlineData("F2,J8", 0, 0.30556)]
+        [InlineData("F2,J8,E", 0, 0.05093)]
+        public void ActionCalculatorReturnsExpectedSendOffResult(string calculation, int rerolls, params double[] expected)
+        {
+            var result = _actionCalculator.Calculate(calculation);
+
+            Assert.Equal(expected.Length, result.SendOffResults[rerolls].Length);
+
+            for (var i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal((decimal)expected[i], result.SendOffResults[rerolls][i], 5);
+            }
         }
     }
 }

@@ -14,17 +14,18 @@ namespace ActionCalculator.Strategies.Fouling
             _actionMediator = actionMediator;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool doubleOnFoul = false)
+        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var bribe = (Bribe) playerAction.Action;
             var success = bribe.Success;
             var failure = bribe.Failure;
             var i = playerAction.Index;
 
-            if (doubleOnFoul)
+            if (nonCriticalFailure)
             {
                 _actionMediator.Resolve(p * success, r, i, usedSkills);
                 _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
+                _actionMediator.SendOff(p * failure, r, i);
                 return;
             }
 

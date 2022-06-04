@@ -14,12 +14,12 @@ namespace ActionCalculator.Strategies.Fouling
             _actionMediator = actionMediator;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool doubleOnFoul = false)
+        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var argueTheCall = (ArgueTheCall) playerAction.Action;
             var i = playerAction.Index;
 
-            if (doubleOnFoul)
+            if (nonCriticalFailure)
             {
                 _actionMediator.Resolve(p * argueTheCall.Success, r, i, usedSkills);
                 _actionMediator.Resolve(p * argueTheCall.Failure, r, i, usedSkills, true);

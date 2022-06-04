@@ -9,14 +9,13 @@ namespace ActionCalculator.Strategies
     public class InjuryStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
-        private readonly ID6 _iD6;
-        private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer | Skills.DirtyPlayer;
+        private readonly ID6 _d6;
+        private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer;
 
-
-        public InjuryStrategy(IActionMediator actionMediator, ID6 iD6)
+        public InjuryStrategy(IActionMediator actionMediator, ID6 d6)
         {
             _actionMediator = actionMediator;
-            _iD6 = iD6;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -25,13 +24,13 @@ namespace ActionCalculator.Strategies
             var action = (Injury) playerAction.Action;
             var i = playerAction.Index;
             var modifier = GetModifier(player, usedSkills);
-            var success = _iD6.Success(2, action.Roll - modifier);
-
-            _actionMediator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
+            var success = _d6.Success(2, action.Roll - modifier);
+            
+            _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             if (player.CanUseSkill(Skills.SavageMauling, usedSkills))
             {
-                _actionMediator.Resolve(p * (1 - success) * success, r, i, usedSkills, nonCriticalFailure);
+                _actionMediator.Resolve(p * (1 - success) * success, r, i, usedSkills);
             }
         }
 
@@ -44,8 +43,6 @@ namespace ActionCalculator.Strategies
             {
                 switch (skill)
                 {
-                    case Skills.DirtyPlayer:
-                        return player.DirtyPlayerValue;
                     case Skills.MightyBlow:
                         modifier += player.MightyBlowValue;
                         break;

@@ -9,10 +9,12 @@ namespace ActionCalculator.Strategies.BallHandling
     public class InterceptionStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
+        private readonly ID6 _d6;
 
-        public InterceptionStrategy(IActionMediator actionMediator)
+        public InterceptionStrategy(IActionMediator actionMediator, ID6 d6)
         {
             _actionMediator = actionMediator;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -22,7 +24,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var i = playerAction.Index;
 
             var interceptionFailure = nonCriticalFailure
-                ? 1 - (7m - (interception.Roll - 1).ThisOrMinimum(2).ThisOrMaximum(6)) / 6
+                ? 1 - _d6.Success(1, interception.Roll - 1)
                 : interception.Failure;
 
             if (player.CanUseSkill(Skills.CloudBurster, usedSkills))

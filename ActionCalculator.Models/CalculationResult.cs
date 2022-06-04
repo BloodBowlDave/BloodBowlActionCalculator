@@ -2,13 +2,15 @@
 {
     public class CalculationResult
     {
-        public CalculationResult(Calculation calculation, List<ProbabilityResult> probabilityResults)
+        public CalculationResult(Calculation calculation, List<decimal[]> results, List<decimal[]> sendOffResults)
         {
             Calculation = calculation;
-            ProbabilityResults = probabilityResults;
+            Results = results;
+            SendOffResults = sendOffResults;
         }
 
         public Calculation Calculation { get; }
-        public List<ProbabilityResult> ProbabilityResults { get; }
+        public List<decimal[]> Results { get; }
+        public List<decimal[]> SendOffResults { get; }
     }
 }

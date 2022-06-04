@@ -7,6 +7,13 @@ namespace ActionCalculator.ActionBuilders;
 
 public class ThrowTeamMateBuilder : IActionBuilder
 {
+    private readonly ID6 _d6;
+
+    public ThrowTeamMateBuilder(ID6 d6)
+    {
+        _d6 = d6;
+    }
+
     public Action Build(string input)
     {
         var usePro = input.Contains("*");
@@ -37,7 +44,7 @@ public class ThrowTeamMateBuilder : IActionBuilder
         }
 
         roll = int.Parse(input[1..]);
-        var success = (7m - roll) / 6;
+        var success = _d6.Success(1, roll);
         var failure = 1m / 6;
         var inaccurateThrow = 1 - success - failure;
 

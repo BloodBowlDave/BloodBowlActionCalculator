@@ -31,12 +31,17 @@ namespace ActionCalculator
             var previousActionType = previousPlayerAction?.Action.ActionType;
 
             var skipPlayerAction = SkipPlayerAction(nonCriticalFailure, previousPlayerAction);
-
+            
             if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction, skipPlayerAction))
             {
                 if (previousActionType is ActionType.Tentacles or ActionType.Block or ActionType.Stab or ActionType.Chainsaw && nonCriticalFailure)
                 {
                     return;
+                }
+
+                if (previousActionType is ActionType.Foul && !nonCriticalFailure)
+                {
+                    SendOff(p * 1m / 6, r, i);
                 }
 
                 WriteResult(p, r, usedSkills, previousActionType);
@@ -49,8 +54,12 @@ namespace ActionCalculator
 
             if (nonCriticalFailure)
             {
-                if (PlayerSentOff(previousActionType, action.ActionType) || !NonCriticalFailureSupported(previousActionType)
-                    && !playerAction.RequiresNonCriticalFailure)
+                if (PlayerSentOff(previousActionType, action.ActionType))
+                {
+                    return;
+                }
+
+                if (!NonCriticalFailureSupported(previousActionType) && !playerAction.RequiresNonCriticalFailure)
                 {
                     return;
                 }
@@ -79,15 +88,33 @@ namespace ActionCalculator
             if (!IsStartOfBranch(previousPlayerAction, playerAction))
             {
                 usedSkills = GetUsedSkills(previousPlayerAction?.Player.Id, player.Id, usedSkills);
-                Execute(playerAction, p, r, usedSkills, nonCriticalFailure);
+                Execute(playerAction, p, r, usedSkills, previousActionType, nonCriticalFailure);
                 return;
             }
 
             while (playerAction != null)
             {
-                Execute(playerAction, p, r, GetUsedSkills(previousPlayerAction?.Player.Id, player.Id, usedSkills), nonCriticalFailure);
+                Execute(playerAction, p, r, GetUsedSkills(previousPlayerAction?.Player.Id, player.Id, usedSkills), previousActionType, nonCriticalFailure);
                 playerAction = GetNextBranchStartPlayerAction(i, playerAction.BranchId);
             }
+        }
+
+        public void SendOff(decimal p, int r, int i)
+        {
+            if (p == 0)
+            {
+                return;
+            }
+
+            if (_context.Calculation.PlayerActions.Any(x => 
+                    x.Index > i && x.Action.ActionType is ActionType.Bribe or ActionType.ArgueTheCall))
+            {
+                return;
+            }
+
+            Console.WriteLine($"SendOff - MaxRerolls:{_context.MaxRerolls} P:{p:0.00000} R:{r}");
+
+            _context.SendOffResults[_context.MaxRerolls - r] += p;
         }
 
         private bool SkipPlayerAction(bool nonCriticalFailure, PlayerAction? previousPlayerAction) =>
@@ -101,8 +128,7 @@ namespace ActionCalculator
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
         private bool IsEndOfCalculation(PlayerAction playerAction, bool skipPlayerAction) =>
-            playerAction.Index + (skipPlayerAction ? 2 : 1) == _context.Calculation.PlayerActions.Length 
-            || playerAction.TerminatesCalculation;
+            playerAction.Index + (skipPlayerAction ? 2 : 1) == _context.Calculation.PlayerActions.Length || playerAction.TerminatesCalculation;
 
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
@@ -113,7 +139,7 @@ namespace ActionCalculator
             _context.Calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId == 0);
 
         private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
-            previousPlayerId != playerId ? usedSkills & Skills.DivingTackle & Skills.BlastIt & Skills.CloudBurster : usedSkills;
+            previousPlayerId != playerId ? usedSkills & (Skills.DivingTackle | Skills.BlastIt | Skills.CloudBurster) : usedSkills;
 
         private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
             _context.Calculation.PlayerActions.FirstOrDefault(x =>
@@ -123,7 +149,7 @@ namespace ActionCalculator
             previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass
                 or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception or ActionType.NonRerollable or ActionType.Dauntless;
 
-        private static bool PlayerSentOff(ActionType? previousActionType, ActionType actionType) =>
+        private static bool PlayerSentOff(ActionType? previousActionType, ActionType? actionType) =>
             previousActionType switch
             {
                 ActionType.Foul => actionType is not (ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury),
@@ -133,9 +159,9 @@ namespace ActionCalculator
                 _ => false
             };
 
-        private void Execute(PlayerAction playerAction, decimal p, int r, Skills usedSkills, bool nonCriticalFailure)
+        private void Execute(PlayerAction playerAction, decimal p, int r, Skills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
         {
-            var actionStrategy = _actionStrategyFactory.GetActionStrategy(playerAction.Action, this, nonCriticalFailure);
+            var actionStrategy = _actionStrategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure);
             actionStrategy.Execute(p, r, playerAction, usedSkills, nonCriticalFailure);
         }
 

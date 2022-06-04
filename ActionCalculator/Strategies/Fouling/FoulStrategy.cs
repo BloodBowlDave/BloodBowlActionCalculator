@@ -31,13 +31,13 @@ namespace ActionCalculator.Strategies.Fouling
                 useDpOnArmour = _d6.Success(2, foul.Roll - player.DirtyPlayerValue) - success;
             }
 
-            var doubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _d6.RollDouble(2, foul.Roll);
-            var doubleOnInjury = _d6.RollDouble(2, 2);
-            var noDouble = (1 - doubleOnArmour) * (1 - doubleOnInjury);
+            var successAndDoubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _d6.RollDouble(foul.Roll);
+            var noDouble = 1 - successAndDoubleOnArmour;
+
+            _actionMediator.SendOff(p * (canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _d6.RollDouble(2)), r, i);
 
             Foul(p * success * noDouble, p * success * (1 - noDouble), r, i, usedSkills);
-            p *= useDpOnArmour;
-            Foul(p * noDouble, p * (1 - noDouble), r, i, usedSkills | Skills.DirtyPlayer);
+            Foul(p * useDpOnArmour * noDouble, p * useDpOnArmour * (1 - noDouble), r, i, usedSkills | Skills.DirtyPlayer);
         }
 
         private void Foul(decimal successNoDouble, decimal successWithDouble, int r, int i, Skills usedSkills)

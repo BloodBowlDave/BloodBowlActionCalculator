@@ -7,6 +7,13 @@ namespace ActionCalculator.ActionBuilders;
 
 public class PassActionBuilder : IActionBuilder
 {
+    private readonly ID6 _d6;
+
+    public PassActionBuilder(ID6 d6)
+    {
+        _d6 = d6;
+    }
+
     public Action Build(string input)
     {
         var usePro = input.Contains("*");
@@ -37,7 +44,7 @@ public class PassActionBuilder : IActionBuilder
         }
 
         roll = int.Parse(input[1..]);
-        var success = (7m - roll) / 6;
+        var success = _d6.Success(1, roll);
         var failure = 1m / 6;
         var inaccuratePass = 1 - success - failure;
 

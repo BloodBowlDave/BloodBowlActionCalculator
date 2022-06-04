@@ -12,7 +12,7 @@ namespace ActionCalculator
             _rolls = GenerateRolls().ToArray();
         }
 
-        private IEnumerable<List<List<int>>> GenerateRolls()
+        private static IEnumerable<List<List<int>>> GenerateRolls()
         {
             for (var i = 1; i <= 3; i++)
             {
@@ -32,13 +32,26 @@ namespace ActionCalculator
         public List<List<int>> Rolls(int numberOfDice) => _rolls[numberOfDice - 1];
 
         public decimal Success(int numberOfDice, int minimumRoll) => 
-            (decimal)Successes(numberOfDice, minimumRoll).Count() / _rolls[numberOfDice - 1].Count;
+            (decimal)Successes(numberOfDice, NormaliseRoll(numberOfDice, minimumRoll)).Count() / _rolls[numberOfDice - 1].Count;
+
+        private static int NormaliseRoll(int numberOfDice, int minimumRoll) =>
+            numberOfDice switch
+            {
+                1 => minimumRoll.NormaliseD6(),
+                2 => minimumRoll.Normalise2D6(),
+                3 => minimumRoll.Normalise3D6(),
+                _ => throw new ArgumentOutOfRangeException(nameof(minimumRoll), minimumRoll, null)
+            };
 
         private IEnumerable<List<int>> Successes(int numberOfDice, int minimumRoll) => 
             _rolls[numberOfDice - 1].Where(x => x.Sum() >= minimumRoll);
 
-        public decimal RollDouble(int numberOfDice, int minimumRoll) => 
-            (decimal)Successes(numberOfDice, minimumRoll)
-                .Count(x => x.Sum() >= minimumRoll && x.All(y => y == x.First())) / _rolls[numberOfDice - 1].Count;
+        public decimal RollDouble(int minimumRoll)
+        {
+            var roll = NormaliseRoll(2, minimumRoll);
+
+            return (decimal) Successes(2, roll).Count(x => 
+                x.Sum() >= roll && x.All(y => y == x.First())) / _rolls[1].Count;
+        }
     }
 }

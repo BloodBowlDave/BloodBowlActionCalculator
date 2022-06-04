@@ -10,11 +10,13 @@ namespace ActionCalculator.Strategies
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
+        private readonly ID6 _d6;
 
-        public LandingStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public LandingStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
+            _d6 = d6;
         }
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
@@ -22,7 +24,7 @@ namespace ActionCalculator.Strategies
             var (lonerSuccess, proSuccess, _) = player;
             var landing = (Landing) playerAction.Action;
             var i = playerAction.Index;
-            var success = nonCriticalFailure ? (7m - (landing.Roll + 1).ThisOrMinimum(2).ThisOrMaximum(6)) / 6 : landing.Success;
+            var success = nonCriticalFailure ? _d6.Success(1, landing.Roll + 1) : landing.Success;
             var failure = 1m - success;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);

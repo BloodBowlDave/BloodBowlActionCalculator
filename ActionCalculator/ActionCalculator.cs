@@ -25,31 +25,41 @@ namespace ActionCalculator
         {
             var calculation = _calculationBuilder.Build(calculationString);
 
-            var probabilityResults = new List<ProbabilityResult>();
+            var probabilityResults = new List<decimal[]>();
+            var sendOffResults = new List<decimal[]>();
 
             for (var r = 0; r < MaximumRerolls; r++)
             {
-                var context = new CalculationContext(calculation, r, new decimal[calculation.PlayerActions.Length * 2 + 1]);
+                var context = new CalculationContext(calculation, r, 
+                    new decimal[calculation.PlayerActions.Length * 2 + 1], 
+                    new decimal[calculation.PlayerActions.Length * 2 + 1]);
 
                 _actionMediator.Initialise(context);
                 _actionMediator.Resolve(1m, r, -1, Skills.None);
 
                 var results = context.Results.Where(x => x > 0).ToArray();
 
-                if (r > 0 && probabilityResults[r - 1].Probabilities.SequenceEqual(results, _probabilityComparer))
+                if (r > 0 && probabilityResults[r - 1].SequenceEqual(results, _probabilityComparer))
                 {
                     break;
                 }
 
-                probabilityResults.Add(new ProbabilityResult(results));
+                probabilityResults.Add(results);
+
+                sendOffResults.Add(context.SendOffResults.Where(x => x > 0).ToArray());
             }
 
             foreach (var probabilityResult in probabilityResults)
             {
-                AggregateResults(probabilityResult.Probabilities);
+                AggregateResults(probabilityResult);
             }
 
-            return new CalculationResult(calculation, probabilityResults.ToList());
+            foreach (var sendOffResult in sendOffResults)
+            {
+                AggregateResults(sendOffResult);
+            }
+
+            return new CalculationResult(calculation, probabilityResults, sendOffResults);
         }
 
         private static void AggregateResults(IList<decimal> result)

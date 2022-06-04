@@ -3,6 +3,7 @@ using ActionCalculator.Abstractions.Calculators;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
 using ActionCalculator.Utilities;
+using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Strategies.Movement
 {
@@ -10,11 +11,13 @@ namespace ActionCalculator.Strategies.Movement
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
+        private readonly ID6 _d6;
 
-        public DodgeStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public DodgeStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -78,8 +81,11 @@ namespace ActionCalculator.Strategies.Movement
         private static bool CanUseBreakTackle(Func<Skills, Skills, bool> canUseSkill, Skills usedSkills) =>
             !usedSkills.Contains(Skills.BreakTackle) && (canUseSkill(Skills.BreakTackle, usedSkills) || canUseSkill(Skills.Incorporeal, usedSkills));
 
-        private static decimal SuccessAfterModifiers(Dodge dodge, bool useDivingTackle, int breakTackleValue) =>
-            (7m - (dodge.Roll + (useDivingTackle ? 2 : 0) - breakTackleValue).ThisOrMinimum(2).ThisOrMaximum(6)) / 6;
+        private decimal SuccessAfterModifiers(Action dodge, bool useDivingTackle, int breakTackleValue)
+        {
+            var roll = dodge.Roll + (useDivingTackle ? 2 : 0) - breakTackleValue;
+            return _d6.Success(1, roll); ;
+        }
 
         private void DodgeReroll(decimal p, int r, int i, Skills usedSkills,
             decimal failure, decimal success, decimal useBreakTackle, decimal useDivingTackle)

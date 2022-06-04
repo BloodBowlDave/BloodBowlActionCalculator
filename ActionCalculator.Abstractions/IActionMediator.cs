@@ -6,5 +6,6 @@ namespace ActionCalculator.Abstractions
     {
         void Initialise(CalculationContext context);
         void Resolve(decimal p, int r, int i, Skills usedSkills, bool nonCriticalFailure = false);
+        void SendOff(decimal p, int r, int i);
     }
 }
