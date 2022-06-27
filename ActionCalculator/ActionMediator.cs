@@ -39,9 +39,16 @@ namespace ActionCalculator
                     return;
                 }
 
-                if (previousActionType is ActionType.Foul && !nonCriticalFailure)
+                if (previousActionType is ActionType.Foul)
                 {
-                    SendOff(p * 1m / 6, r, i);
+                    if (nonCriticalFailure)
+                    {
+                        SendOff(p, r, i);
+                    }
+                    else
+                    {
+                        SendOff(p * 1m / 6, r, i);
+                    }
                 }
 
                 WriteResult(p, r, usedSkills, previousActionType);
@@ -51,6 +58,12 @@ namespace ActionCalculator
             var playerAction = GetNextPlayerAction(i, skipPlayerAction);
             var player = playerAction.Player;
             var action = playerAction.Action;
+
+            if (previousActionType == ActionType.Foul && !nonCriticalFailure && action.ActionType is not ActionType.Injury)
+            {
+                Resolve(p / 6, r, i, usedSkills, true);
+                p *= 5m / 6;
+            }
 
             if (nonCriticalFailure)
             {
@@ -106,8 +119,7 @@ namespace ActionCalculator
                 return;
             }
 
-            if (_context.Calculation.PlayerActions.Any(x => 
-                    x.Index > i && x.Action.ActionType is ActionType.Bribe or ActionType.ArgueTheCall))
+            if (_context.Calculation.PlayerActions.Any(x => x.Index > i && x.Action.ActionType is ActionType.Bribe or ActionType.ArgueTheCall))
             {
                 return;
             }

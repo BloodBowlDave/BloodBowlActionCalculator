@@ -126,11 +126,11 @@ namespace ActionCalculator.Tests
         [InlineData("DP1:F8", 0, 0.58333)]
         [InlineData("DP1:F8,J8", 0, 0.31250)]
         [InlineData("F8", 0, 0.41667)]
-        [InlineData("F8,2", 0, 0.26524)]
-        [InlineData("F8,A6,2", 0, 0.27890)]
-        [InlineData("F8,A6,E,2", 0, 0.32445)]
-        [InlineData("F8,E,2", 0, 0.33356)]
-        [InlineData("F8,E,A6,2", 0, 0.33584)]
+        [InlineData("F8,2", 0, 0.23148)]
+        [InlineData("F8,A6,2", 0, 0.25077)]
+        [InlineData("F8,A6,E,2", 0, 0.31507)]
+        [InlineData("F8,E,2", 0, 0.32793)]
+        [InlineData("F8,E,A6,2", 0, 0.33115)]
         [InlineData("SG:F8,2", 0, 0.28935)]
         //dauntless
         [InlineData("L2',2D2|1D2", 1, 0.51852, 0.76132)]
@@ -214,22 +214,22 @@ namespace ActionCalculator.Tests
 
             Assert.Equal(calculation, result.Calculation.ToString());
         }
-        
-        //[Theory]
-        //[InlineData("F2", 0, 0.30556)]
-        //[InlineData("F2,E", 0, 0.18519)]
-        //[InlineData("F2,J8", 0, 0.30556)]
-        //[InlineData("F2,J8,E", 0, 0.05093)]
-        //public void ActionCalculatorReturnsExpectedSendOffResult(string calculation, int rerolls, params double[] expected)
-        //{
-        //    var result = _actionCalculator.Calculate(calculation);
 
-        //    Assert.Equal(expected.Length, result.SendOffResults[rerolls].Length);
+        [Theory]
+        [InlineData("F2", 0, 0.30556)]
+        [InlineData("F2,E", 0, 0.05093)]
+        [InlineData("F2,J8", 0, 0.30556)]
+        [InlineData("F2,J8,E", 0, 0.05093)]
+        public void ActionCalculatorReturnsExpectedSendOffResult(string calculation, int rerolls, params double[] expected)
+        {
+            var result = _actionCalculator.Calculate(calculation);
 
-        //    for (var i = 0; i < expected.Length; i++)
-        //    {
-        //        Assert.Equal((decimal)expected[i], result.SendOffResults[rerolls][i], 5);
-        //    }
-        //}
+            Assert.Equal(expected.Length, result.SendOffResults[rerolls].Length);
+
+            for (var i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal((decimal)expected[i], result.SendOffResults[rerolls][i], 5);
+            }
+        }
     }
 }

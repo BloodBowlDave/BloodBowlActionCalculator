@@ -30,8 +30,8 @@ namespace ActionCalculator.Strategies.Fouling
 
             _actionMediator.SendOff(p * sentOffWithoutBreakingArmour, r, i);
             
-            _actionMediator.Resolve(p * success * (1 - rollDouble), r, i, usedSkills);
-            _actionMediator.Resolve(p * success * rollDouble, r, i, usedSkills, true);
+            _actionMediator.Resolve(p * (success - rollDouble), r, i, usedSkills);
+            _actionMediator.Resolve(p * rollDouble, r, i, usedSkills, true);
             
             if (!canUseSkill(Skills.DirtyPlayer, usedSkills))
             {
@@ -42,8 +42,8 @@ namespace ActionCalculator.Strategies.Fouling
 
             var rollDoubleAndUseDirtyPlayer = canUseSneakyGit ? 0 : _d6.RollDouble(roll - player.DirtyPlayerValue, roll - 1);
 
-            _actionMediator.Resolve(p * success * (1 - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | Skills.DirtyPlayer);
-            _actionMediator.Resolve(p * success * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | Skills.DirtyPlayer, true);
+            _actionMediator.Resolve(p * (success - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | Skills.DirtyPlayer);
+            _actionMediator.Resolve(p * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | Skills.DirtyPlayer, true);
         }
     }
 }

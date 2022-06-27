@@ -31,10 +31,10 @@ namespace ActionCalculator.Strategies.Fouling
                 return;
             }
 
-            var doubleOnInjury = _d6.RollDouble(2, 12);
-            _actionMediator.Resolve(p * success * (1 - doubleOnInjury), r, i, usedSkills);
-            _actionMediator.Resolve(p * success * doubleOnInjury, r, i, usedSkills, true);
-            _actionMediator.SendOff(p * doubleOnInjury, r, i);
+            var successAndDoubleOnInjury = _d6.RollDouble(action.Roll - modifier, 12);
+            _actionMediator.Resolve(p * (success - successAndDoubleOnInjury), r, i, usedSkills);
+            _actionMediator.Resolve(p * successAndDoubleOnInjury, r, i, usedSkills, true);
+            _actionMediator.SendOff(p * _d6.RollDouble(2, 12), r, i);
         }
     }
 }

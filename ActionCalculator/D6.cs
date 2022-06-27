@@ -53,12 +53,9 @@ namespace ActionCalculator
         public decimal RollDouble(int minimumRoll, int maximumRoll)
         {
             minimumRoll = NormaliseRoll(2, minimumRoll);
-            maximumRoll = NormaliseRoll(2, maximumRoll);
-
-            var successes = Successes(2, minimumRoll, maximumRoll).ToList();
-
-            return (decimal) successes.Count(x => 
-                x.Sum() >= minimumRoll && x.Sum() <= maximumRoll && x.All(y => y == x.First())) / successes.Count;
+            
+            return (decimal)Successes(2, minimumRoll, maximumRoll).Count(x => 
+                x.Sum() >= minimumRoll && x.Sum() <= maximumRoll && x.All(y => y == x.First())) / _rolls[1].Count;
         }
     }
 }
