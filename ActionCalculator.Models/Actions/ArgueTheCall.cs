@@ -1,12 +1,13 @@
-﻿namespace ActionCalculator.Models.Actions;
-
-public class ArgueTheCall : Action
+﻿namespace ActionCalculator.Models.Actions
 {
-    public ArgueTheCall(decimal success, decimal failure, decimal criticalFailure, int roll) 
-        : base(ActionType.ArgueTheCall, success, failure, roll, false)
-    {
-        CriticalFailure = criticalFailure;
-    }
+	public class ArgueTheCall : Action
+	{
+		public ArgueTheCall(decimal success, decimal failure, decimal criticalFailure, int roll) 
+			: base(ActionType.ArgueTheCall, success, failure, roll, false)
+		{
+			CriticalFailure = criticalFailure;
+		}
 
-    private decimal CriticalFailure { get; }
+		private decimal CriticalFailure { get; }
+	}
 }

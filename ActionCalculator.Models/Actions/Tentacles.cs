@@ -1,16 +1,17 @@
-﻿namespace ActionCalculator.Models.Actions;
-
-public class Tentacles : Action
+﻿namespace ActionCalculator.Models.Actions
 {
-    public Tentacles(decimal success, decimal failure, bool usePro, bool rerollFailure, int difference) 
-        : base(ActionType.Tentacles, success, failure, difference, usePro)
-    {
-        RerollFailure = rerollFailure;
-    }
+	public class Tentacles : Action
+	{
+		public Tentacles(decimal success, decimal failure, bool usePro, bool rerollFailure, int difference) 
+			: base(ActionType.Tentacles, success, failure, difference, usePro)
+		{
+			RerollFailure = rerollFailure;
+		}
     
-    public bool RerollFailure { get; }
+		public bool RerollFailure { get; }
 
-    public override string ToString() => $"{(char)ActionType}{GetModifier()}{(!RerollFailure ? "'" : "")}";
+		public override string ToString() => $"{(char)ActionType}{GetModifier()}{(!RerollFailure ? "'" : "")}";
 
-    private string GetModifier() => Roll > 0 ? "+" + Roll : Roll.ToString();
+		private string GetModifier() => Roll > 0 ? "+" + Roll : Roll.ToString();
+	}
 }

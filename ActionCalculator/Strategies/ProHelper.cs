@@ -1,4 +1,4 @@
-﻿using ActionCalculator.Abstractions.Calculators;
+﻿using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using Action = ActionCalculator.Models.Actions.Action;
 

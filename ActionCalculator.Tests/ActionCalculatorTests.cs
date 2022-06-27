@@ -215,21 +215,21 @@ namespace ActionCalculator.Tests
             Assert.Equal(calculation, result.Calculation.ToString());
         }
         
-        [Theory]
-        [InlineData("F2", 0, 0.30556)]
-        [InlineData("F2,E", 0, 0.18519)]
-        [InlineData("F2,J8", 0, 0.30556)]
-        [InlineData("F2,J8,E", 0, 0.05093)]
-        public void ActionCalculatorReturnsExpectedSendOffResult(string calculation, int rerolls, params double[] expected)
-        {
-            var result = _actionCalculator.Calculate(calculation);
+        //[Theory]
+        //[InlineData("F2", 0, 0.30556)]
+        //[InlineData("F2,E", 0, 0.18519)]
+        //[InlineData("F2,J8", 0, 0.30556)]
+        //[InlineData("F2,J8,E", 0, 0.05093)]
+        //public void ActionCalculatorReturnsExpectedSendOffResult(string calculation, int rerolls, params double[] expected)
+        //{
+        //    var result = _actionCalculator.Calculate(calculation);
 
-            Assert.Equal(expected.Length, result.SendOffResults[rerolls].Length);
+        //    Assert.Equal(expected.Length, result.SendOffResults[rerolls].Length);
 
-            for (var i = 0; i < expected.Length; i++)
-            {
-                Assert.Equal((decimal)expected[i], result.SendOffResults[rerolls][i], 5);
-            }
-        }
+        //    for (var i = 0; i < expected.Length; i++)
+        //    {
+        //        Assert.Equal((decimal)expected[i], result.SendOffResults[rerolls][i], 5);
+        //    }
+        //}
     }
 }

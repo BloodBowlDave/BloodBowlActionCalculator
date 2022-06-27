@@ -1,9 +1,10 @@
-﻿namespace ActionCalculator.Models.Actions;
-
-public class HailMaryPass : Action
+﻿namespace ActionCalculator.Models.Actions
 {
-    public HailMaryPass(decimal success, decimal failure, int roll, bool usePro) 
-        : base(ActionType.HailMaryPass, success, failure, roll, usePro)
-    {
-    }
+	public class HailMaryPass : Action
+	{
+		public HailMaryPass(decimal success, decimal failure, int roll, bool usePro) 
+			: base(ActionType.HailMaryPass, success, failure, roll, usePro)
+		{
+		}
+	}
 }

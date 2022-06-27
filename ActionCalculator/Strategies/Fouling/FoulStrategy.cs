@@ -1,5 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
 
@@ -20,30 +20,30 @@ namespace ActionCalculator.Strategies.Fouling
         {
             var player = playerAction.Player;
             var canUseSkill = player.CanUseSkill;
-            var useDpOnArmour = 0m;
-            var foul = (Foul) playerAction.Action;
-            var success = _d6.Success(2, foul.Roll);
+            var roll = playerAction.Action.Roll;
+            var success = _d6.Success(2, roll);
             var i = playerAction.Index;
 
-            var hasDirtyPlayer = canUseSkill(Skills.DirtyPlayer, usedSkills);
-            if (hasDirtyPlayer)
+            var canUseSneakyGit = canUseSkill(Skills.SneakyGit, usedSkills);
+            var rollDouble = canUseSneakyGit ? 0 : _d6.RollDouble(roll, 12);
+            var sentOffWithoutBreakingArmour = canUseSneakyGit ? 0 : _d6.RollDouble(2, roll - 1);
+
+            _actionMediator.SendOff(p * sentOffWithoutBreakingArmour, r, i);
+            
+            _actionMediator.Resolve(p * success * (1 - rollDouble), r, i, usedSkills);
+            _actionMediator.Resolve(p * success * rollDouble, r, i, usedSkills, true);
+            
+            if (!canUseSkill(Skills.DirtyPlayer, usedSkills))
             {
-                useDpOnArmour = _d6.Success(2, foul.Roll - player.DirtyPlayerValue) - success;
+	            return;
             }
 
-            var successAndDoubleOnArmour = canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _d6.RollDouble(foul.Roll);
-            var noDouble = 1 - successAndDoubleOnArmour;
+            success = _d6.Success(2, roll - player.DirtyPlayerValue) - success;
 
-            _actionMediator.SendOff(p * (canUseSkill(Skills.SneakyGit, usedSkills) ? 0 : _d6.RollDouble(2)), r, i);
+            var rollDoubleAndUseDirtyPlayer = canUseSneakyGit ? 0 : _d6.RollDouble(roll - player.DirtyPlayerValue, roll - 1);
 
-            Foul(p * success * noDouble, p * success * (1 - noDouble), r, i, usedSkills);
-            Foul(p * useDpOnArmour * noDouble, p * useDpOnArmour * (1 - noDouble), r, i, usedSkills | Skills.DirtyPlayer);
-        }
-
-        private void Foul(decimal successNoDouble, decimal successWithDouble, int r, int i, Skills usedSkills)
-        {
-            _actionMediator.Resolve(successNoDouble, r, i, usedSkills);
-            _actionMediator.Resolve(successWithDouble, r, i, usedSkills, true);
+            _actionMediator.Resolve(p * success * (1 - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | Skills.DirtyPlayer);
+            _actionMediator.Resolve(p * success * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | Skills.DirtyPlayer, true);
         }
     }
 }

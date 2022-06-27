@@ -1,8 +1,9 @@
-﻿namespace ActionCalculator.Models.Actions;
-
-public class Injury : Action
+﻿namespace ActionCalculator.Models.Actions
 {
-    public Injury(int roll) : base(ActionType.Injury, 0, 0, roll, false)
-    {
-    }
+	public class Injury : Action
+	{
+		public Injury(int roll) : base(ActionType.Injury, 0, 0, roll, false)
+		{
+		}
+	}
 }

@@ -33,7 +33,7 @@ namespace ActionCalculator
 
         public decimal Success(int numberOfDice, int minimumRoll) => 
             (decimal)Successes(numberOfDice, NormaliseRoll(numberOfDice, minimumRoll)).Count() / _rolls[numberOfDice - 1].Count;
-
+        
         private static int NormaliseRoll(int numberOfDice, int minimumRoll) =>
             numberOfDice switch
             {
@@ -43,15 +43,22 @@ namespace ActionCalculator
                 _ => throw new ArgumentOutOfRangeException(nameof(minimumRoll), minimumRoll, null)
             };
 
-        private IEnumerable<List<int>> Successes(int numberOfDice, int minimumRoll) => 
-            _rolls[numberOfDice - 1].Where(x => x.Sum() >= minimumRoll);
+        private IEnumerable<List<int>> Successes(int numberOfDice, int minimumRoll, int maximumRoll = 999) => 
+            _rolls[numberOfDice - 1].Where(x =>
+            {
+	            var sum = x.Sum();
+                return sum >= minimumRoll && sum <= maximumRoll;
+            });
 
-        public decimal RollDouble(int minimumRoll)
+        public decimal RollDouble(int minimumRoll, int maximumRoll)
         {
-            var roll = NormaliseRoll(2, minimumRoll);
+            minimumRoll = NormaliseRoll(2, minimumRoll);
+            maximumRoll = NormaliseRoll(2, maximumRoll);
 
-            return (decimal) Successes(2, roll).Count(x => 
-                x.Sum() >= roll && x.All(y => y == x.First())) / _rolls[1].Count;
+            var successes = Successes(2, minimumRoll, maximumRoll).ToList();
+
+            return (decimal) successes.Count(x => 
+                x.Sum() >= minimumRoll && x.Sum() <= maximumRoll && x.All(y => y == x.First())) / successes.Count;
         }
     }
 }

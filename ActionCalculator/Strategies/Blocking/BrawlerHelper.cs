@@ -1,5 +1,5 @@
-﻿using ActionCalculator.Abstractions.Calculators;
-using ActionCalculator.Abstractions.Calculators.Blocking;
+﻿using ActionCalculator.Abstractions.Strategies;
+using ActionCalculator.Abstractions.Strategies.Blocking;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
 using ActionCalculator.Utilities;

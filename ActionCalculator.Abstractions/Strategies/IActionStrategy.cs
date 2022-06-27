@@ -1,6 +1,6 @@
 ﻿using ActionCalculator.Models;
 
-namespace ActionCalculator.Abstractions.Calculators
+namespace ActionCalculator.Abstractions.Strategies
 {
     public interface IActionStrategy
     {

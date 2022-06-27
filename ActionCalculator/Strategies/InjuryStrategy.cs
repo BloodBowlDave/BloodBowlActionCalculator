@@ -1,5 +1,5 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
 using ActionCalculator.Utilities;

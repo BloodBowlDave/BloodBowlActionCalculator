@@ -1,11 +1,11 @@
 ﻿using ActionCalculator.Abstractions;
-using ActionCalculator.Abstractions.Calculators;
+using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
-    public class CatchInaccuratePassStrategy : IActionStrategy
+	public class CatchInaccuratePassStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;

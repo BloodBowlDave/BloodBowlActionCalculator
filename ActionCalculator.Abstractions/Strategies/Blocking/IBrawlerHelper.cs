@@ -1,7 +1,7 @@
 ﻿using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
 
-namespace ActionCalculator.Abstractions.Calculators.Blocking
+namespace ActionCalculator.Abstractions.Strategies.Blocking
 {
     public interface IBrawlerHelper
     {

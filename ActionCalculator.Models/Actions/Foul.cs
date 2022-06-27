@@ -1,8 +1,9 @@
-﻿namespace ActionCalculator.Models.Actions;
-
-public class Foul : Action
+﻿namespace ActionCalculator.Models.Actions
 {
-    public Foul(int roll) : base(ActionType.Foul, 0, 0, roll, false)
-    {
-    }
+	public class Foul : Action
+	{
+		public Foul(int roll) : base(ActionType.Foul, 0, 0, roll, false)
+		{
+		}
+	}
 }

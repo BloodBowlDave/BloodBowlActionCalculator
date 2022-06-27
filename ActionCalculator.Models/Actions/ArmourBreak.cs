@@ -1,10 +1,11 @@
-﻿namespace ActionCalculator.Models.Actions;
-
-public class ArmourBreak : Action
+﻿namespace ActionCalculator.Models.Actions
 {
-    public ArmourBreak(int roll) : base(ActionType.ArmourBreak, 0m, 0m, roll, false)
-    {
-    }
+	public class ArmourBreak : Action
+	{
+		public ArmourBreak(int roll) : base(ActionType.ArmourBreak, 0m, 0m, roll, false)
+		{
+		}
 
-    public override string ToString() => $"{(char) ActionType}{Roll}";
+		public override string ToString() => $"{(char) ActionType}{Roll}";
+	}
 }
