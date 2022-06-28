@@ -25,7 +25,6 @@ namespace ActionCalculator.Strategies.Fouling
             {
                 _actionMediator.Resolve(p * success, r, i, usedSkills);
                 _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
-                _actionMediator.SendOff(p * failure, r, i);
                 return;
             }
 

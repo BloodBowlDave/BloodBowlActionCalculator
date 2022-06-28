@@ -4,23 +4,26 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator
 {
-    public class CalculationBuilder : ICalculationBuilder
+    public class PlayerActionsBuilder : IPlayerActionsBuilder
     {
         private readonly IActionBuilderFactory _actionBuilderFactory;
         private readonly IPlayerBuilder _playerBuilder;
         private readonly List<PlayerAction> _playerActions = new();
 
-        public CalculationBuilder(IActionBuilderFactory actionBuilderFactory, IPlayerBuilder playerBuilder)
+        public PlayerActionsBuilder(IActionBuilderFactory actionBuilderFactory, IPlayerBuilder playerBuilder)
         {
             _actionBuilderFactory = actionBuilderFactory;
             _playerBuilder = playerBuilder;
         }
 
-        public Calculation Build(string calculation)
+        public PlayerActions Build(string playerActionsString)
         {
-            BuildPlayerActions(calculation, new Player(), 0);
-            
-            return new Calculation(_playerActions.ToArray());
+            BuildPlayerActions(playerActionsString, new Player(), 0);
+
+            var playerActions = new PlayerActions();
+            playerActions.AddRange(_playerActions);
+
+            return playerActions;
         }
 
         private void AddPlayerActions(IEnumerable<PlayerAction> playerActions)

@@ -27,14 +27,12 @@ namespace ActionCalculator.Strategies.Fouling
             if (doubleOnFoul)
             {
                 _actionMediator.Resolve(p * success, r, i, usedSkills, true);
-                _actionMediator.SendOff(p, r, i);
                 return;
             }
 
             var successAndDoubleOnInjury = _d6.RollDouble(action.Roll - modifier, 12);
             _actionMediator.Resolve(p * (success - successAndDoubleOnInjury), r, i, usedSkills);
             _actionMediator.Resolve(p * successAndDoubleOnInjury, r, i, usedSkills, true);
-            _actionMediator.SendOff(p * _d6.RollDouble(2, 12), r, i);
         }
     }
 }

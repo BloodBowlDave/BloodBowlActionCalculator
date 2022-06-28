@@ -4,6 +4,6 @@ namespace ActionCalculator.Abstractions
 {
     public interface IActionCalculator
     {
-        public CalculationResult Calculate(string calculation);
+        public CalculationResult Calculate(string playerActionsString);
     }
 }

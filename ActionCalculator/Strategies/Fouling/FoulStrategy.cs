@@ -26,9 +26,6 @@ namespace ActionCalculator.Strategies.Fouling
 
             var canUseSneakyGit = canUseSkill(Skills.SneakyGit, usedSkills);
             var rollDouble = canUseSneakyGit ? 0 : _d6.RollDouble(roll, 12);
-            var sentOffWithoutBreakingArmour = canUseSneakyGit ? 0 : _d6.RollDouble(2, roll - 1);
-
-            _actionMediator.SendOff(p * sentOffWithoutBreakingArmour, r, i);
             
             _actionMediator.Resolve(p * (success - rollDouble), r, i, usedSkills);
             _actionMediator.Resolve(p * rollDouble, r, i, usedSkills, true);

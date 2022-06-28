@@ -2,22 +2,15 @@
 
 namespace ActionCalculator.Models
 {
-    public class Calculation
+    public class PlayerActions : List<PlayerAction>
     {
-        public Calculation(PlayerAction[] playerActions)
-        {
-            PlayerActions = playerActions;
-        }
-
-        public PlayerAction[] PlayerActions { get; }
-
         public override string ToString()
         {
             var sb = new StringBuilder();
             var previousPlayerId = Guid.Empty;
             var firstAction = true;
 
-            foreach (var playerAction in PlayerActions)
+            foreach (var playerAction in this)
             {
                 var player = playerAction.Player;
                 var action = playerAction.Action;
@@ -118,29 +111,29 @@ namespace ActionCalculator.Models
 
         private bool RequiresDauntlessFailure(PlayerAction playerAction)
         {
-            return PlayerActions.SingleOrDefault(x => 
+            return this.SingleOrDefault(x => 
                 x.Index == playerAction.Index - 2)?.Action.ActionType == ActionType.Dauntless;
         }
 
         private int DepthOfNextAction(PlayerAction playerAction) =>
-            PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index)?.Depth ?? 0;
+            this.FirstOrDefault(x => x.Index > playerAction.Index)?.Depth ?? 0;
 
         private static bool CharacterIsABracket(char character) =>
             new List<char> { '}', ']', '{', '[', '(', ')' }.Contains(character);
 
         private bool CurrentPlayerHasPreviousAction(Guid currentPlayerId, PlayerAction playerAction) =>
-            PlayerActions.FirstOrDefault(x => x.Player.Id == currentPlayerId && x.Index < playerAction.Index) != null;
+            this.FirstOrDefault(x => x.Player.Id == currentPlayerId && x.Index < playerAction.Index) != null;
 
         private bool PreviousPlayerHasSubsequentAction(Guid previousPlayerId, PlayerAction playerAction) =>
-            PlayerActions.FirstOrDefault(x => x.Player.Id == previousPlayerId && x.Index > playerAction.Index) != null;
+            this.FirstOrDefault(x => x.Player.Id == previousPlayerId && x.Index > playerAction.Index) != null;
 
         private bool IsEndOfAlternateBranches(PlayerAction playerAction) =>
-            playerAction.BranchId > 0 && (PlayerActions.FirstOrDefault(x => x.Index > playerAction.Index)?.BranchId ?? 0) == 0;
+            playerAction.BranchId > 0 && (this.FirstOrDefault(x => x.Index > playerAction.Index)?.BranchId ?? 0) == 0;
 
         private bool IsStartOfAlternateBranch(PlayerAction playerAction) =>
-            playerAction.BranchId > 0 && !PlayerActions.Any(x => x.BranchId == playerAction.BranchId && x.Index < playerAction.Index);
+            playerAction.BranchId > 0 && !this.Any(x => x.BranchId == playerAction.BranchId && x.Index < playerAction.Index);
 
         private bool BranchTerminatesCalculation(PlayerAction playerAction) =>
-            PlayerActions.LastOrDefault(x => x.Index >= playerAction.Index && x.Depth >= playerAction.Depth)?.TerminatesCalculation ?? false;
+            this.LastOrDefault(x => x.Index >= playerAction.Index && x.Depth >= playerAction.Depth)?.TerminatesCalculation ?? false;
     }
 }

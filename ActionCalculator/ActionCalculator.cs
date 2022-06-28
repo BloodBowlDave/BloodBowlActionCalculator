@@ -5,34 +5,33 @@ namespace ActionCalculator
 {
     public class ActionCalculator : IActionCalculator
     {
-        private readonly ICalculationBuilder _calculationBuilder;
+        private readonly IPlayerActionsBuilder _playerActionsBuilder;
         private readonly IEqualityComparer<decimal> _probabilityComparer;
         private readonly IActionMediator _actionMediator;
 
         private const int MaximumRerolls = 8;
 
         public ActionCalculator(
-            ICalculationBuilder calculationBuilder,
+            IPlayerActionsBuilder playerActionsBuilder,
             IEqualityComparer<decimal> probabilityComparer,
             IActionMediator actionMediator)
         {
-            _calculationBuilder = calculationBuilder;
+            _playerActionsBuilder = playerActionsBuilder;
             _probabilityComparer = probabilityComparer;
             _actionMediator = actionMediator;
         }
 
-        public CalculationResult Calculate(string calculationString)
+        public CalculationResult Calculate(string playerActionsString)
         {
-            var calculation = _calculationBuilder.Build(calculationString);
+            var playerActions = _playerActionsBuilder.Build(playerActionsString);
 
             var probabilityResults = new List<decimal[]>();
-            var sendOffResults = new List<decimal[]>();
 
             for (var r = 0; r < MaximumRerolls; r++)
             {
-                var context = new CalculationContext(calculation, r, 
-                    new decimal[calculation.PlayerActions.Length * 2 + 1], 
-                    new decimal[calculation.PlayerActions.Length * 2 + 1]);
+                var context = new CalculationContext(playerActions, r, 
+                    new decimal[playerActions.Count * 2 + 1], 
+                    new decimal[playerActions.Count * 2 + 1]);
 
                 _actionMediator.Initialise(context);
                 _actionMediator.Resolve(1m, r, -1, Skills.None);
@@ -45,8 +44,6 @@ namespace ActionCalculator
                 }
 
                 probabilityResults.Add(results);
-
-                sendOffResults.Add(context.SendOffResults.Where(x => x > 0).ToArray());
             }
 
             foreach (var probabilityResult in probabilityResults)
@@ -54,12 +51,7 @@ namespace ActionCalculator
                 AggregateResults(probabilityResult);
             }
 
-            foreach (var sendOffResult in sendOffResults)
-            {
-                AggregateResults(sendOffResult);
-            }
-
-            return new CalculationResult(calculation, probabilityResults, sendOffResults);
+            return new CalculationResult(playerActions, probabilityResults);
         }
 
         private static void AggregateResults(IList<decimal> result)

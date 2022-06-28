@@ -2,15 +2,13 @@
 {
     public class CalculationResult
     {
-        public CalculationResult(Calculation calculation, List<decimal[]> results, List<decimal[]> sendOffResults)
+        public CalculationResult(PlayerActions playerActions, List<decimal[]> results)
         {
-            Calculation = calculation;
+            PlayerActions = playerActions;
             Results = results;
-            SendOffResults = sendOffResults;
         }
 
-        public Calculation Calculation { get; }
+        public PlayerActions PlayerActions { get; }
         public List<decimal[]> Results { get; }
-        public List<decimal[]> SendOffResults { get; }
     }
 }

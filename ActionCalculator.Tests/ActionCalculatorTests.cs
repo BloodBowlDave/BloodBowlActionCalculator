@@ -11,7 +11,7 @@ namespace ActionCalculator.Tests
         public ActionCalculatorTests()
         {
             _actionCalculator = new ActionCalculator(
-                new CalculationBuilder(
+                new PlayerActionsBuilder(
                     new ActionBuilderFactory(),
                     new PlayerBuilder()),
                 new ProbabilityComparer(),
@@ -201,9 +201,9 @@ namespace ActionCalculator.Tests
         //chainsaw
         [InlineData("W8", 0, 0.41667)]
         [InlineData("W8[:2D2]", 0, 0.74074)]
-        public void ActionCalculatorReturnsExpectedResult(string calculation, int rerolls, params double[] expected)
+        public void ActionCalculatorReturnsExpectedResult(string playerActionsString, int rerolls, params double[] expected)
         {
-            var result = _actionCalculator.Calculate(calculation);
+            var result = _actionCalculator.Calculate(playerActionsString);
 
             Assert.Equal(expected.Length, result.Results[rerolls].Length);
 
@@ -212,24 +212,7 @@ namespace ActionCalculator.Tests
                 Assert.Equal((decimal)expected[i], result.Results[rerolls][i], 5);
             }
 
-            Assert.Equal(calculation, result.Calculation.ToString());
-        }
-
-        [Theory]
-        [InlineData("F2", 0, 0.30556)]
-        [InlineData("F2,E", 0, 0.05093)]
-        [InlineData("F2,J8", 0, 0.30556)]
-        [InlineData("F2,J8,E", 0, 0.05093)]
-        public void ActionCalculatorReturnsExpectedSendOffResult(string calculation, int rerolls, params double[] expected)
-        {
-            var result = _actionCalculator.Calculate(calculation);
-
-            Assert.Equal(expected.Length, result.SendOffResults[rerolls].Length);
-
-            for (var i = 0; i < expected.Length; i++)
-            {
-                Assert.Equal((decimal)expected[i], result.SendOffResults[rerolls][i], 5);
-            }
+            Assert.Equal(playerActionsString, result.PlayerActions.ToString());
         }
     }
 }
