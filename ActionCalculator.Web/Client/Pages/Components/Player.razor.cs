@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace ActionCalculator.Web.Client.Shared
+namespace ActionCalculator.Web.Client.Pages.Components
 {
     public partial class Player
     {

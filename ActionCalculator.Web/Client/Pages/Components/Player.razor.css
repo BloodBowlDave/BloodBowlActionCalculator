@@ -1,9 +1,4 @@
-﻿h3 {
-    float: left;
-    margin-right: 10px;
-}
-
-.skill-input {
+﻿.skill-input {
     display: inline-flex;
     width: 34px;
 }
