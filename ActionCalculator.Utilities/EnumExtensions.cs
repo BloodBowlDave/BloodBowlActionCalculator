@@ -35,7 +35,7 @@ namespace ActionCalculator.Utilities
         private static IEnumerable<T> ToEnumerable<T>(this T value) where T : Enum =>
             value.GetType().ToEnumerable<T>().Where(x => value.Contains(x));
 
-        private static IEnumerable<T> ToEnumerable<T>(this Type type) where T : Enum =>
+        public static IEnumerable<T> ToEnumerable<T>(this Type type) where T : Enum =>
             Enum.GetValues(type).Cast<T>();
 
         public static string GetDescriptionFromValue(this Enum value) =>

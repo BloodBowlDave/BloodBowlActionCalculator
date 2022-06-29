@@ -46,7 +46,7 @@ namespace ActionCalculator.Models
                 Skills.ConsummateProfessional => Skills.Pro,
                 _ => skill
             };
-
+            
             return Skills.Contains(skill) && !usedSkills.Contains(underlyingSkill);
         }
 

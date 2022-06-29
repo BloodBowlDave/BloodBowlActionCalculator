@@ -8,36 +8,36 @@ namespace ActionCalculator.Models
         None = 0,
         [Description("D")]
         Dodge = 1,
+        [Description("BT")]
+        BreakTackle = 2, 
         [Description("SH")]
-        SureHands = 2,
+        SureHands = 4,
         [Description("SF")]
-        SureFeet = 4,
+        SureFeet = 8,
         [Description("PA")]
-        Pass = 8,
+        Pass = 16,
+        [Description("CB")]
+        CloudBurster = 32,
         [Description("C")]
-        Catch = 16,
-        [Description("P")]
-        Pro = 32,
-        [Description("L")]
-        Loner = 64,
+        Catch = 64,
         [Description("DC")]
         DivingCatch = 128,
-        [Description("DP")]
-        DirtyPlayer = 256,
-        [Description("MB")]
-        MightyBlow = 512,
         [Description("B")]
-        Brawler = 1024,
+        Brawler = 256,
         [Description("CL")]
-        Claw = 2048,
+        Claw = 512,
+        [Description("MB")]
+        MightyBlow = 1024,
+        [Description("P")]
+        Pro = 2048,
+        [Description("L")]
+        Loner = 4096,
+        [Description("DP")]
+        DirtyPlayer = 8192, 
         [Description("SG")]
-        SneakyGit = 4096,
+        SneakyGit = 16384,
         [Description("DT")]
-        DivingTackle = 8192,
-        [Description("CB")]
-        CloudBurster = 16384,
-        [Description("BT")]
-        BreakTackle = 32768,
+        DivingTackle = 32768,
         [Description("CP")]
         ConsummateProfessional = 65536,
         [Description("OP")]

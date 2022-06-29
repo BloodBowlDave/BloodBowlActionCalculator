@@ -1,0 +1,13 @@
+﻿h3 {
+    float: left;
+    margin-right: 10px;
+}
+
+.skill-input {
+    display: inline-flex;
+    width: 34px;
+}
+
+.skill-input .mud-input {
+    margin-top: 0;
+}
