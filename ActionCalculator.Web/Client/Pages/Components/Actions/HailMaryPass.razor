@@ -1,0 +1,14 @@
+﻿<MudItem>
+    <MudPaper>
+        <h5>Hail Mary Pass</h5>
+        
+        <MudNumericField T="int" Min="1" Max="6" @bind-Value="_pa" Label="PA"/>
+        <MudNumericField T="int" Min="-5" Max="5" @bind-Value="_modifier" Label="Modifier"/>
+        <MudButton>Add</MudButton>
+    </MudPaper>
+</MudItem>
+
+@code {
+    private int _pa = 3;
+    private int _modifier;
+}

@@ -1,9 +1,9 @@
-﻿@using ActionCalculator.Models
-@using ActionCalculator.Utilities
-@using System.Linq
+﻿@using System.Linq
+@using global::ActionCalculator.Models
 
 <MudPaper>
-    
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewPlayer" Style="display: inline-flex">New Player</MudButton>
+
     <MudChipSet MultiSelection="true" Filter="false" @bind-SelectedChips="_selected">
         @foreach (var skill in GetSkills())
         {   
@@ -11,37 +11,37 @@
                 Text="@skill.ToString()" 
                 Variant="Variant.Text"
                 Color="Color.Default" 
-                SelectedColor="Color.Primary">
+                SelectedColor="Color.Primary"
+                OnClick="PlayerChanged">
             </MudChip>
 
             @if (skill == Skills.Loner)
             {
                 <div hidden="@(!SkillIsSelected("Loner"))" class="skill-input">
-                    <MudNumericField T="int" Min="2" Max="6" @bind-Value="_lonerValue"></MudNumericField>
+                    <MudNumericField T="int" Min="2" Max="6" Value="_lonerValue" ValueChanged="@(LonerChanged)"/>
                 </div>
             }
             else if (skill == Skills.MightyBlow)
             {
                 <div hidden="@(!SkillIsSelected("MightyBlow"))" class="skill-input">
-                    <MudNumericField T="int" Min="1" Max="2" @bind-Value="_mightyBlowValue"></MudNumericField>
+                    <MudNumericField T="int" Min="1" Max="2" Value="_mightyBlowValue" ValueChanged="@(MightyBlowChanged)"/>
                 </div>
             }
             else if (skill == Skills.DirtyPlayer)
             {
                 <div hidden="@(!SkillIsSelected("DirtyPlayer"))" class="skill-input">
-                    <MudNumericField T="int" Min="1" Max="2" @bind-Value="_dirtyPlayerValue"></MudNumericField>
+                    <MudNumericField T="int" Min="1" Max="2" Value="_dirtyPlayerValue" ValueChanged="@(DirtyPlayerChanged)"/>
                 </div>
             }
             else if (skill == Skills.BreakTackle)
             {
                 <div hidden="@(!SkillIsSelected("BreakTackle"))" class="skill-input">
-                    <MudNumericField T="int" Min="1" Max="2" @bind-Value="_breakTackleValue"></MudNumericField>
+                    <MudNumericField T="int" Min="1" Max="2" Value="_breakTackleValue" ValueChanged="@(BreakTackleChanged)"/>
                 </div>
             }
         }
     </MudChipSet>
     
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewPlayer">New Player</MudButton>
     <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="ClearSelected">Clear</MudButton>
 </MudPaper>
 
@@ -53,31 +53,13 @@
     .skill-input .mud-input-control {
         margin-top: 0;
     }
+
+    .skill-input {
+        display: inline-flex;
+        width: 34px;
+    }
+
+    .skill-input .mud-input {
+        margin-top: 0;
+    }
 </style>
-
-@code {
-
-    int _lonerValue;
-    int _mightyBlowValue;
-    int _dirtyPlayerValue;
-    int _breakTackleValue;
-
-    Guid _playerId;
-    MudChip[] _selected;
-    
-    private IEnumerable<Skills> GetSkills() => 
-        typeof(Skills).ToEnumerable<Skills>().Where(x => x is > 0 and < Skills.DivingTackle);
-
-    private bool SkillIsSelected(string skill) => _selected.Any(x => x.Text == skill);
-
-    private void ClearSelected()
-    {
-        _selected = Array.Empty<MudChip>();
-    }
-
-    private void NewPlayer()
-    {
-        _playerId = Guid.NewGuid();
-        ClearSelected();
-    }
-}

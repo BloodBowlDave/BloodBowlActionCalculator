@@ -1,22 +1,22 @@
 using ActionCalculator.Abstractions;
-using ActionCalculator.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace ActionCalculator.Tests
 {
     public class ActionCalculatorTests
     {
-        private readonly IActionCalculator _actionCalculator;
+        private readonly ICalculator _calculator;
 
         public ActionCalculatorTests()
         {
-            _actionCalculator = new ActionCalculator(
-                new PlayerActionsBuilder(
-                    new ActionBuilderFactory(),
-                    new PlayerBuilder()),
-                new ProbabilityComparer(),
-                new ActionMediator(
-                    new ActionStrategyFactory()));
+            var services = new ServiceCollection();
+
+            services.AddActionCalculatorServices();
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            _calculator = serviceProvider.GetService<ICalculator>();
         }
 
         [Theory]
@@ -203,7 +203,7 @@ namespace ActionCalculator.Tests
         [InlineData("W8[:2D2]", 0, 0.74074)]
         public void ActionCalculatorReturnsExpectedResult(string playerActionsString, int rerolls, params double[] expected)
         {
-            var result = _actionCalculator.Calculate(playerActionsString);
+            var result = _calculator.Calculate(playerActionsString);
 
             Assert.Equal(expected.Length, result.Results[rerolls].Length);
 

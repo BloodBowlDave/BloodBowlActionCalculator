@@ -12,7 +12,7 @@
         Foul = 'F',
         ArmourBreak = 'B',
         NonRerollable = 'X',
-        ThrowTeamMate = 'H',
+        ThrowTeammate = 'H',
         Dauntless = 'L',
         Interception = 'I',
         Tentacles = 'N',

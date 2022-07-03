@@ -5,11 +5,11 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class ThrowTeamMateBuilder : IActionBuilder
+	public class ThrowTeammateBuilder : IActionBuilder
 	{
 		private readonly ID6 _d6;
 
-		public ThrowTeamMateBuilder(ID6 d6)
+		public ThrowTeammateBuilder(ID6 d6)
 		{
 			_d6 = d6;
 		}
@@ -34,7 +34,7 @@ namespace ActionCalculator.ActionBuilders
 				var failures = (1m - modifier).ThisOrMinimum(1).ThisOrMaximum(5);
 				var inaccurateThrows = 6 - successes - failures;
 
-				return new ThrowTeamMate(successes / 6,
+				return new ThrowTeammate(successes / 6,
 					failures / 6,
 					inaccurateThrows / 6,
 					usePro,
@@ -48,7 +48,7 @@ namespace ActionCalculator.ActionBuilders
 			var failure = 1m / 6;
 			var inaccurateThrow = 1 - success - failure;
 
-			return new ThrowTeamMate(success,
+			return new ThrowTeammate(success,
 				failure,
 				inaccurateThrow,
 				usePro,

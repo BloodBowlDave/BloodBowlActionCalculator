@@ -1,13 +1,11 @@
-﻿<MudPaper>
-    <h5>Rerollable</h5>
-
-    <MudButton>2+</MudButton>
-    <MudButton>3+</MudButton>
-    <MudButton>4+</MudButton>
-    <MudButton>5+</MudButton>
-    <MudButton>6+</MudButton>
-</MudPaper>
-
-@code {
-
-}
+﻿<MudItem>
+    <MudPaper>
+        <h5>Rerollable</h5>
+        
+        @for (var i = 2; i <= 6; i++)
+        {
+            var roll = i;
+            <MudButton OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+        }
+    </MudPaper>
+</MudItem>

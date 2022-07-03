@@ -3,7 +3,7 @@ using ActionCalculator.Models;
 
 namespace ActionCalculator
 {
-    public class ActionCalculator : IActionCalculator
+    public class Calculator : ICalculator
     {
         private readonly IPlayerActionsBuilder _playerActionsBuilder;
         private readonly IEqualityComparer<decimal> _probabilityComparer;
@@ -11,7 +11,7 @@ namespace ActionCalculator
 
         private const int MaximumRerolls = 8;
 
-        public ActionCalculator(
+        public Calculator(
             IPlayerActionsBuilder playerActionsBuilder,
             IEqualityComparer<decimal> probabilityComparer,
             IActionMediator actionMediator)
@@ -29,9 +29,7 @@ namespace ActionCalculator
 
             for (var r = 0; r < MaximumRerolls; r++)
             {
-                var context = new CalculationContext(playerActions, r, 
-                    new decimal[playerActions.Count * 2 + 1], 
-                    new decimal[playerActions.Count * 2 + 1]);
+                var context = new Calculation(playerActions, r);
 
                 _actionMediator.Initialise(context);
                 _actionMediator.Resolve(1m, r, -1, Skills.None);

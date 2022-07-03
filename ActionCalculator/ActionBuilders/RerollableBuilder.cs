@@ -4,11 +4,11 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class RerollableActionBuilder : IActionBuilder
+	public class RerollableBuilder : IActionBuilder
 	{
 		private readonly ID6 _d6;
 
-		public RerollableActionBuilder(ID6 d6)
+		public RerollableBuilder(ID6 d6)
 		{
 			_d6 = d6;
 		}

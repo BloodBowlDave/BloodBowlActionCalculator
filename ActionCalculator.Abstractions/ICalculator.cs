@@ -2,7 +2,7 @@
 
 namespace ActionCalculator.Abstractions
 {
-    public interface IActionCalculator
+    public interface ICalculator
     {
         public CalculationResult Calculate(string playerActionsString);
     }

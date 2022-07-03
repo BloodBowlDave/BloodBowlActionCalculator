@@ -1,39 +1,58 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.ActionBuilders;
 using ActionCalculator.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ActionCalculator
 {
     public class ActionBuilderFactory : IActionBuilderFactory
     {
-        public IActionBuilder GetActionBuilder(string input) =>
-            GetActionType(input) switch
+        private readonly IServiceProvider _serviceProvider;
+
+        public ActionBuilderFactory(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        public IActionBuilder GetActionBuilder(string input) => GetActionBuilder(GetActionType(input));
+
+        public IActionBuilder GetActionBuilder(ActionType actionType)
+        {
+            IActionBuilder? actionBuilder = actionType switch
             {
-                ActionType.Block => new BlockBuilder(),
-                ActionType.Foul => new FoulBuilder(),
-                ActionType.ArmourBreak => new ArmourBreakBuilder(),
-                ActionType.Pass => new PassActionBuilder(new D6()),
-                ActionType.ThrowTeamMate => new ThrowTeamMateBuilder(new D6()),
-                ActionType.Bribe => new BribeBuilder(),
-                ActionType.ArgueTheCall => new ArgueTheCallBuilder(new D6()),
-                ActionType.Tentacles => new TentaclesBuilder(),
-                ActionType.Shadowing => new ShadowingBuilder(),
-                ActionType.Injury => new InjuryBuilder(),
-                ActionType.Catch => new CatchBuilder(new D6()),
-                ActionType.Rerollable => new RerollableActionBuilder(new D6()),
-                ActionType.Dodge => new DodgeBuilder(new D6()),
-                ActionType.Rush => new RushBuilder(new D6()),
-                ActionType.PickUp => new PickupBuilder(new D6()),
-                ActionType.NonRerollable => new NonRerollableActionBuilder(new D6()),
-                ActionType.Dauntless => new DauntlessBuilder(new D6()),
-                ActionType.Interception => new InterceptionBuilder(new D6()),
-                ActionType.Landing => new LandingBuilder(new D6()),
-                ActionType.HailMaryPass => new HailMaryPassBuilder(new D6()),
-                ActionType.Hypnogaze => new HypnogazeBuilder(new D6()),
-                ActionType.Stab => new StabBuilder(),
-                ActionType.Chainsaw => new ChainsawBuilder(),
+                ActionType.ArgueTheCall => _serviceProvider.GetService<ArgueTheCallBuilder>(),
+                ActionType.ArmourBreak => _serviceProvider.GetService<ArmourBreakBuilder>(),
+                ActionType.Bribe => _serviceProvider.GetService<BribeBuilder>(),
+                ActionType.Catch => _serviceProvider.GetService<CatchBuilder>(),
+                ActionType.Chainsaw => _serviceProvider.GetService<ChainsawBuilder>(),
+                ActionType.Dauntless => _serviceProvider.GetService<DauntlessBuilder>(),
+                ActionType.Dodge => _serviceProvider.GetService<DodgeBuilder>(),
+                ActionType.Foul => _serviceProvider.GetService<FoulBuilder>(),
+                ActionType.HailMaryPass => _serviceProvider.GetService<HailMaryPassBuilder>(),
+                ActionType.Hypnogaze => _serviceProvider.GetService<HypnogazeBuilder>(),
+                ActionType.Injury => _serviceProvider.GetService<InjuryBuilder>(),
+                ActionType.Interception => _serviceProvider.GetService<InterceptionBuilder>(),
+                ActionType.Landing => _serviceProvider.GetService<LandingBuilder>(),
+                ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableBuilder>(),
+                ActionType.Pass => _serviceProvider.GetService<PassActionBuilder>(),
+                ActionType.PickUp => _serviceProvider.GetService<PickupBuilder>(),
+                ActionType.Rerollable => _serviceProvider.GetService<RerollableBuilder>(),
+                ActionType.Rush => _serviceProvider.GetService<RushBuilder>(),
+                ActionType.Shadowing => _serviceProvider.GetService<ShadowingBuilder>(),
+                ActionType.Stab => _serviceProvider.GetService<StabBuilder>(),
+                ActionType.Tentacles => _serviceProvider.GetService<TentaclesBuilder>(),
+                ActionType.ThrowTeammate => _serviceProvider.GetService<ThrowTeammateBuilder>(),
+                ActionType.Block => _serviceProvider.GetService<BlockBuilder>(),
                 _ => throw new ArgumentOutOfRangeException()
             };
+
+            if (actionBuilder == null)
+            {
+                throw new Exception($"Action builder service not registered for type {actionType}");
+            }
+
+            return actionBuilder;
+        }
 
         private static ActionType GetActionType(string input) =>
             IsBlockAction(input)

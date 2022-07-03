@@ -6,16 +6,16 @@ namespace ActionCalculator
 {
     public class ActionMediator : IActionMediator
     {
-        private readonly IActionStrategyFactory _actionStrategyFactory;
-        private CalculationContext _context;
+        private readonly IStrategyFactory _strategyFactory;
+        private Calculation _context;
 
-        public ActionMediator(IActionStrategyFactory actionStrategyFactory)
+        public ActionMediator(IStrategyFactory strategyFactory)
         {
-            _actionStrategyFactory = actionStrategyFactory;
+            _strategyFactory = strategyFactory;
             _context = null!;
         }
 
-        public void Initialise(CalculationContext context)
+        public void Initialise(Calculation context)
         {
             _context = context;
         }
@@ -130,7 +130,7 @@ namespace ActionCalculator
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
             previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass
-                or ActionType.Pass or ActionType.ThrowTeamMate or ActionType.Interception or ActionType.NonRerollable or ActionType.Dauntless;
+                or ActionType.Pass or ActionType.ThrowTeammate or ActionType.Interception or ActionType.NonRerollable or ActionType.Dauntless;
 
         private static bool PlayerSentOff(ActionType? previousActionType, ActionType? actionType) =>
             previousActionType switch
@@ -144,15 +144,15 @@ namespace ActionCalculator
 
         private void Execute(PlayerAction playerAction, decimal p, int r, Skills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
         {
-            var actionStrategy = _actionStrategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure);
+            var actionStrategy = _strategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure);
             actionStrategy.Execute(p, r, playerAction, usedSkills, nonCriticalFailure);
         }
 
         private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)
         {
-            Console.WriteLine($"MaxRerolls:{_context.MaxRerolls} P:{p:0.00000} R:{r} Action:{previousActionType} UsedSkills:{usedSkills}");
+            Console.WriteLine($"Rerolls:{_context.Rerolls} P:{p:0.00000} R:{r} Action:{previousActionType} UsedSkills:{usedSkills}");
 
-            _context.Results[_context.MaxRerolls - r] += p;
+            _context.Results[_context.Rerolls - r] += p;
         }
     }
 }

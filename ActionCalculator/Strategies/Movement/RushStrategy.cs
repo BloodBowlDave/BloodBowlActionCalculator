@@ -5,12 +5,12 @@ using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Movement
 {
-    public class RushActionStrategy : IActionStrategy
+    public class RushStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
 
-        public RushActionStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public RushStrategy(IActionMediator actionMediator, IProHelper proHelper)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;

@@ -5,12 +5,12 @@ using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
-    public class ThrowTeamMateStrategy : IActionStrategy
+    public class ThrowTeammateStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
 
-        public ThrowTeamMateStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public ThrowTeammateStrategy(IActionMediator actionMediator, IProHelper proHelper)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var throwTeamMate = (ThrowTeamMate) playerAction.Action;
+            var throwTeamMate = (ThrowTeammate) playerAction.Action;
             var success = throwTeamMate.Success;
             var failure = throwTeamMate.Failure;
             var i = playerAction.Index;

@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ActionCalculator.Models\ActionCalculator.Models.csproj" />
+    <ProjectReference Include="..\..\ActionCalculator\ActionCalculator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

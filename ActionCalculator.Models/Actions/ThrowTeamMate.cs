@@ -1,10 +1,10 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class ThrowTeamMate : Action
+	public class ThrowTeammate : Action
 	{
-		public ThrowTeamMate(decimal success, decimal failure, decimal inaccurateThrow, bool usePro, 
+		public ThrowTeammate(decimal success, decimal failure, decimal inaccurateThrow, bool usePro, 
 			bool rerollInaccurateThrow, int roll, int modifier) 
-			: base(ActionType.ThrowTeamMate, success, failure, roll, usePro)
+			: base(ActionType.ThrowTeammate, success, failure, roll, usePro)
 		{
 			InaccurateThrow = inaccurateThrow;
 			RerollInaccurateThrow = rerollInaccurateThrow;

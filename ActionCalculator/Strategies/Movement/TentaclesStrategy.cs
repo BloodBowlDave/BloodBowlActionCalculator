@@ -5,12 +5,12 @@ using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Movement
 {
-    public class TentaclesActionStrategy : IActionStrategy
+    public class TentaclesStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
 
-        public TentaclesActionStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public TentaclesStrategy(IActionMediator actionMediator, IProHelper proHelper)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;

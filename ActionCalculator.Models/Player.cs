@@ -15,9 +15,9 @@ namespace ActionCalculator.Models
             ProSuccess = 2m / 3;
         }
 
-        public Player(Skills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, int incorporealValue)
+        public Player(Guid id, Skills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, int incorporealValue)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             Skills = skills;
             LonerSuccess = (7m - lonerValue) / 6;
             LonerValue = lonerValue;
@@ -28,7 +28,7 @@ namespace ActionCalculator.Models
         }
 
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
         private Skills Skills { get; }
         public decimal LonerSuccess { get; }
         private int LonerValue { get; }

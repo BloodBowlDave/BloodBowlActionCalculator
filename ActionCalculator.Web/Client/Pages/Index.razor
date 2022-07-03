@@ -2,9 +2,11 @@
 
 <PageTitle>Dave's Action Calculator</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+<MudContainer MaxWidth="MaxWidth.Large">
     <h1>Dave's Action Calculator</h1>
-    <Player/>
+    <Player CurrentPlayer="_currentPlayer" OnPlayerChanged="OnPlayerChanged" />
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <ActionsContainer/>
+    <ActionsContainer OnAddAction="@AddAction"/>
+    <MudInputString Value="@_currentPlayer.Id.ToString()"></MudInputString>
+    <MudInputString Value="@_currentPlayer.BreakTackleValue.ToString()"></MudInputString>
 </MudContainer>

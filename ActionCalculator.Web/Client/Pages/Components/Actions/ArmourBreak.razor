@@ -1,0 +1,12 @@
+﻿<MudItem>
+    <MudPaper>
+        <h5>Armour Break</h5>
+        
+        <MudNumericField T="int" Min="2" Max="11" @bind-Value="_armourBreak"/>
+        <MudButton>Add</MudButton>
+    </MudPaper>
+</MudItem>
+
+@code {
+    private int _armourBreak = 9;
+}
