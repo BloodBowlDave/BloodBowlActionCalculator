@@ -1,0 +1,63 @@
+﻿@using ActionCalculator.Models
+@using Microsoft.AspNetCore.Components
+
+@{
+    var playerId = Guid.NewGuid();
+    var playerNumber = 1;
+}
+
+@if (Calculation.PlayerActions.Any())
+{
+    <MudPaper>
+        <h5>Calculation - @(Calculation.PlayerActions.ToString())</h5>
+        <MudNumericField T="int" Min="0" Max="8" Label="Rerolls" Value="Calculation.Rerolls" ValueChanged="@(RerollsChanged)"/>
+        <MudButton OnClick="SaveCalculation">Save</MudButton>
+        <MudButton OnClick="ClearCalculation">Clear</MudButton>
+    </MudPaper>
+
+    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"></MudDivider>
+        
+    <MudGrid Spacing="1">
+
+        @foreach (var playerAction in Calculation.PlayerActions)
+        {
+            if (playerAction.Player.Id != playerId)
+            {
+                playerId = playerAction.Player.Id;
+
+                <PlayerSummary Player="@playerAction.Player" PlayerNumber="playerNumber"/>
+
+                playerNumber++;
+            }
+
+            <ActionSummary Action="@playerAction.Action"/>
+        }
+        
+    </MudGrid>
+}
+
+@code {
+
+    [Parameter] 
+    public Calculation Calculation { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<Calculation> CalculationChanged { get; set; }
+    
+    private void RerollsChanged(int i)
+    {
+        Calculation.Rerolls = i;
+        CalculationChanged.InvokeAsync(Calculation);
+    }
+
+    private void SaveCalculation()
+    {
+
+    }
+
+    private void ClearCalculation()
+    {
+        Calculation = new Calculation(new PlayerActions(), Calculation.Rerolls);
+        CalculationChanged.InvokeAsync(Calculation);
+    }
+}

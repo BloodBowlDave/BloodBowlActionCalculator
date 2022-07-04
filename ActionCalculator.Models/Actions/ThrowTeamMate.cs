@@ -13,7 +13,7 @@
     
 		public decimal InaccurateThrow { get; }
 		public bool RerollInaccurateThrow { get; }
-		private int Modifier { get; }
+		public int Modifier { get; }
 
 		public override string ToString() => $"{(char)ActionType}{Roll}{GetModifier()}{(!RerollInaccurateThrow ? "'" : "")}";
 

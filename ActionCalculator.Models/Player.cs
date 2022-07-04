@@ -28,10 +28,10 @@ namespace ActionCalculator.Models
         }
 
 
-        public Guid Id { get; set; }
-        private Skills Skills { get; }
+        public Guid Id { get; }
+        public Skills Skills { get; }
         public decimal LonerSuccess { get; }
-        private int LonerValue { get; }
+        public int LonerValue { get; }
         public int BreakTackleValue { get; }
         public int MightyBlowValue { get; }
         public int DirtyPlayerValue { get; }

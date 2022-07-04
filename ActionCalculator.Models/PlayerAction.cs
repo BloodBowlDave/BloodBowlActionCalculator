@@ -11,7 +11,7 @@ namespace ActionCalculator.Models
             Depth = depth;
         }
 
-        public Player Player { get; }
+        public Player Player { get; set; }
         public Action Action { get; }
         public int Index { get; set; }
         public int Depth { get; }

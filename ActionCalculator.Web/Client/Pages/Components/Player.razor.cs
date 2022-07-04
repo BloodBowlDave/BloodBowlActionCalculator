@@ -47,7 +47,7 @@ namespace ActionCalculator.Web.Client.Pages.Components
 
         private void NewPlayer()
         {
-            CurrentPlayer.Id = Guid.NewGuid();
+            CurrentPlayer = new Models.Player();
             ClearSelected();
         }
 

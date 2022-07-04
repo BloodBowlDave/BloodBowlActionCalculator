@@ -1,0 +1,67 @@
+﻿@using System.Text
+@using Block = ActionCalculator.Models.Actions.Block
+<MudItem>
+    <MudPaper>
+        <h6>@(GetDescription(Action))</h6>
+    </MudPaper>
+</MudItem>
+
+@code {
+
+    [Parameter]
+    public Action Action { get; set; } = null!;
+
+    private string GetDescription(Action action)
+    {
+        var actionType = action.ActionType.ToString();
+
+        return action.ActionType switch
+        {
+            ActionType.Rerollable => $"{action.Roll}+",
+            ActionType.Dodge => $"{action.Roll}+ {actionType}",
+            ActionType.Rush => $"{action.Roll}+ {actionType}",
+            ActionType.PickUp => $"{action.Roll}+ {actionType}",
+            ActionType.Pass => $"{action.Roll}+ {actionType} {GetModifier(action)}",
+            ActionType.Block => $"{GetBlockDescription((Block) action)}",
+            ActionType.Catch => $"{action.Roll}+ {actionType}",
+            ActionType.Foul => $"{action.Roll}+ {actionType}",
+            ActionType.ArmourBreak => $"{action.Roll}+ {actionType}",
+            ActionType.NonRerollable => $"{action.Roll}+ {actionType}",
+            ActionType.ThrowTeammate => $"{action.Roll}+ {actionType} {GetModifier(action)}",
+            ActionType.Dauntless => $"{action.Roll}+ {actionType}",
+            ActionType.Interception => $"{action.Roll}+ {actionType}",
+            ActionType.ArgueTheCall => $"{action.Roll}+ {actionType}",
+            ActionType.Bribe => $"{action.Roll}+ {actionType}",
+            ActionType.Injury => $"{action.Roll}+ {actionType}",
+            ActionType.Landing => $"{action.Roll}+ {actionType}",
+            ActionType.HailMaryPass => $"{action.Roll}+ {actionType}",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private string GetModifier(Action action)
+    {
+        var modifier = action.ActionType == ActionType.Pass 
+            ? ((Models.Actions.Pass) action).Modifier 
+            : ((Models.Actions.ThrowTeammate) action).Modifier;
+
+        return $"{(modifier < 0 ? "" : "+")}{modifier} Modifier";
+    }
+
+    private string GetBlockDescription(Block block)
+    {
+        var successString = block.NumberOfSuccessfulResults > 1
+            ? $"{block.NumberOfSuccessfulResults} successes"
+            : "1 success";
+
+        return block.NumberOfDice switch
+        {
+            3 => $"3 dice block {successString}",
+            2 => $"2 dice block {successString}",
+            1 => $"1 die block {successString}",
+            -2 => $"2 red dice block {successString}",
+            -3 => $"3 red dice block {successString}",
+            _ => throw new ArgumentOutOfRangeException()
+            };
+    }
+}
