@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, _) = player;
-            var action = (RerollableAction) playerAction.Action;
+            var action = (Rerollable) playerAction.Action;
             var success = action.Success;
             var failure = action.Failure;
             var i = playerAction.Index;

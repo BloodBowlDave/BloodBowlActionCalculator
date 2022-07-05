@@ -1,0 +1,38 @@
+﻿@using System.Text
+@using Block = ActionCalculator.Models.Actions.Block
+@using Player = ActionCalculator.Models.Player
+<MudItem>
+    <MudPaper>
+	    <h6>@(Action.GetDescription())</h6>
+        
+        @if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None))
+        {
+            <MudCheckBox T="bool" Label="Pro"/>
+        }
+        
+        @if (Action.ActionType == ActionType.Block && Player.CanUseSkill(Skills.Brawler, Skills.None))
+        {
+	        <MudCheckBox T="bool" Label="Brawler"/>
+        }
+        
+        @if (Action.ActionType == ActionType.Dodge)
+        {
+	        if (Player.CanUseSkill(Skills.BreakTackle, Skills.None))
+	        {
+	            <MudCheckBox T="bool" Label="Break Tackle"/>
+	        }
+
+            <MudCheckBox T="bool" Label="Diving Tackle"/>
+        }
+    </MudPaper>
+</MudItem>
+
+@code {
+
+    [Parameter]
+    public PlayerAction PlayerAction { get; set; } = null!;
+
+	private Player Player => PlayerAction.Player;
+	private Action Action => PlayerAction.Action;
+
+}

@@ -6,5 +6,7 @@
             : base(ActionType.Chainsaw, 0, 0, roll, false)
         {
         }
+
+        public override bool IsRerollable() => false;
     }
 }

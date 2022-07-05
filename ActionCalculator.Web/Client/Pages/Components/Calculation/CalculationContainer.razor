@@ -30,7 +30,7 @@
                 playerNumber++;
             }
 
-            <ActionSummary Action="@playerAction.Action"/>
+            <ActionSummary PlayerAction="@playerAction"/>
         }
         
     </MudGrid>
@@ -39,10 +39,10 @@
 @code {
 
     [Parameter] 
-    public Calculation Calculation { get; set; } = null!;
+    public Models.Calculation Calculation { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<Calculation> CalculationChanged { get; set; }
+    public EventCallback<Models.Calculation> CalculationChanged { get; set; }
     
     private void RerollsChanged(int i)
     {
@@ -57,7 +57,7 @@
 
     private void ClearCalculation()
     {
-        Calculation = new Calculation(new PlayerActions(), Calculation.Rerolls);
+        Calculation = new Models.Calculation(new PlayerActions(), Calculation.Rerolls);
         CalculationChanged.InvokeAsync(Calculation);
     }
 }

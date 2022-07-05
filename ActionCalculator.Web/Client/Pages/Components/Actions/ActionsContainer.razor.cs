@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Action = ActionCalculator.Models.Actions.Action;
 
-namespace ActionCalculator.Web.Client.Pages.Components
+namespace ActionCalculator.Web.Client.Pages.Components.Actions
 {
     public partial class ActionsContainer
     {

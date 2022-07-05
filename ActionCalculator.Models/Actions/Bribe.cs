@@ -8,5 +8,7 @@
 		}
     
 		public override string ToString() => ((char) ActionType).ToString();
+
+		public override bool IsRerollable() => false;
 	}
 }

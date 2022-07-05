@@ -1,8 +1,8 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class RerollableAction : Action
+	public class Rerollable : Action
 	{
-		public RerollableAction(decimal success, decimal failure, bool usePro, int roll) 
+		public Rerollable(decimal success, decimal failure, bool usePro, int roll) 
 			: base(ActionType.Rerollable, success, failure, roll, usePro)
 		{
 		}

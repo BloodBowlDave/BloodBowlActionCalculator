@@ -5,5 +5,7 @@
 		public Injury(int roll) : base(ActionType.Injury, 0, 0, roll, false)
 		{
 		}
+
+		public override bool IsRerollable() => false;
 	}
 }

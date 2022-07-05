@@ -20,5 +20,22 @@
         public bool RerollNonCriticalFailure { get; }
 
         public override string ToString() => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}";
+
+        public override string GetDescription()
+        {
+	        var successString = NumberOfSuccessfulResults > 1
+		        ? $"{NumberOfSuccessfulResults} successes"
+		        : "1 success";
+
+	        return NumberOfDice switch
+	        {
+		        3 => $"3 dice block {successString}",
+		        2 => $"2 dice block {successString}",
+		        1 => $"1 die block {successString}",
+		        -2 => $"2 red dice block {successString}",
+		        -3 => $"3 red dice block {successString}",
+		        _ => throw new ArgumentOutOfRangeException()
+	        };
+        }
     }
 }

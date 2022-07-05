@@ -16,6 +16,8 @@
 
 		public override string ToString() => $"{(char) ActionType}{Roll}{GetModifier()}{(!RerollInaccuratePass ? "'" : "")}";
 
+		public override string GetDescription() => base.GetDescription() + $" {GetModifier()} Modifier";
+
 		private string GetModifier() => Modifier > 0 ? "+" + Modifier : Modifier < 0 ? Modifier.ToString() : "";
 	}
 }

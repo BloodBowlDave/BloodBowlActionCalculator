@@ -20,7 +20,7 @@ namespace ActionCalculator.ActionBuilders
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 			var success = _d6.Success(1, roll);
 
-			return new RerollableAction(success, 1 - success, usePro, roll);
+			return new Rerollable(success, 1 - success, usePro, roll);
 		}
 	}
 }

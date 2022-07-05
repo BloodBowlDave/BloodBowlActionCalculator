@@ -16,7 +16,11 @@
         public decimal Failure { get; }
         public bool UsePro { get; }
         public int Roll { get; }
+        
+        public virtual bool IsRerollable() => true;
 
         public override string ToString() => $"{(char) ActionType}{Roll}{(UsePro ? "*" : "")}";
+
+        public virtual string GetDescription() => $"{Roll}+ {ActionType}";
     }
 }

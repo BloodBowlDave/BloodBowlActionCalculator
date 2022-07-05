@@ -25,19 +25,19 @@ namespace ActionCalculator.ActionBuilders
 				{
 					var twoD6Success = _d6.Success(2, numerator);
 
-					return new NonRerollableAction(twoD6Success, 1 - twoD6Success, numerator, denominator);
+					return new NonRerollable(twoD6Success, 1 - twoD6Success, numerator, denominator);
 				}
 
 				var success = (decimal)numerator / denominator;
             
-				return new NonRerollableAction(success, 1 - success, numerator, denominator);
+				return new NonRerollable(success, 1 - success, numerator, denominator);
 			}
 			else
 			{
 				var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 				var success = _d6.Success(1, roll);
 
-				return new NonRerollableAction(success, 1 - success, roll, 6);
+				return new NonRerollable(success, 1 - success, roll, 6);
 			}
 		}
 	}

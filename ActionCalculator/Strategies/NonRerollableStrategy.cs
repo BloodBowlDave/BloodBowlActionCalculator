@@ -18,7 +18,7 @@ namespace ActionCalculator.Strategies
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
-            var action = (NonRerollableAction) playerAction.Action;
+            var action = (NonRerollable) playerAction.Action;
             var success = action.Success;
             var failure = action.Failure;
             var i = playerAction.Index;

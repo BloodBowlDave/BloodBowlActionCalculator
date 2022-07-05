@@ -1,12 +1,28 @@
 ﻿<MudItem>
-    <MudPaper>
-        <h5>Argue The Call</h5>
+	<MudPaper>
+		<h5>Argue The Call</h5>
         
-        <MudButton>5+</MudButton>
-        <MudButton>6+</MudButton>
-    </MudPaper>
+		@for (var i = 5; i <= 6; i++)
+		{
+			var roll = i;
+			<MudButton OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+		}
+	</MudPaper>
 </MudItem>
 
-@code {
+@code
+{
+	private IActionBuilder? _actionBuilder;
+        
+	[Parameter]
+	public EventCallback<Action> OnAddAction { get; set; }
 
+	[Inject]
+	protected IActionBuilderFactory ActionBuilderFactory { get; set; } = null!;
+	private void AddAction(int roll)
+	{
+		_actionBuilder ??= ActionBuilderFactory.GetActionBuilder(ActionType.ArgueTheCall);
+
+		OnAddAction.InvokeAsync(_actionBuilder.Build(roll.ToString()));
+	}
 }

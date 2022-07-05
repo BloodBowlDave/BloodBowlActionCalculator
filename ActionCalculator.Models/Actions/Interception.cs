@@ -6,5 +6,7 @@
 			: base(ActionType.Interception, 0, failure, roll, false)
 		{
 		}
+
+		public override bool IsRerollable() => false;
 	}
 }

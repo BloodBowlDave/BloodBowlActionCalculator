@@ -9,5 +9,7 @@
 		}
 
 		private decimal CriticalFailure { get; }
+
+		public override bool IsRerollable() => false;
 	}
 }

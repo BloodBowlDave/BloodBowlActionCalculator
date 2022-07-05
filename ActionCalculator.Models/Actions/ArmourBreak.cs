@@ -7,5 +7,7 @@
 		}
 
 		public override string ToString() => $"{(char) ActionType}{Roll}";
+
+		public override bool IsRerollable() => false;
 	}
 }

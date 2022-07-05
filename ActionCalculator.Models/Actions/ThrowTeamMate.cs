@@ -16,6 +16,8 @@
 		public int Modifier { get; }
 
 		public override string ToString() => $"{(char)ActionType}{Roll}{GetModifier()}{(!RerollInaccurateThrow ? "'" : "")}";
+		
+		public override string GetDescription() => base.GetDescription() + $" {GetModifier()} Modifier";
 
 		private string GetModifier() => Modifier > 0 ? "+" + Modifier : Modifier < 0 ? Modifier.ToString() : "";
 	}
