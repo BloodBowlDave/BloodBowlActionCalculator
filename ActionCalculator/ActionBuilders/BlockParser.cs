@@ -4,9 +4,9 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class BlockBuilder : IActionBuilder
+	public class BlockParser : IActionParser
 	{
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
 			var useBrawler = input.Contains("^");
@@ -19,8 +19,8 @@ namespace ActionCalculator.ActionBuilders
 			var resultsSplit = split[1].Split('!');
 			var numberOfSuccessfulResults = int.Parse(resultsSplit[0]);
 			var numberOfNonCriticalFailures = resultsSplit.Length > 1 ? int.Parse(resultsSplit[1]) : 0;
-
-			return new Block(numberOfDice, numberOfSuccessfulResults, numberOfNonCriticalFailures, useBrawler, usePro, rerollNonCriticalFailure);
+			
+            return new Block(numberOfDice, numberOfSuccessfulResults, numberOfNonCriticalFailures, useBrawler, usePro, rerollNonCriticalFailure);
 		}
-	}
+    }
 }

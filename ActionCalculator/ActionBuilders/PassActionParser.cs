@@ -5,16 +5,16 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class PassActionBuilder : IActionBuilder
+	public class PassActionParser : IActionParser
 	{
 		private readonly ID6 _d6;
 
-		public PassActionBuilder(ID6 d6)
+		public PassActionParser(ID6 d6)
 		{
 			_d6 = d6;
 		}
 
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
 			var rerollInaccuratePass = !input.Contains("'");

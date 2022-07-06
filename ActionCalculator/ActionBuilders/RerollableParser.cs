@@ -4,25 +4,23 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class HailMaryPassBuilder : IActionBuilder
+	public class RerollableParser : IActionParser
 	{
 		private readonly ID6 _d6;
 
-		public HailMaryPassBuilder(ID6 d6)
+		public RerollableParser(ID6 d6)
 		{
 			_d6 = d6;
 		}
 
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
-
-			input = input.Replace("*", "");
-
+    
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 			var success = _d6.Success(1, roll);
 
-			return new HailMaryPass(success, 1 - success, roll, usePro);
+			return new Rerollable(success, 1 - success, usePro, roll);
 		}
 	}
 }

@@ -4,8 +4,8 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class InjuryBuilder : IActionBuilder
+	public class InjuryParser : IActionParser
 	{
-		public Action Build(string input) => new Injury(int.Parse(input[1..]));
+		public Action Parse(string input) => new Injury(int.Parse(input[1..]));
 	}
 }

@@ -4,8 +4,8 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class FoulBuilder : IActionBuilder
+	public class StabParser : IActionParser
 	{
-		public Action Build(string input) => new Foul(int.Parse(input[1..]));
+		public Action Parse(string input) => new Stab(int.Parse(input[1..]));
 	}
 }

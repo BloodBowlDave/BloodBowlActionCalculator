@@ -16,7 +16,7 @@ namespace ActionCalculator
     {
         public static void AddActionCalculatorServices(this IServiceCollection services)
         {
-            services.AddSingleton<IActionBuilderFactory, ActionBuilderFactory>();
+            services.AddSingleton<IActionParserFactory, ActionParserFactory>();
             services.AddSingleton<IActionMediator, ActionMediator>();
             services.AddSingleton<IBrawlerHelper, BrawlerHelper>();
             services.AddSingleton<ICalculator, Calculator>();
@@ -63,29 +63,29 @@ namespace ActionCalculator
 
         private static void AddActionBuilders(IServiceCollection services)
         {
-            services.AddSingleton<ArgueTheCallBuilder>();
-            services.AddSingleton<ArmourBreakBuilder>();
-            services.AddSingleton<BlockBuilder>();
-            services.AddSingleton<BribeBuilder>();
-            services.AddSingleton<CatchBuilder>();
-            services.AddSingleton<ChainsawBuilder>();
-            services.AddSingleton<DauntlessBuilder>();
-            services.AddSingleton<DodgeBuilder>();
-            services.AddSingleton<FoulBuilder>();
-            services.AddSingleton<HailMaryPassBuilder>();
-            services.AddSingleton<HypnogazeBuilder>();
-            services.AddSingleton<InjuryBuilder>();
-            services.AddSingleton<InterceptionBuilder>();
-            services.AddSingleton<LandingBuilder>();
-            services.AddSingleton<NonRerollableBuilder>();
-            services.AddSingleton<PassActionBuilder>();
-            services.AddSingleton<PickupBuilder>();
-            services.AddSingleton<RerollableBuilder>();
-            services.AddSingleton<RushBuilder>();
-            services.AddSingleton<ShadowingBuilder>();
-            services.AddSingleton<StabBuilder>();
-            services.AddSingleton<TentaclesBuilder>();
-            services.AddSingleton<ThrowTeammateBuilder>();
+            services.AddSingleton<ArgueTheCallParser>();
+            services.AddSingleton<ArmourBreakParser>();
+            services.AddSingleton<BlockParser>();
+            services.AddSingleton<BribeParser>();
+            services.AddSingleton<CatchParser>();
+            services.AddSingleton<ChainsawParser>();
+            services.AddSingleton<DauntlessParser>();
+            services.AddSingleton<DodgeParser>();
+            services.AddSingleton<FoulParser>();
+            services.AddSingleton<HailMaryPassParser>();
+            services.AddSingleton<HypnogazeParser>();
+            services.AddSingleton<InjuryParser>();
+            services.AddSingleton<InterceptionParser>();
+            services.AddSingleton<LandingParser>();
+            services.AddSingleton<NonRerollableParser>();
+            services.AddSingleton<PassActionParser>();
+            services.AddSingleton<PickupParser>();
+            services.AddSingleton<RerollableParser>();
+            services.AddSingleton<RushParser>();
+            services.AddSingleton<ShadowingParser>();
+            services.AddSingleton<StabParser>();
+            services.AddSingleton<TentaclesParser>();
+            services.AddSingleton<ThrowTeammateParser>();
         }
     }
 }

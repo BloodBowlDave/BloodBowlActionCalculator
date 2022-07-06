@@ -5,16 +5,16 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class DauntlessBuilder : IActionBuilder
+	public class DauntlessParser : IActionParser
 	{
 		private readonly ID6 _d6;
 
-		public DauntlessBuilder(ID6 d6)
+		public DauntlessParser(ID6 d6)
 		{
 			_d6 = d6;
 		}
 
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
 			var rerollFailure = !input.Contains("'");
@@ -26,5 +26,17 @@ namespace ActionCalculator.ActionBuilders
 
 			return new Dauntless(success, 1 - success, rerollFailure, roll, usePro);
 		}
-	}
+
+        public Action Build(int roll)
+		{
+			var success = _d6.Success(1, roll);
+
+            return new Dauntless(success, 1 - success, true, roll, false);
+		}
+
+        public Action Build(int roll, int modifier)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

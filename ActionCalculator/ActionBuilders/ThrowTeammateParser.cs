@@ -5,16 +5,16 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class ThrowTeammateBuilder : IActionBuilder
+	public class ThrowTeammateParser : IActionParser
 	{
 		private readonly ID6 _d6;
 
-		public ThrowTeammateBuilder(ID6 d6)
+		public ThrowTeammateParser(ID6 d6)
 		{
 			_d6 = d6;
 		}
 
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
 			var rerollInaccurateThrow = !input.Contains("'");

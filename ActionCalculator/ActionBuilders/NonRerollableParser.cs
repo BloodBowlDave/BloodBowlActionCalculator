@@ -4,16 +4,16 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class NonRerollableBuilder : IActionBuilder
+	public class NonRerollableParser : IActionParser
 	{
 		private readonly ID6 _d6;
 
-		public NonRerollableBuilder(ID6 d6)
+		public NonRerollableParser(ID6 d6)
 		{
 			_d6 = d6;
 		}
 
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			if (input.Contains("/"))
 			{

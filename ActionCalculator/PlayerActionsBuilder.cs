@@ -6,13 +6,13 @@ namespace ActionCalculator
 {
     public class PlayerActionsBuilder : IPlayerActionsBuilder
     {
-        private readonly IActionBuilderFactory _actionBuilderFactory;
+        private readonly IActionParserFactory _actionParserFactory;
         private readonly IPlayerBuilder _playerBuilder;
         private readonly List<PlayerAction> _playerActions = new();
 
-        public PlayerActionsBuilder(IActionBuilderFactory actionBuilderFactory, IPlayerBuilder playerBuilder)
+        public PlayerActionsBuilder(IActionParserFactory actionParserFactory, IPlayerBuilder playerBuilder)
         {
-            _actionBuilderFactory = actionBuilderFactory;
+            _actionParserFactory = actionParserFactory;
             _playerBuilder = playerBuilder;
         }
 
@@ -152,14 +152,14 @@ namespace ActionCalculator
             {
                 var actionSplit = actionString.Split('|');
 
-                yield return _actionBuilderFactory.GetActionBuilder(actionSplit[0]).Build(actionSplit[0]);
+                yield return _actionParserFactory.GetActionParser(actionSplit[0]).Parse(actionSplit[0]);
 
                 if (actionSplit.Length == 1)
                 {
                     continue;
                 }
                 
-                yield return _actionBuilderFactory.GetActionBuilder(actionSplit[1]).Build(actionSplit[1]);
+                yield return _actionParserFactory.GetActionParser(actionSplit[1]).Parse(actionSplit[1]);
             }
         }
     }

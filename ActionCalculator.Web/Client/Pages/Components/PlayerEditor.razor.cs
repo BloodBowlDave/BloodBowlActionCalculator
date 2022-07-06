@@ -5,7 +5,7 @@ using MudBlazor;
 
 namespace ActionCalculator.Web.Client.Pages.Components
 {
-    public partial class Player
+    public partial class PlayerEditor
     {
         private int _lonerValue = 4;
         private int _mightyBlowValue = 1;
@@ -20,7 +20,7 @@ namespace ActionCalculator.Web.Client.Pages.Components
         [Parameter] 
         public EventCallback<Models.Player> OnPlayerChanged { get; set; }
 
-        public Player()
+        public PlayerEditor()
         {
             _selected = Array.Empty<MudChip>();
         }

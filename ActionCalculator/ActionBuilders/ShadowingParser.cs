@@ -5,9 +5,9 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class TentaclesBuilder : IActionBuilder
+	public class ShadowingParser : IActionParser
 	{
-		public Action Build(string input)
+		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
 			var rerollFailure = !input.Contains("'");
@@ -17,7 +17,7 @@ namespace ActionCalculator.ActionBuilders
 			var difference = int.Parse(input[1..]);
 			var failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
 
-			return new Tentacles(1 - failure, failure, usePro, rerollFailure, difference);
+			return new Shadowing(1 - failure, failure, usePro, rerollFailure, difference);
 		}
 	}
 }

@@ -2,11 +2,26 @@
     <MudPaper>
         <h5>Armour Break</h5>
         
-        <MudNumericField T="int" Min="2" Max="11" @bind-Value="_armourBreak"/>
-        <MudButton>Add</MudButton>
+        <MudNumericField T="int" Min="2" Max="11" @bind="_minimumRoll"/>
+        <MudButton OnClick="@(AddAction)">Add</MudButton>
     </MudPaper>
 </MudItem>
 
-@code {
-    private int _armourBreak = 9;
+@code
+{
+    private IActionParser? _actionBuilder;
+    private int _minimumRoll = 9;
+        
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    [Inject]
+    protected IActionParserFactory ActionParserFactory { get; set; } = null!;
+
+    private void AddAction()
+    {
+        _actionBuilder ??= ActionParserFactory.GetActionParser(ActionType.ArmourBreak);
+
+        OnAddAction.InvokeAsync(_actionBuilder.Parse(_minimumRoll));
+    }
 }

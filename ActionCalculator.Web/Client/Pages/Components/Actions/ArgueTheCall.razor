@@ -12,17 +12,18 @@
 
 @code
 {
-	private IActionBuilder? _actionBuilder;
+	private IActionParser? _actionBuilder;
         
 	[Parameter]
 	public EventCallback<Action> OnAddAction { get; set; }
 
 	[Inject]
-	protected IActionBuilderFactory ActionBuilderFactory { get; set; } = null!;
+	protected IActionParserFactory ActionParserFactory { get; set; } = null!;
+
 	private void AddAction(int roll)
 	{
-		_actionBuilder ??= ActionBuilderFactory.GetActionBuilder(ActionType.ArgueTheCall);
+		_actionBuilder ??= ActionParserFactory.GetActionParser(ActionType.ArgueTheCall);
 
-		OnAddAction.InvokeAsync(_actionBuilder.Build(roll.ToString()));
+		OnAddAction.InvokeAsync(_actionBuilder.Parse(roll.ToString()));
 	}
 }
