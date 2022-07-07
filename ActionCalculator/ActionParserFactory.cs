@@ -34,7 +34,7 @@ namespace ActionCalculator
                 ActionType.Interception => _serviceProvider.GetService<InterceptionParser>(),
                 ActionType.Landing => _serviceProvider.GetService<LandingParser>(),
                 ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableParser>(),
-                ActionType.Pass => _serviceProvider.GetService<PassActionParser>(),
+                ActionType.Pass => _serviceProvider.GetService<PassParser>(),
                 ActionType.PickUp => _serviceProvider.GetService<PickupParser>(),
                 ActionType.Rerollable => _serviceProvider.GetService<RerollableParser>(),
                 ActionType.Rush => _serviceProvider.GetService<RushParser>(),

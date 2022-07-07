@@ -1,16 +1,15 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Models.Actions;
-using ActionCalculator.Utilities;
 using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class ThrowTeammateParser : IActionParser
+	public class PassParser : IActionParser
 	{
         public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
-			var rerollInaccurateThrow = !input.Contains("'");
+			var rerollInaccuratePass = !input.Contains("'");
 
 			input = input.Replace("*", "").Replace("'", "");
 
@@ -21,12 +20,12 @@ namespace ActionCalculator.ActionBuilders
 				var modifier = int.Parse(input.Substring(3, 1));
 				modifier = input.Substring(2, 1) == "-" ? -modifier : modifier;
 				
-				return new ThrowTeammate(usePro, rerollInaccurateThrow, roll, modifier);
+				return new Pass(usePro, rerollInaccuratePass, roll, modifier);
 			}
 
 			roll = int.Parse(input[1..]);
 
-			return new ThrowTeammate(usePro, rerollInaccurateThrow, roll, 0);
+			return new Pass(usePro, rerollInaccuratePass, roll, 0);
 		}
 	}
 }

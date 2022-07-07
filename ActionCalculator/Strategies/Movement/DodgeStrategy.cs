@@ -24,8 +24,8 @@ namespace ActionCalculator.Strategies.Movement
         {
             var player = playerAction.Player;
             var dodge = (Dodge) playerAction.Action;
-            var success = dodge.Success;
-            var failure = dodge.Failure;
+            var success = _d6.Success(1, dodge.Roll);
+            var failure = 1 - success;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var i = playerAction.Index;
 
@@ -84,7 +84,7 @@ namespace ActionCalculator.Strategies.Movement
         private decimal SuccessAfterModifiers(Action dodge, bool useDivingTackle, int breakTackleValue)
         {
             var roll = dodge.Roll + (useDivingTackle ? 2 : 0) - breakTackleValue;
-            return _d6.Success(1, roll); ;
+            return _d6.Success(1, roll);
         }
 
         private void DodgeReroll(decimal p, int r, int i, Skills usedSkills,

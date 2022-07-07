@@ -6,10 +6,6 @@ namespace ActionCalculator.ActionBuilders
 {
 	public class FoulParser : IActionParser
 	{
-		public Action Parse(string input) => Build(int.Parse(input[1..]));
-        
-        public Action Build(int roll) => new Foul(roll);
-
-        public Action Build(int roll, int modifier) => throw new NotImplementedException();
+		public Action Parse(string input) => new Foul(int.Parse(input[1..]));
     }
 }

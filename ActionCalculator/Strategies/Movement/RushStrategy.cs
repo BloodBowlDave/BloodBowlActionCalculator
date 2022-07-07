@@ -9,20 +9,23 @@ namespace ActionCalculator.Strategies.Movement
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
+        private readonly ID6 _d6;
 
-        public RushStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public RushStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
+            var rush = playerAction.Action;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var rush = (Rush) playerAction.Action;
-            var success = rush.Success;
-            var failure = rush.Failure;
+
+            var success = _d6.Success(1, rush.Roll);
+            var failure = 1 - success;
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);

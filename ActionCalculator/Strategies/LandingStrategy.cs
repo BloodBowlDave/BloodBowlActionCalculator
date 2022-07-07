@@ -20,11 +20,12 @@ namespace ActionCalculator.Strategies
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
+            var landing = playerAction.Action;
             var (lonerSuccess, proSuccess, _) = player;
-            var landing = (Landing) playerAction.Action;
             var i = playerAction.Index;
-            var success = nonCriticalFailure ? _d6.Success(1, landing.Roll + 1) : landing.Success;
-            var failure = 1m - success;
+
+            var success = _d6.Success(1, nonCriticalFailure ? landing.Roll + 1 : landing.Roll);
+            var failure = 1 - success;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 

@@ -2,7 +2,7 @@
 {
 	public class Foul : Action
 	{
-		public Foul(int roll) : base(ActionType.Foul, 0, 0, roll, false)
+		public Foul(int roll) : base(ActionType.Foul, roll, false)
 		{
 		}
 

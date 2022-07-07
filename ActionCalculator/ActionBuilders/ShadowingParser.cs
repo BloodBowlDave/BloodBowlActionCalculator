@@ -15,9 +15,8 @@ namespace ActionCalculator.ActionBuilders
 			input = input.Replace("*", "").Replace("'", "");
 
 			var difference = int.Parse(input[1..]);
-			var failure = (decimal)(difference + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
 
-			return new Shadowing(1 - failure, failure, usePro, rerollFailure, difference);
+			return new Shadowing(usePro, rerollFailure, difference);
 		}
 	}
 }

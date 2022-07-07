@@ -9,11 +9,13 @@ namespace ActionCalculator.Strategies
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
+        private readonly ID6 _d6;
 
-        public HypnogazeStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public HypnogazeStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
@@ -21,13 +23,13 @@ namespace ActionCalculator.Strategies
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var hypnogaze = (Hypnogaze) playerAction.Action;
-            var success = hypnogaze.Success;
-            var failure = hypnogaze.Failure;
+            var success = _d6.Success(1, hypnogaze.Roll);
+            var failure = 1 - success;
             var i = playerAction.Index;
 
-            _actionMediator.Resolve(p * hypnogaze.Success, r, i, usedSkills);
+            _actionMediator.Resolve(p * success, r, i, usedSkills);
 
-            p *= hypnogaze.Failure;
+            p *= failure;
 
             if (canUseSkill(Skills.MesmerisingDance, usedSkills))
             {

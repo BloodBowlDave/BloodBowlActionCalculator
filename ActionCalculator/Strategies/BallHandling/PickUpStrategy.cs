@@ -8,11 +8,13 @@ namespace ActionCalculator.Strategies.BallHandling
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
+        private readonly ID6 _d6;
 
-        public PickUpStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public PickUpStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -20,8 +22,9 @@ namespace ActionCalculator.Strategies.BallHandling
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var pickUp = playerAction.Action;
-            var success = pickUp.Success;
-            var failure = pickUp.Failure;
+
+            var success = _d6.Success(1, pickUp.Roll);
+            var failure = 1 - success;
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);

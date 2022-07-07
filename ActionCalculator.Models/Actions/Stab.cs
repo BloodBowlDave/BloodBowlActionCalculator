@@ -2,8 +2,7 @@
 {
     public class Stab : Action
     {
-        public Stab(int roll) 
-            : base(ActionType.Stab, 0, 0, roll, false)
+        public Stab(int roll) : base(ActionType.Stab, roll, false)
         {
         }
 

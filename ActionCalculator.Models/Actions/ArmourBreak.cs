@@ -2,7 +2,7 @@
 {
 	public class ArmourBreak : Action
 	{
-		public ArmourBreak(int roll) : base(ActionType.ArmourBreak, 0m, 0m, roll, false)
+		public ArmourBreak(int roll) : base(ActionType.ArmourBreak, roll, false)
 		{
 		}
 

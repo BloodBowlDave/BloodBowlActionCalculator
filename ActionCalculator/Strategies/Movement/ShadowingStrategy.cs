@@ -2,6 +2,7 @@
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Movement
 {
@@ -20,22 +21,23 @@ namespace ActionCalculator.Strategies.Movement
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, _) = player;
-            var action = (Shadowing) playerAction.Action;
-            var success = action.Success;
-            var failure = action.Failure;
+            var shadowing = (Shadowing) playerAction.Action;
+
+            var failure = (decimal)(shadowing.Roll + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+            var success = 1 - failure;
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
-            p *= action.Failure;
+            p *= failure;
 
-            if (_proHelper.UsePro(player, action, r, usedSkills, success, success))
+            if (_proHelper.UsePro(player, shadowing, r, usedSkills, success, success))
             {
                 ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess, success, failure);
                 return;
             }
 
-            if (r > 0 && action.RerollFailure)
+            if (r > 0 && shadowing.RerollFailure)
             {
                 ExecuteReroll(p, r - 1, i, usedSkills, lonerSuccess, success, failure);
                 return;

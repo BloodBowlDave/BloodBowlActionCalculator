@@ -2,8 +2,7 @@
 {
 	public class Rerollable : Action
 	{
-		public Rerollable(decimal success, decimal failure, bool usePro, int roll) 
-			: base(ActionType.Rerollable, success, failure, roll, usePro)
+		public Rerollable(bool usePro, int roll) : base(ActionType.Rerollable, roll, usePro)
 		{
 		}
     

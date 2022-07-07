@@ -2,6 +2,7 @@
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Movement
 {
@@ -21,8 +22,9 @@ namespace ActionCalculator.Strategies.Movement
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, _) = player;
             var tentacles = (Tentacles) playerAction.Action;
-            var success = tentacles.Success;
-            var failure = tentacles.Failure;
+
+            var failure = (decimal)(tentacles.Roll + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+            var success = 1 - failure;
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);

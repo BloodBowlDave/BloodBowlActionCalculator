@@ -4,7 +4,7 @@
     {
         public Block(int numberOfDice, int numberOfSuccessfulResults, int numberOfNonCriticalFailures, 
             bool useBrawler, bool usePro, bool rerollNonCriticalFailure) 
-            : base(ActionType.Block, 0, 0, 0, usePro)
+            : base(ActionType.Block, 0, usePro)
         {
             NumberOfDice = numberOfDice;
             NumberOfSuccessfulResults = numberOfSuccessfulResults;

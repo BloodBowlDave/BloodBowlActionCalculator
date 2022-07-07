@@ -2,8 +2,7 @@
 {
 	public class Hypnogaze : Action
 	{
-		public Hypnogaze(decimal success, decimal failure, int roll, bool usePro, bool rerollFailure) 
-			: base(ActionType.Hypnogaze, success, failure, roll, usePro)
+		public Hypnogaze(int roll, bool usePro, bool rerollFailure) : base(ActionType.Hypnogaze, roll, usePro)
 		{
 			RerollFailure = rerollFailure;
 		}

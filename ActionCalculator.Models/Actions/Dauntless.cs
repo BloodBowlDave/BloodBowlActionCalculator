@@ -2,8 +2,7 @@
 {
 	public class Dauntless : Action
 	{
-		public Dauntless(decimal success, decimal failure, bool rerollFailure, int roll, bool usePro) 
-			: base(ActionType.Dauntless, success, failure, roll, usePro)
+		public Dauntless(bool rerollFailure, int roll, bool usePro) : base(ActionType.Dauntless, roll, usePro)
 		{
 			RerollFailure = rerollFailure;
 		}

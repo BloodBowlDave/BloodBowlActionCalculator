@@ -2,8 +2,7 @@
 {
 	public class Tentacles : Action
 	{
-		public Tentacles(decimal success, decimal failure, bool usePro, bool rerollFailure, int difference) 
-			: base(ActionType.Tentacles, success, failure, difference, usePro)
+		public Tentacles(bool usePro, bool rerollFailure, int difference) : base(ActionType.Tentacles, difference, usePro)
 		{
 			RerollFailure = rerollFailure;
 		}

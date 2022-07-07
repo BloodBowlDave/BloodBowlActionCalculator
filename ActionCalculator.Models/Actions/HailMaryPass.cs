@@ -2,8 +2,7 @@
 {
 	public class HailMaryPass : Action
 	{
-		public HailMaryPass(decimal success, decimal failure, int roll, bool usePro) 
-			: base(ActionType.HailMaryPass, success, failure, roll, usePro)
+		public HailMaryPass(int roll, bool usePro) : base(ActionType.HailMaryPass, roll, usePro)
 		{
 		}
 	}

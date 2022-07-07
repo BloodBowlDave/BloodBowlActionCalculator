@@ -2,8 +2,7 @@
 {
 	public class PickUp : Action
 	{
-		public PickUp(decimal success, decimal failure, bool usePro, int roll) 
-			: base(ActionType.PickUp, success, failure, roll, usePro)
+		public PickUp(bool usePro, int roll) : base(ActionType.PickUp, roll, usePro)
 		{
 		}
 	}

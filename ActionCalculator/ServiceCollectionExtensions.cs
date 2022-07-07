@@ -78,7 +78,7 @@ namespace ActionCalculator
             services.AddSingleton<InterceptionParser>();
             services.AddSingleton<LandingParser>();
             services.AddSingleton<NonRerollableParser>();
-            services.AddSingleton<PassActionParser>();
+            services.AddSingleton<PassParser>();
             services.AddSingleton<PickupParser>();
             services.AddSingleton<RerollableParser>();
             services.AddSingleton<RushParser>();

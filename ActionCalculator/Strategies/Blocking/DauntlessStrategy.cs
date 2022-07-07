@@ -9,11 +9,13 @@ namespace ActionCalculator.Strategies.Blocking
     {
         private readonly IActionMediator _actionMediator;
         private readonly IProHelper _proHelper;
+        private readonly ID6 _d6;
 
-        public DauntlessStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public DauntlessStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
         {
             _actionMediator = actionMediator;
             _proHelper = proHelper;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
@@ -21,8 +23,9 @@ namespace ActionCalculator.Strategies.Blocking
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var dauntless = (Dauntless) playerAction.Action;
-            var success = dauntless.Success;
-            var failure = dauntless.Failure;
+
+            var success = _d6.Success(1, dauntless.Roll);
+            var failure = 1 - success;
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);

@@ -2,8 +2,7 @@
 {
 	public class Interception : Action
 	{
-		public Interception(decimal failure, int roll) 
-			: base(ActionType.Interception, 0, failure, roll, false)
+		public Interception(int roll) : base(ActionType.Interception, roll, false)
 		{
 		}
 

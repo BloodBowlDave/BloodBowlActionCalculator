@@ -2,8 +2,7 @@
 {
 	public class Landing : Action
 	{
-		public Landing(decimal success, decimal failure, int roll, bool usePro) 
-			: base(ActionType.Landing, success, failure, roll, usePro)
+		public Landing(int roll, bool usePro) : base(ActionType.Landing, roll, usePro)
 		{
 		}
 	}

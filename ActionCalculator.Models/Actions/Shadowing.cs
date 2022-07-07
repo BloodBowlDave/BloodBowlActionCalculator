@@ -2,8 +2,7 @@
 {
 	public class Shadowing : Action
 	{
-		public Shadowing(decimal success, decimal failure, bool usePro, bool rerollFailure, int difference) 
-			: base(ActionType.Shadowing, success, failure, difference, usePro)
+		public Shadowing(bool usePro, bool rerollFailure, int difference) : base(ActionType.Shadowing, difference, usePro)
 		{
 			RerollFailure = rerollFailure;
 			Difference = difference;

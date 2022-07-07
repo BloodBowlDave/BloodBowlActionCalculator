@@ -2,6 +2,7 @@
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
@@ -21,13 +22,21 @@ namespace ActionCalculator.Strategies.BallHandling
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var throwTeamMate = (ThrowTeammate) playerAction.Action;
-            var success = throwTeamMate.Success;
-            var failure = throwTeamMate.Failure;
+
+            var modifier = throwTeamMate.Modifier;
+            var modifiedRoll = throwTeamMate.Roll - modifier;
+
+            var successes = (7m - modifiedRoll).ThisOrMinimum(1).ThisOrMaximum(5);
+            var failures = (1m - modifier).ThisOrMinimum(1).ThisOrMaximum(5);
+            var inaccurateThrows = 6 - successes - failures;
+            var success = successes / 6;
+            var failure = failures / 6;
+
             var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
-            var inaccurateThrow = throwTeamMate.InaccurateThrow;
+            var inaccurateThrow = inaccurateThrows / 6;
             var rerollInaccurateThrow = throwTeamMate.RerollInaccurateThrow;
             var accurateThrowAfterFailure = (failure + (rerollInaccurateThrow ? inaccurateThrow : 0)) * success;
             var inaccurateThrowAfterFailure = (failure + (rerollInaccurateThrow ? inaccurateThrow : 0)) * inaccurateThrow;

@@ -127,7 +127,7 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var success = playerAction.Action.Success;
+            var success = _d6.Success(1, playerAction.Action.Roll);
             
             AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills), successNoReroll);
             

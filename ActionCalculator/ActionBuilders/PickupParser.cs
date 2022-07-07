@@ -6,13 +6,6 @@ namespace ActionCalculator.ActionBuilders
 {
 	public class PickupParser : IActionParser
 	{
-		private readonly ID6 _d6;
-
-		public PickupParser(ID6 d6)
-		{
-			_d6 = d6;
-		}
-
 		public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
@@ -20,9 +13,8 @@ namespace ActionCalculator.ActionBuilders
 			input = input.Replace("*", "");
 
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
-			var success = _d6.Success(1, roll);
 
-			return new PickUp(success, 1 - success, usePro, roll);
+			return new PickUp(usePro, roll);
 		}
 	}
 }

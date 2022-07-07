@@ -2,8 +2,7 @@
 {
 	public class NonRerollable : Action
 	{
-		public NonRerollable(decimal success, decimal failure, int roll, int denominator) 
-			: base(ActionType.NonRerollable, success, failure, roll, false)
+		public NonRerollable(int roll, int denominator) : base(ActionType.NonRerollable, roll, false)
 		{
 			Denominator = denominator;
 		}

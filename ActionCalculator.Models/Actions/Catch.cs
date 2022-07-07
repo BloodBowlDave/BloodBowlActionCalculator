@@ -2,8 +2,7 @@
 {
     public class Catch : Action
     {
-        public Catch(decimal success, decimal failure, int roll, bool usePro) 
-            : base(ActionType.Catch, success, failure, roll, usePro)
+        public Catch(int roll, bool usePro) : base(ActionType.Catch, roll, usePro)
         {
         }
     }

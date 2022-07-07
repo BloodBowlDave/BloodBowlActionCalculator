@@ -8,21 +8,26 @@ namespace ActionCalculator.Strategies.Fouling
     public class ArgueTheCallStrategy : IActionStrategy
     {
         private readonly IActionMediator _actionMediator;
+        private readonly ID6 _d6;
 
-        public ArgueTheCallStrategy(IActionMediator actionMediator)
+        public ArgueTheCallStrategy(IActionMediator actionMediator, ID6 d6)
         {
             _actionMediator = actionMediator;
+            _d6 = d6;
         }
 
         public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var argueTheCall = (ArgueTheCall) playerAction.Action;
             var i = playerAction.Index;
 
             if (nonCriticalFailure)
             {
-                _actionMediator.Resolve(p * argueTheCall.Success, r, i, usedSkills);
-                _actionMediator.Resolve(p * argueTheCall.Failure, r, i, usedSkills, true);
+                var argueTheCall = (ArgueTheCall)playerAction.Action;
+                var success = _d6.Success(1, argueTheCall.Roll);
+                var failure = 1 - success - 1m / 6;
+
+                _actionMediator.Resolve(p * success, r, i, usedSkills);
+                _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
                 return;
             }
 

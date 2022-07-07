@@ -9,19 +9,13 @@
 
 @code
 {
-    private IActionParser? _actionBuilder;
     private int _minimumRoll = 9;
         
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
-
-    [Inject]
-    protected IActionParserFactory ActionParserFactory { get; set; } = null!;
-
+    
     private void AddAction()
     {
-        _actionBuilder ??= ActionParserFactory.GetActionParser(ActionType.ArmourBreak);
-
-        OnAddAction.InvokeAsync(_actionBuilder.Parse(_minimumRoll));
+        OnAddAction.InvokeAsync(new Models.Actions.ArmourBreak(_minimumRoll));
     }
 }

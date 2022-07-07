@@ -2,8 +2,7 @@
 {
 	public class Dodge : Action
 	{
-		public Dodge(decimal success, decimal failure, int roll, bool usePro, bool useDivingTackle, bool useBreakTackle) 
-			: base(ActionType.Dodge, success, failure, roll, usePro)
+		public Dodge(int roll, bool usePro, bool useDivingTackle, bool useBreakTackle) : base(ActionType.Dodge, roll, usePro)
 		{
 			UseDivingTackle = useDivingTackle;
 			UseBreakTackle = useBreakTackle;
