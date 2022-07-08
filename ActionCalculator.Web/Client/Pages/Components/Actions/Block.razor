@@ -2,16 +2,20 @@
     <MudPaper>
         <h5>Block</h5>
         
-        <MudNumericField T="int" Min="-3" Max="3" Label="Dice" Value="_numberOfDice" ValueChanged="@(NumberOfDiceChanged)"/>
+        <MudNumericField T="int" Min="-3" Max="3" Value="_numberOfDice" ValueChanged="@(NumberOfDiceChanged)" Label="Dice"/>
         <MudNumericField T="int" Min="1" Max="5" @bind-Value="_numberOfSuccesses" Label="Successes"/>
-        <MudButton>Add</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code {
+
     private int _numberOfDice = 1;
     private int _numberOfSuccesses = 2;
     private int _previousNumberOfDice;
+
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
 
     private void NumberOfDiceChanged(int i)
     {
@@ -24,5 +28,11 @@
         }
 
         _numberOfDice = _previousNumberOfDice > 0 ? -2 : 1;
+    }
+
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.Block(_numberOfDice, 
+            _numberOfSuccesses, 0, false, false, true));
     }
 }

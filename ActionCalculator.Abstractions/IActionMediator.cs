@@ -4,7 +4,7 @@ namespace ActionCalculator.Abstractions
 {
     public interface IActionMediator
     {
-        void Initialise(Calculation context);
+        decimal[] Calculate(Calculation calculation);
         void Resolve(decimal p, int r, int i, Skills usedSkills, bool nonCriticalFailure = false);
     }
 }

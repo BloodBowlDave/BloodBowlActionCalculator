@@ -2,7 +2,7 @@
 {
 	public class Pass : Action
 	{
-		public Pass(bool usePro, bool rerollInaccuratePass, int roll, int modifier) : base(ActionType.Pass, roll, usePro)
+		public Pass(int roll, int modifier, bool usePro, bool rerollInaccuratePass) : base(ActionType.Pass, roll, usePro)
 		{
 			RerollInaccuratePass = rerollInaccuratePass;
 			Modifier = modifier;

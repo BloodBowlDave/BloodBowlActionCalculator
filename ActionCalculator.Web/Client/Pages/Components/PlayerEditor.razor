@@ -1,5 +1,5 @@
 ﻿<MudPaper>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewPlayer" Style="display: inline-flex">New Player</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewPlayer">New Player</MudButton>
 
     <MudChipSet MultiSelection="true" Filter="false" @bind-SelectedChips="_selected">
         @foreach (var skill in GetSkills())
@@ -14,25 +14,25 @@
 
             @if (skill == Skills.Loner)
             {
-                <div hidden="@(!SkillIsSelected("Loner"))" class="skill-input">
+                <div hidden="@(!SkillIsSelected("Loner"))">
                     <MudNumericField T="int" Min="2" Max="6" Value="_lonerValue" ValueChanged="@(LonerChanged)"/>
                 </div>
             }
             else if (skill == Skills.MightyBlow)
             {
-                <div hidden="@(!SkillIsSelected("MightyBlow"))" class="skill-input">
+                <div hidden="@(!SkillIsSelected("MightyBlow"))">
                     <MudNumericField T="int" Min="1" Max="2" Value="_mightyBlowValue" ValueChanged="@(MightyBlowChanged)"/>
                 </div>
             }
             else if (skill == Skills.DirtyPlayer)
             {
-                <div hidden="@(!SkillIsSelected("DirtyPlayer"))" class="skill-input">
+                <div hidden="@(!SkillIsSelected("DirtyPlayer"))">
                     <MudNumericField T="int" Min="1" Max="2" Value="_dirtyPlayerValue" ValueChanged="@(DirtyPlayerChanged)"/>
                 </div>
             }
             else if (skill == Skills.BreakTackle)
             {
-                <div hidden="@(!SkillIsSelected("BreakTackle"))" class="skill-input">
+                <div hidden="@(!SkillIsSelected("BreakTackle"))">
                     <MudNumericField T="int" Min="1" Max="2" Value="_breakTackleValue" ValueChanged="@(BreakTackleChanged)"/>
                 </div>
             }
@@ -41,22 +41,3 @@
     
     <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="ClearSelected">Clear</MudButton>
 </MudPaper>
-
-<style type="text/css">
-    .skill-input .mud-input {
-        margin-top: 0 !important;
-    }
-
-    .skill-input .mud-input-control {
-        margin-top: 0;
-    }
-
-    .skill-input {
-        display: inline-flex;
-        width: 34px;
-    }
-
-    .skill-input .mud-input {
-        margin-top: 0;
-    }
-</style>

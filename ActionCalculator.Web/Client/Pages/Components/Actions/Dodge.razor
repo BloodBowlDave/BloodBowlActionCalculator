@@ -2,14 +2,19 @@
     <MudPaper>
         <h5>Dodge</h5>
 
-        <MudButton>2+</MudButton>
-        <MudButton>3+</MudButton>
-        <MudButton>4+</MudButton>
-        <MudButton>5+</MudButton>
-        <MudButton>6+</MudButton>
+        <MudNumericField T="int" Min="1" Max="8" @bind-Value="_roll"/>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code {
+    private int _roll = 3;
 
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.Dodge(_roll, false, false, true));
+    }
 }

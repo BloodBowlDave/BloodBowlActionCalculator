@@ -21,12 +21,12 @@ namespace ActionCalculator.ActionBuilders
 				var modifier = int.Parse(input.Substring(3, 1));
 				modifier = input.Substring(2, 1) == "-" ? -modifier : modifier;
 				
-				return new ThrowTeammate(usePro, rerollInaccurateThrow, roll, modifier);
+				return new ThrowTeammate(roll, modifier, usePro, rerollInaccurateThrow);
 			}
 
 			roll = int.Parse(input[1..]);
 
-			return new ThrowTeammate(usePro, rerollInaccurateThrow, roll, 0);
+			return new ThrowTeammate(roll, 0, usePro, rerollInaccurateThrow);
 		}
 	}
 }

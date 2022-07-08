@@ -137,7 +137,7 @@ namespace ActionCalculator.Tests
         [InlineData("L2,2D2|1D2", 0, 0.51852)]
         [InlineData("L2,2D2|1D2", 2, 0.46296, 0.75514, 0.79561)]
         [InlineData("P:L3'*,2D2|-2D2", 1, 0.47325, 0.69273)]
-        [InlineData("P:L3'*,2D2|-2D2,X4", 1, 0.23663, 0.34636)]
+        [InlineData("P:L3'*,2D2|-2D2,X1/2", 1, 0.23663, 0.34636)]
         [InlineData("BR,L4:L3,2D2|-2D2", 0, 0.50617)]
         //loner
         [InlineData("L3:2,2,2,2", 4, 0.48225, 0.69659, 0.73231, 0.73496, 0.73503)]

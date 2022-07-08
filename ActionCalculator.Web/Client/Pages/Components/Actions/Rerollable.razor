@@ -1,29 +1,22 @@
 ﻿<MudItem>
     <MudPaper>
-        <h5>Rerollable</h5>
+        <h5>Rerollable Action</h5>
         
         @for (var i = 2; i <= 6; i++)
         {
             var roll = i;
-            <MudButton OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
         }
     </MudPaper>
 </MudItem>
 
 @code
 {
-    private IActionParser? _actionBuilder;
-        
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
-
-    [Inject]
-    protected IActionParserFactory ActionParserFactory { get; set; } = null!;
-
+    
     private void AddAction(int roll)
     {
-        _actionBuilder ??= ActionParserFactory.GetActionParser(ActionType.Rerollable);
-
-        OnAddAction.InvokeAsync(_actionBuilder.Parse(roll.ToString()));
+        OnAddAction.InvokeAsync(new Models.Actions.Rerollable(roll, false));
     }
 }

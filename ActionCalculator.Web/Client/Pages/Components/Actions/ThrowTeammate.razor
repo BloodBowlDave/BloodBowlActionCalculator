@@ -2,13 +2,21 @@
     <MudPaper>
         <h5>Throw Teammate</h5>
         
-        <MudNumericField T="int" Min="1" Max="6" @bind-Value="_pa" Label="PA"/>
+        <MudNumericField T="int" Min="1" Max="6" @bind-Value="_passingAbility" Label="PA"/>
         <MudNumericField T="int" Min="-5" Max="5" @bind-Value="_modifier" Label="Modifier"/>
-        <MudButton>Add</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code {
-    private int _pa = 3;
+    private int _passingAbility = 3;
     private int _modifier;
+    
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.ThrowTeammate(_passingAbility, _modifier, false, true));
+    }
 }

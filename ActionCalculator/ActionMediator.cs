@@ -7,17 +7,24 @@ namespace ActionCalculator
     public class ActionMediator : IActionMediator
     {
         private readonly IStrategyFactory _strategyFactory;
-        private Calculation _context;
+        private Calculation _calculation;
+        private decimal[] _results;
 
         public ActionMediator(IStrategyFactory strategyFactory)
         {
             _strategyFactory = strategyFactory;
-            _context = null!;
+            _calculation = null!;
+            _results = null!;
         }
 
-        public void Initialise(Calculation context)
+        public decimal[] Calculate(Calculation calculation)
         {
-            _context = context;
+            _calculation = calculation;
+            _results = new decimal[calculation.Rerolls * 2 + 1];
+
+            Resolve(1m, calculation.Rerolls, -1, Skills.None);
+            
+            return _results.Where(x => x > 0).ToArray();
         }
 
         public void Resolve(decimal p, int r, int i, Skills usedSkills, bool nonCriticalFailure = false)
@@ -27,7 +34,7 @@ namespace ActionCalculator
                 return;
             }
 
-            var previousPlayerAction = _context.PlayerActions.SingleOrDefault(x => x.Index == i);
+            var previousPlayerAction = _calculation.PlayerActions.SingleOrDefault(x => x.Index == i);
             var previousActionType = previousPlayerAction?.Action.ActionType;
 
             var skipPlayerAction = SkipPlayerAction(nonCriticalFailure, previousPlayerAction);
@@ -101,31 +108,31 @@ namespace ActionCalculator
         }
         
         private bool SkipPlayerAction(bool nonCriticalFailure, PlayerAction? previousPlayerAction) =>
-            previousPlayerAction != null && _context.PlayerActions.SingleOrDefault(x 
+            previousPlayerAction != null && _calculation.PlayerActions.SingleOrDefault(x 
                 => x.Index == previousPlayerAction.Index - 1)?.Action.ActionType == ActionType.Dauntless
             || previousPlayerAction?.Action.ActionType == ActionType.Dauntless && nonCriticalFailure;
 
-        private PlayerAction GetNextPlayerAction(int i, bool skipPlayerAction) => _context.PlayerActions[i + (skipPlayerAction ? 2 : 1)];
+        private PlayerAction GetNextPlayerAction(int i, bool skipPlayerAction) => _calculation.PlayerActions[i + (skipPlayerAction ? 2 : 1)];
 
         private static bool IsStartOfBranch(PlayerAction? previousPlayerAction, PlayerAction playerAction) =>
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
         private bool IsEndOfCalculation(PlayerAction playerAction, bool skipPlayerAction) =>
-            playerAction.Index + (skipPlayerAction ? 2 : 1) == _context.PlayerActions.Count || playerAction.TerminatesCalculation;
+            playerAction.Index + (skipPlayerAction ? 2 : 1) == _calculation.PlayerActions.Count || playerAction.TerminatesCalculation;
 
         private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
-            _context.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
+            _calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
         
         private static bool IsEndOfBranch(int? previousBranchId, int branchId) => branchId > 0 && previousBranchId > 0 && previousBranchId != branchId;
 
         private PlayerAction? GetNextNonBranchPlayerAction(int i) =>
-            _context.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId == 0);
+            _calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId == 0);
 
         private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
             previousPlayerId != playerId ? usedSkills & (Skills.DivingTackle | Skills.BlastIt | Skills.CloudBurster) : usedSkills;
 
         private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
-            _context.PlayerActions.FirstOrDefault(x =>
+            _calculation.PlayerActions.FirstOrDefault(x =>
                 x.Depth < playerAction.Depth && x.Index > playerAction.Index);
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
@@ -150,9 +157,17 @@ namespace ActionCalculator
 
         private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)
         {
-            Console.WriteLine($"Rerolls:{_context.Rerolls} P:{p:0.00000} R:{r} Action:{previousActionType} UsedSkills:{usedSkills}");
+            Console.WriteLine($"Rerolls:{_calculation.Rerolls} P:{p:0.00000} R:{r} Action:{previousActionType} UsedSkills:{usedSkills}");
 
-            _context.Results[_context.Rerolls - r] += p;
+            _results[_calculation.Rerolls - r] += p;
+        }
+
+        private static void AggregateResults(IList<decimal> result)
+        {
+            for (var i = 1; i < result.Count; i++)
+            {
+                result[i] += result[i - 1];
+            }
         }
     }
 }

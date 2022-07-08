@@ -9,7 +9,7 @@
     
 		public int Denominator { get; }
 
-		public override string ToString() => $"{(char) ActionType}{Roll}{(Denominator > 0 && Denominator != 6 ? "/" + Denominator : "")}";
+		public override string ToString() => $"{(char) ActionType}{Roll}/{Denominator}";
 
 		public override bool IsRerollable() => false;
 	}

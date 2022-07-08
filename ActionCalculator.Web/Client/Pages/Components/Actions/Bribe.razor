@@ -2,10 +2,18 @@
     <MudPaper>
         <h5>Bribe</h5>
 
-        <MudButton>Add</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code {
+    
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+    
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.Bribe());
+    }
 
 }

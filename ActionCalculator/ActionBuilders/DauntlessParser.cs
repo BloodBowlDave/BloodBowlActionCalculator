@@ -15,7 +15,7 @@ namespace ActionCalculator.ActionBuilders
 
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 
-			return new Dauntless(rerollFailure, roll, usePro);
+			return new Dauntless(roll, rerollFailure, usePro);
 		}
     }
 }

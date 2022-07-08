@@ -12,7 +12,7 @@ namespace ActionCalculator.ActionBuilders
     
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 
-			return new Rerollable(usePro, roll);
+			return new Rerollable(roll, usePro);
 		}
 	}
 }

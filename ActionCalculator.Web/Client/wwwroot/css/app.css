@@ -62,3 +62,24 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+    
+.mud-input-number-control {
+    margin-top: 0 !important;
+    width: 70px;
+    display: inline-flex !important;
+    margin-left: 3px !important;
+}
+
+.actions-container .mud-button-outlined {
+    margin-top: 11px;
+}
+
+.actions-container h5 {
+    padding-right: 3px;
+    padding-left: 3px;
+    border-top-left-radius: var(--mud-default-borderradius);
+    border-top-right-radius: var(--mud-default-borderradius);
+    color: var(--mud-palette-primary-text);
+    background-color: var(--mud-palette-primary);
+
+}

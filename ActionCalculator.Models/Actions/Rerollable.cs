@@ -2,7 +2,7 @@
 {
 	public class Rerollable : Action
 	{
-		public Rerollable(bool usePro, int roll) : base(ActionType.Rerollable, roll, usePro)
+		public Rerollable(int roll, bool usePro) : base(ActionType.Rerollable, roll, usePro)
 		{
 		}
     

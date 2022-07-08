@@ -1,0 +1,24 @@
+﻿<MudPaper>
+    <h4>Results</h4>
+    
+    <MudTable T="decimal">
+
+    </MudTable>
+</MudPaper>
+
+@code {
+
+
+    
+    [Parameter] 
+    public Calculation Calculation { get; set; } = null!;
+
+    [Inject]
+    public IActionMediator ActionMediator { get; set; } = null!;
+
+    public Results()
+    {
+        ActionMediator.Calculate(Calculation);
+    }
+
+}

@@ -6,7 +6,9 @@
     <h1>Dave's Action Calculator</h1>
     <PlayerEditor CurrentPlayer="_currentPlayer" OnPlayerChanged="PlayerChanged" />
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <ActionsContainer OnAddAction="@AddAction"/>
+    <ActionsContainer OnAddAction="AddAction"/>
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
     <CalculationContainer Calculation="_calculation" CalculationChanged="CalculationChanged"/>
+    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
+    <Results Calculation="_calculation" />
 </MudContainer>

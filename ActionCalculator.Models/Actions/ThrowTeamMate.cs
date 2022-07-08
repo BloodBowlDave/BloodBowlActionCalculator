@@ -2,7 +2,7 @@
 {
 	public class ThrowTeammate : Action
 	{
-		public ThrowTeammate(bool usePro, bool rerollInaccurateThrow, int roll, int modifier) 
+		public ThrowTeammate(int roll, int modifier, bool usePro, bool rerollInaccurateThrow) 
 			: base(ActionType.ThrowTeammate, roll, usePro)
 		{
 			RerollInaccurateThrow = rerollInaccurateThrow;

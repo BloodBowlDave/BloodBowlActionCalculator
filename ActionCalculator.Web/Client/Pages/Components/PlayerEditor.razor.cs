@@ -15,10 +15,10 @@ namespace ActionCalculator.Web.Client.Pages.Components
         private MudChip[] _selected;
 
         [Parameter] 
-        public Models.Player CurrentPlayer { get; set; } = null!;
+        public Player CurrentPlayer { get; set; } = null!;
 
         [Parameter] 
-        public EventCallback<Models.Player> OnPlayerChanged { get; set; }
+        public EventCallback<Player> OnPlayerChanged { get; set; }
 
         public PlayerEditor()
         {
@@ -34,7 +34,7 @@ namespace ActionCalculator.Web.Client.Pages.Components
         {
             var skills = _selected.Aggregate(Skills.None, (current, chip) => current | Enum.Parse<Skills>(chip.Text));
 
-            CurrentPlayer = new Models.Player(CurrentPlayer.Id, skills, _lonerValue, _breakTackleValue, _mightyBlowValue, _dirtyPlayerValue, 0);
+            CurrentPlayer = new Player(CurrentPlayer.Id, skills, _lonerValue, _breakTackleValue, _mightyBlowValue, _dirtyPlayerValue, 0);
 
             OnPlayerChanged.InvokeAsync(CurrentPlayer);
         }
@@ -47,7 +47,7 @@ namespace ActionCalculator.Web.Client.Pages.Components
 
         private void NewPlayer()
         {
-            CurrentPlayer = new Models.Player();
+            CurrentPlayer = new Player();
             ClearSelected();
         }
 

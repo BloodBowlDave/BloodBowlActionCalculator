@@ -2,11 +2,19 @@
     <MudPaper>
         <h5>Catch</h5>
         
-        <MudNumericField T="int" Min="1" Max="7" @bind-Value="_catch"/>
-        <MudButton>Add</MudButton>
+        <MudNumericField T="int" Min="1" Max="8" @bind-Value="_roll"/>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code {
-    private int _catch = 4;
+    private int _roll = 3;
+
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.Catch(_roll, false));
+    }
 }

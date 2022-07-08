@@ -14,7 +14,7 @@ namespace ActionCalculator.ActionBuilders
 
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 
-			return new PickUp(usePro, roll);
+			return new PickUp(roll, usePro);
 		}
 	}
 }

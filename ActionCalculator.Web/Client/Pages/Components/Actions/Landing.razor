@@ -1,16 +1,20 @@
 ﻿<MudItem>
     <MudPaper>
         <h5>Landing</h5>
-
-        <MudButton>1+</MudButton>
-        <MudButton>2+</MudButton>
-        <MudButton>3+</MudButton>
-        <MudButton>4+</MudButton>
-        <MudButton>5+</MudButton>
-        <MudButton>6+</MudButton>
+        
+        <MudNumericField T="int" Min="1" Max="6" @bind-Value="_roll"/>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code {
+    private int _roll = 5;
 
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.Landing(_roll, false));
+    }
 }

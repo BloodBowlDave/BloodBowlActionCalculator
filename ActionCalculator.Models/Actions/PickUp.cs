@@ -2,7 +2,7 @@
 {
 	public class PickUp : Action
 	{
-		public PickUp(bool usePro, int roll) : base(ActionType.PickUp, roll, usePro)
+		public PickUp(int roll, bool usePro) : base(ActionType.PickUp, roll, usePro)
 		{
 		}
 	}

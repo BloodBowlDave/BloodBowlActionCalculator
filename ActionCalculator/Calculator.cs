@@ -29,13 +29,10 @@ namespace ActionCalculator
 
             for (var r = 0; r < MaximumRerolls; r++)
             {
-                var context = new Calculation(playerActions, r);
+                var calculation = new Calculation(playerActions, r);
 
-                _actionMediator.Initialise(context);
-                _actionMediator.Resolve(1m, r, -1, Skills.None);
-
-                var results = context.Results.Where(x => x > 0).ToArray();
-
+                var results = _actionMediator.Calculate(calculation);
+                
                 if (r > 0 && probabilityResults[r - 1].SequenceEqual(results, _probabilityComparer))
                 {
                     break;

@@ -20,12 +20,12 @@ namespace ActionCalculator.ActionBuilders
 				var modifier = int.Parse(input.Substring(3, 1));
 				modifier = input.Substring(2, 1) == "-" ? -modifier : modifier;
 				
-				return new Pass(usePro, rerollInaccuratePass, roll, modifier);
+				return new Pass(roll, modifier, usePro, rerollInaccuratePass);
 			}
 
 			roll = int.Parse(input[1..]);
 
-			return new Pass(usePro, rerollInaccuratePass, roll, 0);
+			return new Pass(roll, 0, usePro, rerollInaccuratePass);
 		}
 	}
 }

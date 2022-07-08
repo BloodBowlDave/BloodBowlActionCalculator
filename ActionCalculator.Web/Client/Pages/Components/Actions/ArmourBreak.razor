@@ -2,20 +2,20 @@
     <MudPaper>
         <h5>Armour Break</h5>
         
-        <MudNumericField T="int" Min="2" Max="11" @bind="_minimumRoll"/>
-        <MudButton OnClick="@(AddAction)">Add</MudButton>
+        <MudNumericField T="int" Min="2" Max="11" @bind-Value="_roll"/>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(AddAction)">Add</MudButton>
     </MudPaper>
 </MudItem>
 
 @code
 {
-    private int _minimumRoll = 9;
+    private int _roll = 9;
         
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
     
     private void AddAction()
     {
-        OnAddAction.InvokeAsync(new Models.Actions.ArmourBreak(_minimumRoll));
+        OnAddAction.InvokeAsync(new Models.Actions.ArmourBreak(_roll));
     }
 }

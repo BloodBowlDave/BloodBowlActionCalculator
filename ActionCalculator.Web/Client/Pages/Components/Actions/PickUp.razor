@@ -1,15 +1,22 @@
 ﻿<MudItem>
     <MudPaper>
         <h5>Pick Up</h5>
-
-        <MudButton>2+</MudButton>
-        <MudButton>3+</MudButton>
-        <MudButton>4+</MudButton>
-        <MudButton>5+</MudButton>
-        <MudButton>6+</MudButton>
+        
+        @for (var i = 2; i <= 6; i++)
+        {
+            var roll = i;
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+        }
     </MudPaper>
 </MudItem>
 
 @code {
 
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    private void AddAction(int roll)
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.PickUp(roll, false));
+    }
 }

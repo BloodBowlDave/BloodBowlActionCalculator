@@ -9,7 +9,7 @@
 @if (Calculation.PlayerActions.Any())
 {
     <MudPaper>
-        <h5>Calculation - @(Calculation.PlayerActions.ToString())</h5>
+        <h4>Calculation - @(Calculation.PlayerActions.ToString())</h4>
         <MudNumericField T="int" Min="0" Max="8" Label="Rerolls" Value="Calculation.Rerolls" ValueChanged="@(RerollsChanged)"/>
         <MudButton OnClick="SaveCalculation">Save</MudButton>
         <MudButton OnClick="ClearCalculation">Clear</MudButton>
@@ -39,10 +39,10 @@
 @code {
 
     [Parameter] 
-    public Models.Calculation Calculation { get; set; } = null!;
+    public Calculation Calculation { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<Models.Calculation> CalculationChanged { get; set; }
+    public EventCallback<Calculation> CalculationChanged { get; set; }
     
     private void RerollsChanged(int i)
     {
@@ -57,7 +57,7 @@
 
     private void ClearCalculation()
     {
-        Calculation = new Models.Calculation(new PlayerActions(), Calculation.Rerolls);
+        Calculation = new Calculation(new PlayerActions(), Calculation.Rerolls);
         CalculationChanged.InvokeAsync(Calculation);
     }
 }
