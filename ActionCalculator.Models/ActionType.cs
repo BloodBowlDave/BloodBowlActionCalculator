@@ -14,7 +14,7 @@
         NonRerollable = 'X',
         ThrowTeammate = 'H',
         Dauntless = 'L',
-        Interception = 'I',
+        Interference = 'I',
         Tentacles = 'N',
         Shadowing = 'S',
         ArgueTheCall = 'A',

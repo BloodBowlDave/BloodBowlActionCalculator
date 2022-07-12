@@ -1,7 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
-using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Fouling
 {

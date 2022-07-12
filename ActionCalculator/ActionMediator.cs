@@ -23,7 +23,8 @@ namespace ActionCalculator
             _results = new decimal[calculation.Rerolls * 2 + 1];
 
             Resolve(1m, calculation.Rerolls, -1, Skills.None);
-            
+            AggregateResults(_results);
+
             return _results.Where(x => x > 0).ToArray();
         }
 
@@ -137,7 +138,7 @@ namespace ActionCalculator
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
             previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass
-                or ActionType.Pass or ActionType.ThrowTeammate or ActionType.Interception or ActionType.NonRerollable or ActionType.Dauntless;
+                or ActionType.Pass or ActionType.ThrowTeammate or ActionType.Interference or ActionType.NonRerollable or ActionType.Dauntless;
 
         private static bool PlayerSentOff(ActionType? previousActionType, ActionType? actionType) =>
             previousActionType switch
@@ -162,11 +163,16 @@ namespace ActionCalculator
             _results[_calculation.Rerolls - r] += p;
         }
 
-        private static void AggregateResults(IList<decimal> result)
+        private static void AggregateResults(IList<decimal> results)
         {
-            for (var i = 1; i < result.Count; i++)
+            for (var i = 1; i < results.Count; i++)
             {
-                result[i] += result[i - 1];
+                if (results[i] == 0)
+                {
+                    break;
+                }
+
+                results[i] += results[i - 1];
             }
         }
     }

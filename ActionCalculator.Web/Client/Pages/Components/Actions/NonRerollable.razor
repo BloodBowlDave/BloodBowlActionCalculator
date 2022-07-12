@@ -1,0 +1,34 @@
+﻿<MudItem Class="non-rerollable">
+    <MudPaper>
+        <h5>Non-Rerollable Action</h5>
+        
+        <MudNumericField T="int" Label="Numerator" Min="1" Max="@(_denominator - 1)" @bind-Value="_numerator"/>
+        <MudText Style="display:inline-flex;position:relative;top:9px;">/</MudText>
+        <MudNumericField T="int" Label="Denominator" Min="2" Value="_denominator" ValueChanged="DenominatorChanged"/>
+        <MudButton Variant="Variant.Outlined" OnClick="AddAction">Add</MudButton>
+    </MudPaper>
+</MudItem>
+
+@code
+{
+    private int _numerator = 3;
+    private int _denominator = 6;
+
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
+
+    private void DenominatorChanged(int i)
+    {
+        _denominator = i;
+
+        if (_numerator >= _denominator)
+        {
+            _numerator = i - 1;
+        }
+    }
+    
+    private void AddAction()
+    {
+        OnAddAction.InvokeAsync(new Models.Actions.NonRerollable(_numerator, _denominator));
+    }
+}

@@ -4,13 +4,13 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.ActionBuilders
 {
-	public class InterceptionParser : IActionParser
+	public class InterferenceParser : IActionParser
 	{
         public Action Parse(string input)
 		{
 			var roll = int.Parse(input.Length == 2 ? input[1..] : input);
 
-			return new Interception(roll);
+			return new Interference(roll);
 		}
 	}
 }

@@ -4,11 +4,14 @@
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <h1>Dave's Action Calculator</h1>
-    <PlayerEditor CurrentPlayer="_currentPlayer" OnPlayerChanged="PlayerChanged" />
+    <PlayerEditor CurrentPlayer="_currentPlayer" OnPlayerChanged="PlayerChanged" PlayerNumber="PlayerNumber()" />
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
     <ActionsContainer OnAddAction="AddAction"/>
+
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <CalculationContainer Calculation="_calculation" CalculationChanged="CalculationChanged"/>
+    <h3>Calculation</h3>
+
+    <CalculationContainer Calculation="_calculation" CalculationChanged="CalculationChanged" RemoveAction="RemoveAction"/>
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <Results Calculation="_calculation" />
+    @*<Results Calculation="_calculation" />*@
 </MudContainer>

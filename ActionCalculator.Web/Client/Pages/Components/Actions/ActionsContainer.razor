@@ -4,7 +4,7 @@
     <Rush OnAddAction="@OnAddAction"/>
     <PickUp OnAddAction="@OnAddAction"/>
     <Pass OnAddAction="@OnAddAction"/>
-    <Interception OnAddAction="@OnAddAction"/>
+    <Interference OnAddAction="@OnAddAction"/>
     <Catch OnAddAction="@OnAddAction"/>
     <ThrowTeammate OnAddAction="@OnAddAction"/>
     <Landing OnAddAction="@OnAddAction"/>
@@ -14,10 +14,13 @@
     <ArmourBreak OnAddAction="@OnAddAction"/>
     <Injury OnAddAction="@OnAddAction"/>
     <Foul OnAddAction="@OnAddAction"/>
-    <ArgueTheCall OnAddAction="@OnAddAction"/>
     <Bribe OnAddAction="@OnAddAction"/>
+    <ArgueTheCall OnAddAction="@OnAddAction"/>
+    <NonRerollable OnAddAction="OnAddAction"/>
 </MudGrid>
 
 @code {
-
+    
+    [Parameter]
+    public EventCallback<Action> OnAddAction { get; set; }
 }

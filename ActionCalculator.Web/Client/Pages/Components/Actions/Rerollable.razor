@@ -5,7 +5,7 @@
         @for (var i = 2; i <= 6; i++)
         {
             var roll = i;
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
         }
     </MudPaper>
 </MudItem>

@@ -1,11 +1,11 @@
 ﻿<MudItem>
     <MudPaper>
-        <h5>Rush</h5>
+        <h5><u>R</u>ush</h5>
         
         @for (var i = 2; i <= 4; i++)
         {
             var roll = i;
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
         }
     </MudPaper>
 </MudItem>

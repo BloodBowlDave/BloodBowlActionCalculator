@@ -1,7 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
-using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
@@ -24,7 +23,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var hailMaryPass = playerAction.Action;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
-            var success = _d6.Success(1, hailMaryPass.Roll);
+            var success = _d6.Success(1, hailMaryPass.Numerator);
             var failure = 1 - success;
             var i = playerAction.Index;
 

@@ -24,7 +24,7 @@ namespace ActionCalculator.Strategies
             var action = (Injury) playerAction.Action;
             var i = playerAction.Index;
             var modifier = GetModifier(player, usedSkills);
-            var success = _d6.Success(2, action.Roll - modifier);
+            var success = _d6.Success(2, action.Numerator - modifier);
             
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 

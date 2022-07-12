@@ -31,5 +31,18 @@ namespace ActionCalculator.Web.Client.Pages
         {
             _calculation = calculation;
         }
+
+        private int PlayerNumber()
+        {
+            var playerIds = _calculation.PlayerActions.Select(x => x.Player.Id).Distinct().ToList();
+            var playerCount = playerIds.Count;
+
+            return playerIds.Contains(_currentPlayer.Id) ? playerCount : playerCount + 1;
+        }
+
+        private void RemoveAction(int i)
+        {
+            _calculation.PlayerActions.RemoveAt(i);
+        }
     }
 }

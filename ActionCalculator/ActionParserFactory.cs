@@ -31,7 +31,7 @@ namespace ActionCalculator
                 ActionType.HailMaryPass => _serviceProvider.GetService<HailMaryPassParser>(),
                 ActionType.Hypnogaze => _serviceProvider.GetService<HypnogazeParser>(),
                 ActionType.Injury => _serviceProvider.GetService<InjuryParser>(),
-                ActionType.Interception => _serviceProvider.GetService<InterceptionParser>(),
+                ActionType.Interference => _serviceProvider.GetService<InterferenceParser>(),
                 ActionType.Landing => _serviceProvider.GetService<LandingParser>(),
                 ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableParser>(),
                 ActionType.Pass => _serviceProvider.GetService<PassParser>(),

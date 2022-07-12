@@ -40,21 +40,8 @@ namespace ActionCalculator
 
                 probabilityResults.Add(results);
             }
-
-            foreach (var probabilityResult in probabilityResults)
-            {
-                AggregateResults(probabilityResult);
-            }
-
+            
             return new CalculationResult(playerActions, probabilityResults);
-        }
-
-        private static void AggregateResults(IList<decimal> result)
-        {
-            for (var i = 1; i < result.Count; i++)
-            {
-                result[i] += result[i - 1];
-            }
         }
     }
 }

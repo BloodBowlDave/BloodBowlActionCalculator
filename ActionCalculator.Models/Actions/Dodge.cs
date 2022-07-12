@@ -11,6 +11,6 @@
 		public bool UseDivingTackle { get; }
 		public bool UseBreakTackle { get; }
 
-		public override string ToString() => $"{(char) ActionType}{Roll}{(!UseBreakTackle ? "¬" : "")}{(UseDivingTackle ? "\"" : "")}{(UsePro ? "*" : "")}";
+		public override string ToString() => $"{(char) ActionType}{Numerator}{(!UseBreakTackle ? "¬" : "")}{(UseDivingTackle ? "\"" : "")}{(UsePro ? "*" : "")}";
 	}
 }

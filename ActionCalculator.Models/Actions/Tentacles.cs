@@ -11,6 +11,6 @@
 
 		public override string ToString() => $"{(char)ActionType}{GetModifier()}{(!RerollFailure ? "'" : "")}";
 
-		private string GetModifier() => Roll > 0 ? "+" + Roll : Roll.ToString();
+		private string GetModifier() => Numerator > 0 ? "+" + Numerator : Numerator.ToString();
 	}
 }

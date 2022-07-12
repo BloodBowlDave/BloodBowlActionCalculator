@@ -11,11 +11,11 @@
     
 		public bool RerollInaccurateThrow { get; }
         public int Modifier { get; }
-
-		public override string ToString() => $"{(char)ActionType}{Roll}{GetModifier()}{(!RerollInaccurateThrow ? "'" : "")}";
 		
-		public override string GetDescription() => base.GetDescription() + $" {GetModifier()} Modifier";
+		public override string ToString() => $"{(char)ActionType}{Numerator}{GetModifier()}{(!RerollInaccurateThrow ? "'" : "")}";
 
-		private string GetModifier() => Modifier > 0 ? "+" + Modifier : Modifier < 0 ? Modifier.ToString() : "";
+        public override string GetDescription() => base.GetDescription() + $" {GetModifier()}";
+
+        private string GetModifier() => Modifier > 0 ? "+" + Modifier + " Modifier" : Modifier < 0 ? Modifier + " Modifier" : "";
 	}
 }

@@ -1,28 +1,44 @@
 ﻿@using System.Text
 @using Block = ActionCalculator.Models.Actions.Block
 @using Player = ActionCalculator.Models.Player
-<MudItem>
-    <MudPaper>
-	    <h6>@(Action.GetDescription())</h6>
+
+<MudItem Class="action-summary">
+    <MudPaper Style="min-height: 51px;">
         
+        <h6>
+            @(Action.GetDescription())
+            <MudButton Size="Size.Small" OnClick="@(() => RemoveActionByIndex(Index))">x</MudButton>
+        </h6>
+
+
         @if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None))
         {
-            <MudCheckBox T="bool" Label="Pro"/>
+            <MudCheckBox T="bool" Label="Pro" Size="Size.Small"/>
         }
-        
+
         @if (Action.ActionType == ActionType.Block && Player.CanUseSkill(Skills.Brawler, Skills.None))
         {
-	        <MudCheckBox T="bool" Label="Brawler"/>
+            <MudCheckBox T="bool" Label="Brawler" Size="Size.Small"/>
         }
-        
+
         @if (Action.ActionType == ActionType.Dodge)
         {
-	        if (Player.CanUseSkill(Skills.BreakTackle, Skills.None))
-	        {
-	            <MudCheckBox T="bool" Label="Break Tackle"/>
-	        }
+            if (Player.CanUseSkill(Skills.BreakTackle, Skills.None))
+            {
+                <MudCheckBox T="bool" Label="Break Tackle" Size="Size.Small" Checked="BreakTackle()"/>
+            }
 
-            <MudCheckBox T="bool" Label="Diving Tackle"/>
+            <MudCheckBox T="bool" Label="Diving Tackle" Size="Size.Small"/>
+        }
+        
+        @if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
+        {
+            <MudCheckBox T="bool" Label="Reroll Inaccurate" Size="Size.Small" Checked="RerollInaccurate()"/>
+        }
+        
+        @if (Action.ActionType is ActionType.Dauntless)
+        {
+            <MudCheckBox T="bool" Label="Reroll Failure" Size="Size.Small" Checked="RerollFailure()"/>
         }
     </MudPaper>
 </MudItem>
@@ -32,7 +48,27 @@
     [Parameter]
     public PlayerAction PlayerAction { get; set; } = null!;
 
-	private Player Player => PlayerAction.Player;
-	private Action Action => PlayerAction.Action;
+    [Parameter]
+    public EventCallback<int> RemoveAction { get; set; }
+
+    private Player Player => PlayerAction.Player;
+    private Action Action => PlayerAction.Action;
+    private int Index => PlayerAction.Index;
+
+    private void RemoveActionByIndex(int i)
+    {
+        RemoveAction.InvokeAsync(i);
+    }
+
+    private bool RerollFailure() => ((Models.Actions.Dauntless) Action).RerollFailure;
+
+    private bool BreakTackle() => ((Models.Actions.Dodge) Action).UseBreakTackle;
+
+    private bool RerollInaccurate() => Action.ActionType switch
+    {
+        ActionType.Pass => ((Models.Actions.Pass) Action).RerollInaccuratePass,
+        ActionType.ThrowTeammate => ((Models.Actions.ThrowTeammate) Action).RerollInaccurateThrow,
+        _ => false
+    };
 
 }

@@ -1,43 +1,50 @@
-﻿<MudPaper>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewPlayer">New Player</MudButton>
-
+﻿@using System.Text.RegularExpressions
+<MudPaper Class="player-editor">
+    
+    <h4>
+        Player @(PlayerNumber.ToString())
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small" OnClick="ClearSelected">Clear</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Size="Size.Small" OnClick="NewPlayer">New</MudButton>
+        <div style="height: 0; clear: both;"></div>
+    </h4>
+    
     <MudChipSet MultiSelection="true" Filter="false" @bind-SelectedChips="_selected">
         @foreach (var skill in GetSkills())
-        {   
-            <MudChip 
-                Text="@skill.ToString()" 
+        {
+            <MudChip
+                Text="@GetSkillString(skill)"
                 Variant="Variant.Text"
-                Color="Color.Default" 
+                Color="Color.Default"
                 SelectedColor="Color.Primary"
+                Size="Size.Small"
                 OnClick="PlayerChanged">
             </MudChip>
 
             @if (skill == Skills.Loner)
             {
-                <div hidden="@(!SkillIsSelected("Loner"))">
+                <div style="display: @(!SkillIsSelected("Loner") ? "none" : "inline-flex")">
                     <MudNumericField T="int" Min="2" Max="6" Value="_lonerValue" ValueChanged="@(LonerChanged)"/>
                 </div>
             }
             else if (skill == Skills.MightyBlow)
             {
-                <div hidden="@(!SkillIsSelected("MightyBlow"))">
+                <div style="display: @(!SkillIsSelected("Mighty Blow") ? "none" : "inline-flex")">
                     <MudNumericField T="int" Min="1" Max="2" Value="_mightyBlowValue" ValueChanged="@(MightyBlowChanged)"/>
                 </div>
             }
             else if (skill == Skills.DirtyPlayer)
             {
-                <div hidden="@(!SkillIsSelected("DirtyPlayer"))">
+                <div style="display: @(!SkillIsSelected("Dirty Player") ? "none" : "inline-flex")">
                     <MudNumericField T="int" Min="1" Max="2" Value="_dirtyPlayerValue" ValueChanged="@(DirtyPlayerChanged)"/>
                 </div>
             }
             else if (skill == Skills.BreakTackle)
             {
-                <div hidden="@(!SkillIsSelected("BreakTackle"))">
+                <div style="display: @(!SkillIsSelected("Break Tackle") ? "none" : "inline-flex")">
                     <MudNumericField T="int" Min="1" Max="2" Value="_breakTackleValue" ValueChanged="@(BreakTackleChanged)"/>
                 </div>
             }
         }
     </MudChipSet>
-    
-    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="ClearSelected">Clear</MudButton>
+
 </MudPaper>

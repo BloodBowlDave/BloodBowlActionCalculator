@@ -1,7 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
-using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies
 {
@@ -24,7 +23,7 @@ namespace ActionCalculator.Strategies
             var (lonerSuccess, proSuccess, _) = player;
             var i = playerAction.Index;
 
-            var success = _d6.Success(1, nonCriticalFailure ? landing.Roll + 1 : landing.Roll);
+            var success = _d6.Success(1, nonCriticalFailure ? landing.Numerator + 1 : landing.Numerator);
             var failure = 1 - success;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);

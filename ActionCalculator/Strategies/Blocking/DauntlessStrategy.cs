@@ -24,7 +24,7 @@ namespace ActionCalculator.Strategies.Blocking
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var dauntless = (Dauntless) playerAction.Action;
 
-            var success = _d6.Success(1, dauntless.Roll);
+            var success = _d6.Success(1, dauntless.Numerator);
             var failure = 1 - success;
             var i = playerAction.Index;
 

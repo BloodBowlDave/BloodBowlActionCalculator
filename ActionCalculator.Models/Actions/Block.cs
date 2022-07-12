@@ -24,16 +24,16 @@
         public override string GetDescription()
         {
 	        var successString = NumberOfSuccessfulResults > 1
-		        ? $"{NumberOfSuccessfulResults} successes"
-		        : "1 success";
+		        ? $"{NumberOfSuccessfulResults} Successes"
+		        : "1 Success";
 
 	        return NumberOfDice switch
 	        {
-		        3 => $"3 dice block {successString}",
-		        2 => $"2 dice block {successString}",
-		        1 => $"1 die block {successString}",
-		        -2 => $"2 red dice block {successString}",
-		        -3 => $"3 red dice block {successString}",
+		        3 => $"3 Dice Block {successString}",
+		        2 => $"2 Dice Block {successString}",
+		        1 => $"1 Die Block {successString}",
+		        -2 => $"2 Red Dice Block {successString}",
+		        -3 => $"3 Red Dice Block {successString}",
 		        _ => throw new ArgumentOutOfRangeException()
 	        };
         }

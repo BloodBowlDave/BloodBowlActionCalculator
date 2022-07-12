@@ -24,7 +24,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var pass = (Pass) playerAction.Action;
 
             var modifier = pass.Modifier;
-            var modifiedRoll = pass.Roll - modifier;
+            var modifiedRoll = pass.Numerator - modifier;
 
             var successes = (7m - modifiedRoll).ThisOrMinimum(1).ThisOrMaximum(5);
             var failures = (1m - modifier).ThisOrMinimum(1).ThisOrMaximum(5);

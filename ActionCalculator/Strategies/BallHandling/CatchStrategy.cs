@@ -22,7 +22,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var action = playerAction.Action;
-            var success = _d6.Success(1, action.Roll);
+            var success = _d6.Success(1, action.Numerator);
             var failure = 1 - success;
             var i = playerAction.Index;
 

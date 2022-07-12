@@ -6,6 +6,6 @@
 		{
 		}
     
-		public override string ToString() => Roll + (UsePro ? "*" : "");
+		public override string ToString() => Numerator + (UsePro ? "*" : "");
 	}
 }

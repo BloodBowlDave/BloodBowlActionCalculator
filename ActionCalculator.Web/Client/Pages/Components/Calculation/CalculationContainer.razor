@@ -8,16 +8,7 @@
 
 @if (Calculation.PlayerActions.Any())
 {
-    <MudPaper>
-        <h4>Calculation - @(Calculation.PlayerActions.ToString())</h4>
-        <MudNumericField T="int" Min="0" Max="8" Label="Rerolls" Value="Calculation.Rerolls" ValueChanged="@(RerollsChanged)"/>
-        <MudButton OnClick="SaveCalculation">Save</MudButton>
-        <MudButton OnClick="ClearCalculation">Clear</MudButton>
-    </MudPaper>
-
-    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"></MudDivider>
-        
-    <MudGrid Spacing="1">
+    <MudGrid Spacing="1" Class="calculation-summary">
 
         @foreach (var playerAction in Calculation.PlayerActions)
         {
@@ -30,10 +21,19 @@
                 playerNumber++;
             }
 
-            <ActionSummary PlayerAction="@playerAction"/>
+            <ActionSummary PlayerAction="@playerAction" RemoveAction="RemoveAction"/>
         }
         
     </MudGrid>
+
+    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"></MudDivider>
+        
+    <MudPaper Class="calculation-container">
+        <h4>Calculation - @(Calculation.PlayerActions.ToString())</h4>
+        <MudNumericField T="int" Min="0" Max="8" Label="Rerolls" Value="Calculation.Rerolls" ValueChanged="@(RerollsChanged)"/>
+        <MudButton OnClick="SaveCalculation">Save</MudButton>
+        <MudButton OnClick="ClearCalculation">Clear</MudButton>
+    </MudPaper>
 }
 
 @code {
@@ -43,7 +43,10 @@
 
     [Parameter]
     public EventCallback<Calculation> CalculationChanged { get; set; }
-    
+
+    [Parameter]
+    public EventCallback<int> RemoveAction { get; set; }
+
     private void RerollsChanged(int i)
     {
         Calculation.Rerolls = i;

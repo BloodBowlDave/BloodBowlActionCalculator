@@ -4,7 +4,7 @@
         
         <MudNumericField T="int" Min="-3" Max="3" Value="_numberOfDice" ValueChanged="@(NumberOfDiceChanged)" Label="Dice"/>
         <MudNumericField T="int" Min="1" Max="5" @bind-Value="_numberOfSuccesses" Label="Successes"/>
-        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddAction">Add</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="AddAction">Add</MudButton>
     </MudPaper>
 </MudItem>
 

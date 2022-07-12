@@ -1,4 +1,5 @@
-﻿using ActionCalculator.Models;
+﻿using System.Text.RegularExpressions;
+using ActionCalculator.Models;
 using ActionCalculator.Utilities;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -11,11 +12,14 @@ namespace ActionCalculator.Web.Client.Pages.Components
         private int _mightyBlowValue = 1;
         private int _dirtyPlayerValue = 1;
         private int _breakTackleValue = 1;
-
+        
         private MudChip[] _selected;
 
         [Parameter] 
         public Player CurrentPlayer { get; set; } = null!;
+
+        [Parameter]
+        public int PlayerNumber { get; set; }
 
         [Parameter] 
         public EventCallback<Player> OnPlayerChanged { get; set; }
@@ -32,23 +36,23 @@ namespace ActionCalculator.Web.Client.Pages.Components
 
         private void PlayerChanged()
         {
-            var skills = _selected.Aggregate(Skills.None, (current, chip) => current | Enum.Parse<Skills>(chip.Text));
+            var skills = _selected.Aggregate(Skills.None, (current, chip) => 
+                current | Enum.Parse<Skills>(chip.Text.Replace(" ", "")));
 
             CurrentPlayer = new Player(CurrentPlayer.Id, skills, _lonerValue, _breakTackleValue, _mightyBlowValue, _dirtyPlayerValue, 0);
-
             OnPlayerChanged.InvokeAsync(CurrentPlayer);
-        }
-        
-        private void ClearSelected()
-        {
-            _selected = Array.Empty<MudChip>();
-            PlayerChanged();
         }
 
         private void NewPlayer()
         {
             CurrentPlayer = new Player();
             ClearSelected();
+        }
+        
+        private void ClearSelected()
+        {
+            _selected = Array.Empty<MudChip>();
+            PlayerChanged();
         }
 
         private void LonerChanged(int i)
@@ -74,5 +78,8 @@ namespace ActionCalculator.Web.Client.Pages.Components
             _breakTackleValue = i;
             PlayerChanged();
         }
+
+        private string GetSkillString(Skills skill) => 
+            Regex.Replace(skill.ToString(), "([A-Z])", " $1").TrimStart();
     }
 }

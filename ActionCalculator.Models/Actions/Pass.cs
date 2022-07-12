@@ -10,11 +10,11 @@
     
 		public bool RerollInaccuratePass { get; }
         public int Modifier { get; }
+		
+		public override string ToString() => $"{(char) ActionType}{Numerator}{GetModifier()}{(!RerollInaccuratePass ? "'" : "")}";
 
-		public override string ToString() => $"{(char) ActionType}{Roll}{GetModifier()}{(!RerollInaccuratePass ? "'" : "")}";
+		public override string GetDescription() => base.GetDescription() + $" {GetModifier()}";
 
-		public override string GetDescription() => base.GetDescription() + $" {GetModifier()} Modifier";
-
-		private string GetModifier() => Modifier > 0 ? "+" + Modifier : Modifier < 0 ? Modifier.ToString() : "";
+		private string GetModifier() => Modifier > 0 ? "+" + Modifier + " Modifier" : Modifier < 0 ? Modifier + " Modifier" : "";
 	}
 }

@@ -6,17 +6,17 @@
         {
             ActionType = actionType;
             UsePro = usePro;
-            Roll = roll;
+            Numerator = roll;
         }
 
         public ActionType ActionType { get; }
         public bool UsePro { get; }
-        public int Roll { get; }
+        public int Numerator { get; }
         
         public virtual bool IsRerollable() => true;
 
-        public override string ToString() => $"{(char) ActionType}{Roll}{(UsePro ? "*" : "")}";
+        public override string ToString() => $"{(char) ActionType}{Numerator}{(UsePro ? "*" : "")}";
 
-        public virtual string GetDescription() => $"{Roll}+ {ActionType}";
+        public virtual string GetDescription() => $"{Numerator}+ {ActionType}";
     }
 }

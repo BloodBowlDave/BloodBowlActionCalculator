@@ -1,7 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
-using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies
 {
@@ -24,7 +23,7 @@ namespace ActionCalculator.Strategies
             var action = playerAction.Action;
             var (lonerSuccess, proSuccess, _) = player;
 
-            var success = _d6.Success(1, action.Roll);
+            var success = _d6.Success(1, action.Numerator);
             var failure = 1 - success;
             var i = playerAction.Index;
 

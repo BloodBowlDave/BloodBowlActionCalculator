@@ -1,10 +1,11 @@
 ﻿@using ActionCalculator.Utilities
 @using System.Text
+@using System.Text.RegularExpressions
 
 <MudItem>
     <MudPaper>
         <h6>Player @(PlayerNumber)</h6>
-        <MudText>@($"Skills: {SkillsString()}")</MudText>
+        <MudText Style="margin:0 3px 0 3px;">@($"Skills: {SkillsString()}")</MudText>
     </MudPaper>
 </MudItem>
 
@@ -27,7 +28,7 @@
 
         foreach (var skill in Player.Skills.ToEnumerable(Skills.None))
         {
-            sb.Append($"{skill}{GetSkillValue(skill)}, ");
+            sb.Append($"{GetSkillString(skill)}{GetSkillValue(skill)}, ");
         }
 
         return sb.Remove(sb.Length - 2, 2).ToString();
@@ -35,10 +36,13 @@
 
     private string GetSkillValue(Skills skill) => skill switch
     {
-        Skills.Loner => " " + Player.LonerValue,
-        Skills.BreakTackle => " " + Player.BreakTackleValue,
-        Skills.DirtyPlayer => " " + Player.DirtyPlayerValue,
-        Skills.MightyBlow => " " + Player.MightyBlowValue,
+        Skills.Loner => " " + Player.LonerValue + "+",
+        Skills.BreakTackle => " +" + Player.BreakTackleValue,
+        Skills.DirtyPlayer => " +" + Player.DirtyPlayerValue,
+        Skills.MightyBlow => " +" + Player.MightyBlowValue,
         _ => ""
     };
+
+    private string GetSkillString(Skills skill) => 
+        Regex.Replace(skill.ToString(), "([A-Z])", " $1").TrimStart();
 }

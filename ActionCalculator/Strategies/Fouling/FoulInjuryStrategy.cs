@@ -22,7 +22,7 @@ namespace ActionCalculator.Strategies.Fouling
             var action = (Injury)playerAction.Action;
             var i = playerAction.Index;
             var modifier = player.CanUseSkill(Skills.DirtyPlayer, usedSkills) ? player.DirtyPlayerValue : 0;
-            var success = _d6.Success(2, action.Roll - modifier);
+            var success = _d6.Success(2, action.Numerator - modifier);
             
             if (doubleOnFoul)
             {
@@ -30,7 +30,7 @@ namespace ActionCalculator.Strategies.Fouling
                 return;
             }
 
-            var successAndDoubleOnInjury = _d6.RollDouble(action.Roll - modifier, 12);
+            var successAndDoubleOnInjury = _d6.RollDouble(action.Numerator - modifier, 12);
             _actionMediator.Resolve(p * (success - successAndDoubleOnInjury), r, i, usedSkills);
             _actionMediator.Resolve(p * successAndDoubleOnInjury, r, i, usedSkills, true);
         }

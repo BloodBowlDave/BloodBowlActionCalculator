@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var hypnogaze = (Hypnogaze) playerAction.Action;
-            var success = _d6.Success(1, hypnogaze.Roll);
+            var success = _d6.Success(1, hypnogaze.Numerator);
             var failure = 1 - success;
             var i = playerAction.Index;
 

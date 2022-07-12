@@ -65,21 +65,83 @@ a, .btn-link {
     
 .mud-input-number-control {
     margin-top: 0 !important;
-    width: 70px;
+    width: 58px;
     display: inline-flex !important;
     margin-left: 3px !important;
 }
 
-.actions-container .mud-button-outlined {
-    margin-top: 11px;
+.non-rerollable .mud-input-number-control {
+    width: 70px;
 }
 
-.actions-container h5 {
+.actions-container .mud-button-outlined {
+    margin-top: 12px;
+    min-width: auto !important;
+}
+
+.actions-container h5, .player-editor h4, .calculation-container h4, .calculation-summary h6 {
     padding-right: 3px;
     padding-left: 3px;
     border-top-left-radius: var(--mud-default-borderradius);
     border-top-right-radius: var(--mud-default-borderradius);
-    color: var(--mud-palette-primary-text);
-    background-color: var(--mud-palette-primary);
+}
 
+.player-editor h4, .calculation-container h4, .calculation-summary h6 {
+    background-color: var(--mud-palette-primary);
+    color: var(--mud-palette-primary-text);
+}
+
+.actions-container h5, .action-summary h6 {
+    background-color: var(--mud-palette-secondary);
+    color: var(--mud-palette-secondary-text);
+}
+
+.mud-chip {
+    margin-right: 0 !important;
+}
+
+.player-editor button {
+    box-shadow: none;
+}
+
+.player-editor button:hover {
+    box-shadow: none;
+}
+
+.player-editor .mud-input-text {
+    margin-top: 0 !important;
+}
+
+.player-editor .mud-input-slot {
+    height: 1em !important;
+}
+
+.player-editor .mud-input-number-control {
+    width: 40px;
+}
+
+.action-summary h6 {
+    padding-right: 20px;
+    position: relative;
+}
+
+.action-summary .mud-button {
+    color: var(--mud-palette-secondary-text);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 500px;
+    text-align: right;
+}
+
+.action-summary .mud-button-root {
+    padding: 0 !important;
+}
+
+.action-summary .mud-checkbox {
+    margin-right: 3px;
+}
+
+.action-summary p {
+    height: 23px;
 }

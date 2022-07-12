@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var pickUp = playerAction.Action;
 
-            var success = _d6.Success(1, pickUp.Roll);
+            var success = _d6.Success(1, pickUp.Numerator);
             var failure = 1 - success;
             var i = playerAction.Index;
 
