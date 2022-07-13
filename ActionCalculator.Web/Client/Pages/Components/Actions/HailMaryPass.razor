@@ -5,7 +5,7 @@
         @for (var i = 2; i <= 6; i++)
         {
             var roll = i;
-            <MudButton Variant="Variant.Outlined" OnClick="@(() => AddAction(roll))">@(roll)+</MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="@(() => AddAction(roll))" Disabled="Disabled">@(roll)+</MudButton>
         }
     </MudPaper>
 </MudItem>
@@ -14,7 +14,10 @@
         
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
-    
+        
+    [Parameter]
+    public bool Disabled { get; set; }
+
     private void AddAction(int roll)
     {
         OnAddAction.InvokeAsync(new Models.Actions.HailMaryPass(roll, false));

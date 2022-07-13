@@ -1,4 +1,6 @@
 ﻿@using System.Text.RegularExpressions
+@using ActionCalculator.Utilities
+
 <MudPaper Class="player-editor">
     
     <h4>
@@ -12,7 +14,7 @@
         @foreach (var skill in GetSkills())
         {
             <MudChip
-                Text="@GetSkillString(skill)"
+                Text="@(skill.ToString().PascalCaseToSpaced())"
                 Variant="Variant.Text"
                 Color="Color.Default"
                 SelectedColor="Color.Primary"

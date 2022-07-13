@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using ActionCalculator.Models;
+﻿using ActionCalculator.Models;
 using ActionCalculator.Utilities;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -78,8 +77,5 @@ namespace ActionCalculator.Web.Client.Pages.Components
             _breakTackleValue = i;
             PlayerChanged();
         }
-
-        private string GetSkillString(Skills skill) => 
-            Regex.Replace(skill.ToString(), "([A-Z])", " $1").TrimStart();
     }
 }

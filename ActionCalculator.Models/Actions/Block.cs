@@ -13,7 +13,7 @@
             RerollNonCriticalFailure = rerollNonCriticalFailure;
         }
 
-        public bool UseBrawler { get; }
+        public bool UseBrawler { get; set; }
         public int NumberOfDice { get; }
         public int NumberOfSuccessfulResults { get; }
         public int NumberOfNonCriticalFailures { get; }

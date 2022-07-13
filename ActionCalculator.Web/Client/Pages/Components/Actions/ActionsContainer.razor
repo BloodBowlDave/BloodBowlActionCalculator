@@ -1,26 +1,29 @@
 ﻿<MudGrid Spacing="1" Class="actions-container">
-    <Rerollable OnAddAction="@OnAddAction"/>
-    <Dodge OnAddAction="@OnAddAction"/>
-    <Rush OnAddAction="@OnAddAction"/>
-    <PickUp OnAddAction="@OnAddAction"/>
-    <Pass OnAddAction="@OnAddAction"/>
-    <Interference OnAddAction="@OnAddAction"/>
-    <Catch OnAddAction="@OnAddAction"/>
-    <ThrowTeammate OnAddAction="@OnAddAction"/>
-    <Landing OnAddAction="@OnAddAction"/>
-    <HailMaryPass OnAddAction="@OnAddAction"/>
-    <Dauntless OnAddAction="@OnAddAction"/>
+    <Rerollable OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Dodge OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Rush OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <PickUp OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Pass OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Interference OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Catch OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <ThrowTeammate OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Landing OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <HailMaryPass OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Dauntless OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
     <Block OnAddAction="@OnAddAction"/>
-    <ArmourBreak OnAddAction="@OnAddAction"/>
-    <Injury OnAddAction="@OnAddAction"/>
-    <Foul OnAddAction="@OnAddAction"/>
-    <Bribe OnAddAction="@OnAddAction"/>
-    <ArgueTheCall OnAddAction="@OnAddAction"/>
-    <NonRerollable OnAddAction="OnAddAction"/>
+    <ArmourBreak OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Injury OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Foul OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <Bribe OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <ArgueTheCall OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
+    <NonRerollable OnAddAction="OnAddAction" Disabled="DisableAllButBlock"/>
 </MudGrid>
 
 @code {
     
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
+    
+    [Parameter]
+    public bool DisableAllButBlock { get; set; }
 }

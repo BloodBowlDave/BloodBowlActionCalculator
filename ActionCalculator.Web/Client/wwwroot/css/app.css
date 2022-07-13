@@ -121,17 +121,19 @@ a, .btn-link {
 }
 
 .action-summary h6 {
-    padding-right: 20px;
+    padding-right: 30px;
     position: relative;
 }
 
-.action-summary .mud-button {
-    color: var(--mud-palette-secondary-text);
+.action-summary h6:hover {
+    cursor: pointer;
+}
+
+.action-summary h6 .mud-icon-root {
     position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 500px;
-    text-align: right;
+    top: 0;
+    right: -1px;
+    height: 18px;
 }
 
 .action-summary .mud-button-root {

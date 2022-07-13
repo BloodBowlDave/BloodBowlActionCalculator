@@ -7,8 +7,8 @@
 			RerollFailure = rerollFailure;
 		}
     
-		public bool RerollFailure { get; }
-		
-		public override string ToString() => $"{(char) ActionType}{Numerator}{(!RerollFailure ? "'" : "")}{(UsePro ? "*" : "")}";
+		public bool RerollFailure { get; set; }
+
+        public override string ToString() => $"{(char) ActionType}{Numerator}{(!RerollFailure ? "'" : "")}{(UsePro ? "*" : "")}";
 	}
 }

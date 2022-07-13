@@ -2,8 +2,8 @@
     <MudPaper>
         <h5>In<u style="text-decoration-skip-ink:none">j</u>ury</h5>
         
-        <MudNumericField T="int" Min="2" Max="10" @bind-Value="_roll"/>
-        <MudButton Variant="Variant.Outlined" OnClick="AddAction">Add</MudButton>
+        <MudNumericField T="int" Min="2" Max="10" @bind-Value="_roll" Disabled="Disabled"/>
+        <MudButton Variant="Variant.Outlined" OnClick="AddAction" Disabled="Disabled">Add</MudButton>
     </MudPaper>
 </MudItem>
 
@@ -12,6 +12,9 @@
 
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
+        
+    [Parameter]
+    public bool Disabled { get; set; }
 
     private void AddAction()
     {

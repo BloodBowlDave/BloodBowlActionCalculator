@@ -8,6 +8,9 @@
 
 @if (Calculation.PlayerActions.Any())
 {
+    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
+    <h3>Calculation</h3>
+
     <MudGrid Spacing="1" Class="calculation-summary">
 
         @foreach (var playerAction in Calculation.PlayerActions)
@@ -21,7 +24,15 @@
                 playerNumber++;
             }
 
-            <ActionSummary PlayerAction="@playerAction" RemoveAction="RemoveAction"/>
+            <ActionSummary 
+                PlayerAction="@playerAction"
+                RemoveAction="RemoveAction"
+                OnToggleBreakTackle="OnToggleBreakTackle"
+                OnToggleDivingTackle="OnToggleDivingTackle"
+                OnToggleBrawler="OnToggleBrawler"
+                OnTogglePro="OnTogglePro"
+                OnToggleRerollInaccurate="OnToggleRerollInaccurate"
+                OnToggleRerollFailure="OnToggleRerollFailure"/>
         }
         
     </MudGrid>
@@ -43,6 +54,24 @@
 
     [Parameter]
     public EventCallback<Calculation> CalculationChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnToggleBreakTackle { get; set; } 
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnToggleDivingTackle { get; set; } 
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnToggleBrawler { get; set; } 
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnTogglePro { get; set; } 
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnToggleRerollInaccurate { get; set; } 
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnToggleRerollFailure { get; set; } 
 
     [Parameter]
     public EventCallback<int> RemoveAction { get; set; }

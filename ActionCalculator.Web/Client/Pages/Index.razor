@@ -6,12 +6,19 @@
     <h1>Dave's Action Calculator</h1>
     <PlayerEditor CurrentPlayer="_currentPlayer" OnPlayerChanged="PlayerChanged" PlayerNumber="PlayerNumber()" />
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <ActionsContainer OnAddAction="AddAction"/>
+    <ActionsContainer OnAddAction="AddAction" DisableAllButBlock="@DisableAllButBlock()"/>
+    
+    <CalculationContainer 
+        Calculation="_calculation" 
+        CalculationChanged="CalculationChanged" 
+        RemoveAction="RemoveAction"
+        OnToggleBreakTackle="ToggleBreakTackle"
+        OnToggleDivingTackle="ToggleDivingTackle"
+        OnToggleBrawler="ToggleBrawler"
+        OnTogglePro="TogglePro"
+        OnToggleRerollInaccurate="ToggleRerollInaccurate"
+        OnToggleRerollFailure="ToggleRerollFailure"/>
 
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <h3>Calculation</h3>
-
-    <CalculationContainer Calculation="_calculation" CalculationChanged="CalculationChanged" RemoveAction="RemoveAction"/>
-    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    @*<Results Calculation="_calculation" />*@
+    <Results Calculation="_calculation" />
 </MudContainer>

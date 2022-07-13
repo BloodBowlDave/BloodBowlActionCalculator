@@ -9,6 +9,7 @@ namespace ActionCalculator
         private readonly IActionParserFactory _actionParserFactory;
         private readonly IPlayerBuilder _playerBuilder;
         private readonly List<PlayerAction> _playerActions = new();
+        private int _index;
 
         public PlayerActionsBuilder(IActionParserFactory actionParserFactory, IPlayerBuilder playerBuilder)
         {
@@ -25,16 +26,7 @@ namespace ActionCalculator
 
             return playerActions;
         }
-
-        private void AddPlayerActions(IEnumerable<PlayerAction> playerActions)
-        {
-            foreach (var playerAction in playerActions)
-            {
-                playerAction.Index = _playerActions.Count;
-                _playerActions.Add(playerAction);
-            }
-        }
-
+        
         private void BuildPlayerActions(string calculation, Player player, int depth)
         {
             var (specialCharacter, index) = GetFirstSpecialCharacter(calculation);
@@ -77,12 +69,21 @@ namespace ActionCalculator
             return new Tuple<char?, int>(null, -1);
         }
 
-        private void BuildPlayerActionsForOnePlayer(string calculation, Player player, int depth) =>
-            AddPlayerActions(GetActions(calculation).Select(x => new PlayerAction(player, x, depth)));
+        private void BuildPlayerActionsForOnePlayer(string calculation, Player player, int depth)
+        {
+            foreach (var action in GetActions(calculation))
+            {
+                AddPlayerAction(player, action, depth);
+            }
+        }
 
         private void BuildPlayerActionsForMultiplePlayers(string calculation, Player player, int depth, int indexOfPlayerEnd)
         {
-            AddPlayerActions(GetActions(calculation[..indexOfPlayerEnd]).Select(x => new PlayerAction(player, x, depth)));
+            foreach (var action in GetActions(calculation[..indexOfPlayerEnd]))
+            {
+                AddPlayerAction(player, action, depth);
+            }
+
             BuildPlayerActions(calculation[(indexOfPlayerEnd + 1)..], new Player(), depth);
         }
 
@@ -92,8 +93,11 @@ namespace ActionCalculator
             {
                 throw new Exception("No matching closing bracket.");
             }
-
-            AddPlayerActions(GetActions(calculation[..indexOfOpeningBracket]).Select(x => new PlayerAction(player, x, depth)));
+            
+            foreach (var action in GetActions(calculation[..indexOfOpeningBracket]))
+            {
+                AddPlayerAction(player, action, depth);
+            }
 
             var calculationLength = _playerActions.Count;
 
@@ -112,7 +116,10 @@ namespace ActionCalculator
                 }
             }
 
-            AddPlayerActions(GetActions(calculation[(lastIndexOfClosingBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
+            foreach (var action in GetActions(calculation[(lastIndexOfClosingBracket + 1)..]))
+            {
+                AddPlayerAction(player, action, depth);
+            }
         }
 
         private void BuildPlayerActionsWithAlternateBranches(string calculation, Player player, int depth, int indexOfOpeningBracket, int lastIndexOfClosingBracket)
@@ -121,8 +128,11 @@ namespace ActionCalculator
             {
                 throw new Exception("No matching closing bracket.");
             }
-
-            AddPlayerActions(GetActions(calculation[..indexOfOpeningBracket]).Select(x => new PlayerAction(player, x, depth)));
+            
+            foreach (var action in GetActions(calculation[..indexOfOpeningBracket]))
+            {
+                AddPlayerAction(player, action, depth);
+            }
 
             var branches = calculation[(indexOfOpeningBracket + 1)..lastIndexOfClosingBracket].Split(")(");
 
@@ -138,7 +148,10 @@ namespace ActionCalculator
                 }
             }
 
-            AddPlayerActions(GetActions(calculation[(lastIndexOfClosingBracket + 1)..]).Select(x => new PlayerAction(player, x, depth)));
+            foreach (var action in GetActions(calculation[(lastIndexOfClosingBracket + 1)..]))
+            {
+                AddPlayerAction(player, action, depth);
+            }
         }
 
         private IEnumerable<Action> GetActions(string input)
@@ -161,6 +174,12 @@ namespace ActionCalculator
                 
                 yield return _actionParserFactory.GetActionParser(actionSplit[1]).Parse(actionSplit[1]);
             }
+        }
+
+        private void AddPlayerAction(Player player, Action action, int depth)
+        {
+            _playerActions.Add(new PlayerAction(player, action, depth, _index));
+            _index++;
         }
     }
 }

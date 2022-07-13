@@ -9,13 +9,13 @@
 			Modifier = modifier;
 		}
     
-		public bool RerollInaccurateThrow { get; }
+		public bool RerollInaccurateThrow { get; set; }
         public int Modifier { get; }
 		
 		public override string ToString() => $"{(char)ActionType}{Numerator}{GetModifier()}{(!RerollInaccurateThrow ? "'" : "")}";
 
-        public override string GetDescription() => base.GetDescription() + $" {GetModifier()}";
+        public override string GetDescription() => base.GetDescription() + (Modifier != 0 ? $" {GetModifier() + " Modifier"}" : "");
 
-        private string GetModifier() => Modifier > 0 ? "+" + Modifier + " Modifier" : Modifier < 0 ? Modifier + " Modifier" : "";
+        private string GetModifier() => Modifier > 0 ? "+" + Modifier : Modifier < 0 ? Modifier.ToString() : "";
 	}
 }

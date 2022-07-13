@@ -2,7 +2,7 @@
     <MudPaper>
         <h5>Brib<u>e</u></h5>
 
-        <MudButton Variant="Variant.Outlined" OnClick="AddAction">2+</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="AddAction" Disabled="Disabled">2+</MudButton>
     </MudPaper>
 </MudItem>
 
@@ -10,7 +10,10 @@
     
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
-    
+        
+    [Parameter]
+    public bool Disabled { get; set; }
+
     private void AddAction()
     {
         OnAddAction.InvokeAsync(new Models.Actions.Bribe());

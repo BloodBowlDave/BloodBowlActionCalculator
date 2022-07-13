@@ -28,7 +28,7 @@
 
         foreach (var skill in Player.Skills.ToEnumerable(Skills.None))
         {
-            sb.Append($"{GetSkillString(skill)}{GetSkillValue(skill)}, ");
+            sb.Append($"{skill.ToString().PascalCaseToSpaced()}{GetSkillValue(skill)}, ");
         }
 
         return sb.Remove(sb.Length - 2, 2).ToString();
@@ -41,8 +41,5 @@
         Skills.DirtyPlayer => " +" + Player.DirtyPlayerValue,
         Skills.MightyBlow => " +" + Player.MightyBlowValue,
         _ => ""
-    };
-
-    private string GetSkillString(Skills skill) => 
-        Regex.Replace(skill.ToString(), "([A-Z])", " $1").TrimStart();
+    };    
 }
