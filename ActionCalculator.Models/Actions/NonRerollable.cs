@@ -9,7 +9,7 @@
     
 		public int Denominator { get; }
 
-		public override string ToString() => $"{(char) ActionType}{Numerator}/{Denominator}";
+		public override string ToString() => $"{Numerator}/{Denominator}";
 
 		public override bool IsRerollable() => false;
 	}

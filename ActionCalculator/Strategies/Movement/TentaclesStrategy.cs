@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.Movement
             _proHelper = proHelper;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, _) = player;
@@ -25,7 +25,6 @@ namespace ActionCalculator.Strategies.Movement
 
             var failure = (decimal)(tentacles.Numerator + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
             var success = 1 - failure;
-            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 

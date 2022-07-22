@@ -20,14 +20,13 @@ namespace ActionCalculator.Strategies.Movement
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var dodge = (Dodge) playerAction.Action;
             var success = _d6.Success(1, dodge.Numerator);
             var failure = 1 - success;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var i = playerAction.Index;
 
             var useDivingTackle = dodge.UseDivingTackle && !usedSkills.Contains(Skills.DivingTackle);
             var useBreakTackleBeforeReroll = UseBreakTackleBeforeReroll(canUseSkill, dodge, r, usedSkills);

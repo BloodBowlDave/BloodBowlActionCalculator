@@ -19,6 +19,11 @@ namespace ActionCalculator
 
         public decimal[] Calculate(Calculation calculation)
         {
+            if (!calculation.PlayerActions.Any())
+            {
+                return Array.Empty<decimal>();
+            }
+
             _calculation = calculation;
             _results = new decimal[calculation.Rerolls * 2 + 1];
 
@@ -35,12 +40,12 @@ namespace ActionCalculator
                 return;
             }
 
-            var previousPlayerAction = _calculation.PlayerActions.SingleOrDefault(x => x.Index == i);
+            var previousPlayerAction = i > -1 ? _calculation.PlayerActions[i] : null;
             var previousActionType = previousPlayerAction?.Action.ActionType;
 
-            var skipPlayerAction = SkipPlayerAction(nonCriticalFailure, previousPlayerAction);
+            var skipPlayerAction = SkipPlayerAction(nonCriticalFailure, i);
             
-            if (previousPlayerAction != null && IsEndOfCalculation(previousPlayerAction, skipPlayerAction))
+            if (previousPlayerAction != null && IsEndOfCalculation(i, skipPlayerAction))
             {
                 if (previousActionType is ActionType.Tentacles or ActionType.Block or ActionType.Stab or ActionType.Chainsaw && nonCriticalFailure)
                 {
@@ -51,13 +56,15 @@ namespace ActionCalculator
                 return;
             }
             
-            var playerAction = GetNextPlayerAction(i, skipPlayerAction);
+            i = GetNextPlayerActionIndex(i, skipPlayerAction);
+
+            var playerAction = _calculation.PlayerActions[i];
             var player = playerAction.Player;
             var action = playerAction.Action;
 
             if (previousActionType == ActionType.Foul && !nonCriticalFailure && action.ActionType is not ActionType.Injury)
             {
-                Resolve(p / 6, r, i, usedSkills, true);
+                Resolve(p / 6, r, i - 1, usedSkills, true);
                 p *= 5m / 6;
             }
 
@@ -75,66 +82,107 @@ namespace ActionCalculator
             }
             else if (playerAction.RequiresNonCriticalFailure)
             {
-                playerAction = GetNextValidPlayerAction(playerAction);
+                i = GetNextPlayerActionIndexOnMainBranch(playerAction, i);
 
-                if (playerAction == null)
+                if (i == -1)
                 {
                     WriteResult(p, r, usedSkills, previousActionType);
                     return;
                 }
+
+                playerAction = _calculation.PlayerActions[i];
             }
             else if (IsEndOfBranch(previousPlayerAction?.BranchId, playerAction.BranchId))
             {
-                playerAction = GetNextNonBranchPlayerAction(i);
-
-                if (playerAction == null)
+                i = GetNextNonBranchPlayerActionIndex(i);
+                
+                if (i == -1)
                 {
                     WriteResult(p, r, usedSkills, previousActionType);
                     return;
                 }
+
+                playerAction = _calculation.PlayerActions[i];
             }
 
             if (!IsStartOfBranch(previousPlayerAction, playerAction))
             {
                 usedSkills = GetUsedSkills(previousPlayerAction?.Player.Id, player.Id, usedSkills);
-                Execute(playerAction, p, r, usedSkills, previousActionType, nonCriticalFailure);
+                Execute(playerAction, p, r, i, usedSkills, previousActionType, nonCriticalFailure);
                 return;
             }
 
-            while (playerAction != null)
+            while (true)
             {
-                Execute(playerAction, p, r, GetUsedSkills(previousPlayerAction?.Player.Id, player.Id, usedSkills), previousActionType, nonCriticalFailure);
-                playerAction = GetNextBranchStartPlayerAction(i, playerAction.BranchId);
+                Execute(playerAction, p, r, i, GetUsedSkills(previousPlayerAction?.Player.Id, player.Id, usedSkills), previousActionType, nonCriticalFailure);
+
+                i = GetNextBranchStartPlayerActionIndex(i, playerAction.BranchId);
+
+                if (i == -1)
+                {
+                    break;
+                }
+
+                playerAction = _calculation.PlayerActions[i];
             }
         }
         
-        private bool SkipPlayerAction(bool nonCriticalFailure, PlayerAction? previousPlayerAction) =>
-            previousPlayerAction != null && _calculation.PlayerActions.SingleOrDefault(x 
-                => x.Index == previousPlayerAction.Index - 1)?.Action.ActionType == ActionType.Dauntless
-            || previousPlayerAction?.Action.ActionType == ActionType.Dauntless && nonCriticalFailure;
+        private bool SkipPlayerAction(bool nonCriticalFailure, int i) =>
+            i > -1 && (nonCriticalFailure &&
+                       _calculation.PlayerActions[i].Action.ActionType == ActionType.Dauntless ||
+                       i > 0 && _calculation.PlayerActions[i - 1].Action.ActionType == ActionType.Dauntless);
 
-        private PlayerAction GetNextPlayerAction(int i, bool skipPlayerAction) => _calculation.PlayerActions[i + (skipPlayerAction ? 2 : 1)];
+        private static int GetNextPlayerActionIndex(int i, bool skipPlayerAction) => i + (skipPlayerAction ? 2 : 1);
 
         private static bool IsStartOfBranch(PlayerAction? previousPlayerAction, PlayerAction playerAction) =>
             playerAction.BranchId != 0 && playerAction.BranchId != previousPlayerAction?.BranchId;
 
-        private bool IsEndOfCalculation(PlayerAction playerAction, bool skipPlayerAction) =>
-            playerAction.Index + (skipPlayerAction ? 2 : 1) == _calculation.PlayerActions.Count || playerAction.TerminatesCalculation;
+        private bool IsEndOfCalculation(int i, bool skipPlayerAction) =>
+            i + (skipPlayerAction ? 2 : 1) == _calculation.PlayerActions.Count || _calculation.PlayerActions[i].TerminatesCalculation;
 
-        private PlayerAction? GetNextBranchStartPlayerAction(int i, int branchId) =>
-            _calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId > branchId);
-        
+        private int GetNextBranchStartPlayerActionIndex(int i, int branchId)
+        {
+            for (var j = i + 1; j < _calculation.PlayerActions.Count; j++)
+            {
+                if (_calculation.PlayerActions[j].BranchId > branchId)
+                {
+                    return j;
+                }
+            }
+
+            return -1;
+        }
+
         private static bool IsEndOfBranch(int? previousBranchId, int branchId) => branchId > 0 && previousBranchId > 0 && previousBranchId != branchId;
 
-        private PlayerAction? GetNextNonBranchPlayerAction(int i) =>
-            _calculation.PlayerActions.FirstOrDefault(x => x.Index > i && x.BranchId == 0);
+        private int GetNextNonBranchPlayerActionIndex(int i)
+        {
+            for (var j = i + 1; j < _calculation.PlayerActions.Count; j++)
+            {
+                if (_calculation.PlayerActions[j].BranchId == 0)
+                {
+                    return j;
+                }
+            }
+
+            return -1;
+        }
 
         private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
             previousPlayerId != playerId ? usedSkills & (Skills.DivingTackle | Skills.BlastIt | Skills.CloudBurster) : usedSkills;
 
-        private PlayerAction? GetNextValidPlayerAction(PlayerAction playerAction) =>
-            _calculation.PlayerActions.FirstOrDefault(x =>
-                x.Depth < playerAction.Depth && x.Index > playerAction.Index);
+        private int GetNextPlayerActionIndexOnMainBranch(PlayerAction? previousPlayerAction, int i)
+        {
+            for (var j = i + 1; j < _calculation.PlayerActions.Count; j++)
+            {
+                if (previousPlayerAction == null || _calculation.PlayerActions[j].Depth < previousPlayerAction.Depth)
+                {
+                    return j;
+                }
+            }
+
+            return -1;
+        }
 
         private static bool NonCriticalFailureSupported(ActionType? previousActionType) =>
             previousActionType is ActionType.Bribe or ActionType.ArgueTheCall or ActionType.Injury or ActionType.Foul or ActionType.HailMaryPass
@@ -150,10 +198,10 @@ namespace ActionCalculator
                 _ => false
             };
 
-        private void Execute(PlayerAction playerAction, decimal p, int r, Skills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
+        private void Execute(PlayerAction playerAction, decimal p, int r, int i, Skills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
         {
             var actionStrategy = _strategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure);
-            actionStrategy.Execute(p, r, playerAction, usedSkills, nonCriticalFailure);
+            actionStrategy.Execute(p, r, i, playerAction, usedSkills, nonCriticalFailure);
         }
 
         private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)

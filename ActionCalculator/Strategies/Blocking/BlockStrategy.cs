@@ -32,10 +32,8 @@ namespace ActionCalculator.Strategies.Blocking
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var i = playerAction.Index;
-            
             foreach (var outcome in GetOutcomes(r, playerAction, usedSkills))
             {
                 var ((outcomeNonCriticalFailure, rerollsRemaining, outcomeSkillsUsed), pOutcome) = outcome;
@@ -48,7 +46,7 @@ namespace ActionCalculator.Strategies.Blocking
         {
             var player = playerAction.Player;
             _proSuccess = player.ProSuccess;
-            _lonerSuccess = player.LonerSuccess;
+            _lonerSuccess = player.LonerSuccess();
 
             var block = (Block) playerAction.Action;
             var numberOfSuccessfulResults = block.NumberOfSuccessfulResults;

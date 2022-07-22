@@ -1,0 +1,82 @@
+﻿@if (Results != null && Results.Any())
+{
+    <MudItem>
+        <MudPaper Class="calculation-results">
+            <h4 @onclick="ClearCalculation">
+                @(Calculation.PlayerActions.ToString())
+                <MudIcon Icon="@Icons.Filled.Cancel"/>
+            </h4>
+        
+            <MudNumericField T="int" 
+                             Min="0" Max="8"
+                             Label="Rerolls" 
+                             Value="Calculation.Rerolls" 
+                             ValueChanged="@(RerollsChanged)"/>
+             
+            @if (CalculationIndex == 0)
+            {
+                <MudButton Variant="Variant.Outlined" OnClick="SaveCalculation">Save</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Outlined" OnClick="EditCalculation">Edit</MudButton>
+            }
+        
+            <MudTable Items="@Results" Striped="true" Breakpoint="Breakpoint.None" >
+                <HeaderContent>
+                    <MudTh>Rerolls Used</MudTh>
+                    <MudTh>Success %</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Rerolls Used">@context.Item1</MudTd>
+                    <MudTd DataLabel="Success %">@((context.Item2 * 100).ToString("00.0000"))</MudTd>
+                </RowTemplate>
+            </MudTable>
+    
+        </MudPaper>
+    </MudItem>
+}
+
+@code {
+    
+    [Parameter]
+    public EventCallback<Tuple<int, int>> OnRerollsChanged { get; set; }
+    
+    [Parameter]
+    public EventCallback<int> OnClearCalculation { get; set; }
+    
+    [Parameter]
+    public EventCallback<int> OnSaveCalculation { get; set; }
+    
+    [Parameter]
+    public EventCallback<int> OnEditCalculation { get; set; }
+
+    [Parameter]
+    public Calculation Calculation { get; set; } = null!;
+
+    [Parameter]
+    public List<Tuple<int, decimal>>? Results { get; set; }
+    
+    [Parameter]
+    public int CalculationIndex { get; set; }
+    
+    private void RerollsChanged(int i)
+    {
+        OnRerollsChanged.InvokeAsync(new Tuple<int, int>(CalculationIndex, i));
+    }
+
+    private void SaveCalculation()
+    {
+        OnSaveCalculation.InvokeAsync(CalculationIndex);
+    }
+
+    private void ClearCalculation()
+    {
+        OnClearCalculation.InvokeAsync(CalculationIndex);
+    }
+
+    private void EditCalculation()
+    {
+        OnEditCalculation.InvokeAsync(CalculationIndex);
+    }
+}

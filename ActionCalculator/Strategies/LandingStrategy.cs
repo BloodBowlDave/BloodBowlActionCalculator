@@ -16,12 +16,11 @@ namespace ActionCalculator.Strategies
             _proHelper = proHelper;
             _d6 = d6;
         }
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var landing = playerAction.Action;
             var (lonerSuccess, proSuccess, _) = player;
-            var i = playerAction.Index;
 
             var success = _d6.Success(1, nonCriticalFailure ? landing.Numerator + 1 : landing.Numerator);
             var failure = 1 - success;

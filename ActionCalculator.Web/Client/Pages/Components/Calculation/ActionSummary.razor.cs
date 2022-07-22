@@ -13,6 +13,9 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
         public PlayerAction PlayerAction { get; set; } = null!;
 
         [Parameter]
+        public int Index { get; set; }
+
+        [Parameter]
         public bool Disabled { get; set; }
 
         [Parameter]
@@ -38,7 +41,6 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
         private Player Player => PlayerAction.Player;
         private Action Action => PlayerAction.Action;
-        private int Index => PlayerAction.Index;
 
         private void RemoveActionByIndex(int i)
         {

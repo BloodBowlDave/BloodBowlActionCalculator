@@ -10,22 +10,27 @@ namespace ActionCalculator.Models
             var previousPlayerId = Guid.Empty;
             var firstAction = true;
 
-            foreach (var playerAction in this)
+            for (var i = 0; i < Count; i++)
             {
+                var playerAction = this[i];
                 var player = playerAction.Player;
                 var action = playerAction.Action;
                 var currentPlayerId = player.Id;
+                var depth = playerAction.Depth;
+                var branchId = playerAction.BranchId;
+
                 var requiresNonCriticalFailure = playerAction.RequiresNonCriticalFailure;
-                var requiresDauntlessFailure = RequiresDauntlessFailure(playerAction);
-                var branchTerminatesCalculation = BranchTerminatesCalculation(playerAction);
-                var isStartOfAlternateBranch = IsStartOfAlternateBranch(playerAction);
+                var requiresDauntlessFailure = RequiresDauntlessFailure(i);
+                var branchTerminatesCalculation = BranchTerminatesCalculation(i, depth);
+                var isStartOfAlternateBranch = branchId > 0 && IsStartOfAlternateBranch(i, branchId);
 
                 if (previousPlayerId != currentPlayerId)
                 {
                     firstAction = true;
 
-                    var previousPlayerHasSubsequentAction = PreviousPlayerHasSubsequentAction(previousPlayerId, playerAction);
-                    var currentPlayerHasPreviousAction = CurrentPlayerHasPreviousAction(currentPlayerId, playerAction);
+                    var previousPlayerHasSubsequentAction =
+                        PreviousPlayerHasSubsequentAction(previousPlayerId, i);
+                    var currentPlayerHasPreviousAction = CurrentPlayerHasPreviousAction(currentPlayerId, i);
                     var endPlayer = !previousPlayerHasSubsequentAction && !branchTerminatesCalculation;
 
                     if (requiresNonCriticalFailure)
@@ -51,7 +56,7 @@ namespace ActionCalculator.Models
                     {
                         sb.Append(player);
 
-                        if (player.HasSkills() || requiresNonCriticalFailure && !endPlayer)
+                        if (player.HasAnySkills() || requiresNonCriticalFailure && !endPlayer)
                         {
                             sb.Append(':');
                         }
@@ -74,7 +79,7 @@ namespace ActionCalculator.Models
                     }
                     else if (isStartOfAlternateBranch)
                     {
-                        sb.Append(playerAction.BranchId == 1 ? "(" : ")(");
+                        sb.Append(branchId == 1 ? "(" : ")(");
                     }
                     else
                     {
@@ -87,13 +92,13 @@ namespace ActionCalculator.Models
 
                 sb.Append(action);
 
-                var isEndOfAlternateBranches = IsEndOfAlternateBranches(playerAction);
+                var isEndOfAlternateBranches = branchId > 0 && IsEndOfAlternateBranches(i);
 
                 if (playerAction.EndOfBranch)
                 {
-                    var depthDifference = playerAction.Depth - DepthOfNextAction(playerAction);
+                    var depthDifference = depth - DepthOfNextAction(i);
 
-                    for (var i = 0; i < depthDifference; i++)
+                    for (var j = 0; j < depthDifference; j++)
                     {
                         sb.Append(playerAction.TerminatesCalculation ? ']' : '}');
                     }
@@ -108,32 +113,67 @@ namespace ActionCalculator.Models
 
             return sb.ToString();
         }
+        
+        private bool RequiresDauntlessFailure(int i) => i > 1 && this[i - 2].Action.ActionType == ActionType.Dauntless;
 
-        private bool RequiresDauntlessFailure(PlayerAction playerAction)
-        {
-            return this.SingleOrDefault(x => 
-                x.Index == playerAction.Index - 2)?.Action.ActionType == ActionType.Dauntless;
-        }
-
-        private int DepthOfNextAction(PlayerAction playerAction) =>
-            this.FirstOrDefault(x => x.Index > playerAction.Index)?.Depth ?? 0;
+        private int DepthOfNextAction(int i) => i + 1 < Count ? this[i + 1].Depth : 0;
 
         private static bool CharacterIsABracket(char character) =>
             new List<char> { '}', ']', '{', '[', '(', ')' }.Contains(character);
 
-        private bool CurrentPlayerHasPreviousAction(Guid currentPlayerId, PlayerAction playerAction) =>
-            this.FirstOrDefault(x => x.Player.Id == currentPlayerId && x.Index < playerAction.Index) != null;
+        private bool CurrentPlayerHasPreviousAction(Guid currentPlayerId, int i)
+        {
+            for (var j = i - 1; j >= 0; j--)
+            {
+                if (this[j].Player.Id == currentPlayerId)
+                {
+                    return true;
+                }
+            }
 
-        private bool PreviousPlayerHasSubsequentAction(Guid previousPlayerId, PlayerAction playerAction) =>
-            this.FirstOrDefault(x => x.Player.Id == previousPlayerId && x.Index > playerAction.Index) != null;
+            return false;
+        }
 
-        private bool IsEndOfAlternateBranches(PlayerAction playerAction) =>
-            playerAction.BranchId > 0 && (this.FirstOrDefault(x => x.Index > playerAction.Index)?.BranchId ?? 0) == 0;
+        private bool PreviousPlayerHasSubsequentAction(Guid previousPlayerId, int i)
+        {
+            for (var j = i + 1; j < Count; j++)
+            {
+                if (this[j].Player.Id == previousPlayerId)
+                {
+                    return true;
+                }
+            }
 
-        private bool IsStartOfAlternateBranch(PlayerAction playerAction) =>
-            playerAction.BranchId > 0 && !this.Any(x => x.BranchId == playerAction.BranchId && x.Index < playerAction.Index);
+            return false;
+        }
 
-        private bool BranchTerminatesCalculation(PlayerAction playerAction) =>
-            this.LastOrDefault(x => x.Index >= playerAction.Index && x.Depth >= playerAction.Depth)?.TerminatesCalculation ?? false;
+        private bool IsEndOfAlternateBranches(int i) => i + 1 == Count || this[i + 1].BranchId == 0;
+
+        private bool IsStartOfAlternateBranch(int i, int branchId)
+        {
+            for (var j = 0; j < i; j++)
+            {
+                if (this[j].BranchId == branchId)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool BranchTerminatesCalculation(int i, int depth)
+        {
+            for (var j = Count - 1; j >= i; j--)
+            {
+                var playerAction = this[j];
+                if (playerAction.Depth >= depth)
+                {
+                    return playerAction.TerminatesCalculation;
+                }
+            }
+
+            return false;
+        }
     }
 }

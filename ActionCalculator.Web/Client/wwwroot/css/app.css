@@ -74,12 +74,12 @@ a, .btn-link {
     width: 70px;
 }
 
-.actions-container .mud-button-outlined {
+.actions-container .mud-button-outlined, .calculation-results .mud-button-outlined {
     margin-top: 12px;
     min-width: auto !important;
 }
 
-.actions-container h5, .player-editor h4, .calculation-container h4, .calculation-summary h6 {
+.actions-container h5, .player-editor h4, .calculation-results h4, .calculation-summary h6 {
     padding-right: 3px;
     padding-left: 3px;
     border-top-left-radius: var(--mud-default-borderradius);
@@ -96,12 +96,20 @@ a, .btn-link {
     color: var(--mud-palette-secondary-text);
 }
 
+.calculation-results h4 {
+    background-color: var(--mud-palette-tertiary);
+    color: var(--mud-palette-tertiary-text);
+}
+
 .mud-chip {
     margin-right: 0 !important;
 }
 
 .player-editor button {
     box-shadow: none;
+    height: 25px;
+    margin-top: -2px;
+    margin-left: 5px;
 }
 
 .player-editor button:hover {
@@ -114,10 +122,6 @@ a, .btn-link {
 
 .player-editor .mud-input-slot {
     height: 1em !important;
-}
-
-.player-editor .mud-input-number-control {
-    width: 40px;
 }
 
 .action-summary h6 {
@@ -136,14 +140,47 @@ a, .btn-link {
     height: 18px;
 }
 
-.action-summary .mud-button-root {
+.action-summary .mud-button-root, .player-editor .mud-button-root {
     padding: 0 !important;
 }
 
-.action-summary .mud-checkbox {
-    margin-right: 3px;
+.action-summary .mud-checkbox, .player-editor .mud-checkbox {
+    margin-right: 5px;
+}
+
+.player-editor .mud-checkbox {
+    margin-top: 8px;
+}
+
+.player-editor .mud-input-number-control {
+    width: 40px;
+    position: relative;
+    top: 5px;
+    right: 2px;
 }
 
 .action-summary p {
     height: 23px;
+}
+
+
+.calculation-results h4 {
+    padding-right: 30px;
+    position: relative;
+}
+
+.calculation-results h4:hover {
+    cursor: pointer;
+}
+
+.calculation-results h4 .mud-icon-root {
+    position: absolute;
+    top: 4px;
+    right: 1px;
+    height: 18px;
+}
+
+.calculation-results .mud-input-number-control {
+    margin-left: 17px !important;
+    margin-right: 17px !important;
 }

@@ -11,7 +11,7 @@ namespace ActionCalculator.ActionBuilders
 			if (input.Contains("/"))
 			{
 				var split = input.Split('/');
-				var numerator = int.Parse(split[0][1..]);
+				var numerator = int.Parse(split[0]);
 				var denominator = int.Parse(split[1]);
 
 				return new NonRerollable(numerator, denominator);

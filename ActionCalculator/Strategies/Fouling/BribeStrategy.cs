@@ -15,11 +15,10 @@ namespace ActionCalculator.Strategies.Fouling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var success = _d6.Success(1, 2);
             var failure = 1 - success;
-            var i = playerAction.Index;
 
             if (nonCriticalFailure)
             {

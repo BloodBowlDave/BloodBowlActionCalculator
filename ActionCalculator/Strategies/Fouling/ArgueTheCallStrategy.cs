@@ -16,10 +16,8 @@ namespace ActionCalculator.Strategies.Fouling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
-            var i = playerAction.Index;
-
             if (nonCriticalFailure)
             {
                 var argueTheCall = (ArgueTheCall)playerAction.Action;

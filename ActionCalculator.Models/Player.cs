@@ -8,10 +8,10 @@ namespace ActionCalculator.Models
         {
             Id = Guid.NewGuid();
             Skills = Skills.None;
-            LonerSuccess = 1;
-            BreakTackleValue = 0;
-            MightyBlowValue = 0;
-            DirtyPlayerValue = 0;
+            LonerValue = 4;
+            BreakTackleValue = 1;
+            MightyBlowValue = 1;
+            DirtyPlayerValue = 1;
             ProSuccess = 2m / 3;
         }
 
@@ -19,7 +19,6 @@ namespace ActionCalculator.Models
         {
             Id = id;
             Skills = skills;
-            LonerSuccess = (7m - lonerValue) / 6;
             LonerValue = lonerValue;
             BreakTackleValue = skills.Contains(Skills.Incorporeal) ? incorporealValue : breakTackleValue;
             MightyBlowValue = mightyBlowValue;
@@ -29,12 +28,11 @@ namespace ActionCalculator.Models
 
 
         public Guid Id { get; }
-        public Skills Skills { get; }
-        public decimal LonerSuccess { get; }
-        public int LonerValue { get; }
-        public int BreakTackleValue { get; }
-        public int MightyBlowValue { get; }
-        public int DirtyPlayerValue { get; }
+        public Skills Skills { get; set; }
+        public int LonerValue { get; set; }
+        public int BreakTackleValue { get; set; }
+        public int MightyBlowValue { get; set; }
+        public int DirtyPlayerValue { get; set; }
         public decimal ProSuccess { get; }
 
         public bool CanUseSkill(Skills skill, Skills usedSkills)
@@ -66,13 +64,18 @@ namespace ActionCalculator.Models
                 _ => ""
             };
 
-        public bool HasSkills() => Skills != Skills.None;
+        public bool HasAnySkills() => Skills != Skills.None;
 
         public void Deconstruct(out decimal lonerSuccess, out decimal proSuccess, out Func<Skills, Skills, bool> canUseSkill)
         {
-            lonerSuccess = LonerSuccess;
+            lonerSuccess = LonerSuccess();
             proSuccess = ProSuccess;
             canUseSkill = CanUseSkill;
+        }
+
+        public decimal LonerSuccess()
+        {
+            return Skills.Contains(Skills.Loner) ? (7m - LonerValue) / 6 : 1;
         }
     }
 }

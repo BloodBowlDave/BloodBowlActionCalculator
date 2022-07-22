@@ -18,14 +18,13 @@ namespace ActionCalculator.Strategies
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var hypnogaze = (Hypnogaze) playerAction.Action;
             var success = _d6.Success(1, hypnogaze.Numerator);
             var failure = 1 - success;
-            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 

@@ -14,10 +14,10 @@ namespace ActionCalculator
             _serviceProvider = serviceProvider;
         }
 
-        public IActionParser GetActionParser(string input) => GetActionParser(GetActionType(input));
-
-        public IActionParser GetActionParser(ActionType actionType)
+        public IActionParser GetActionParser(string input) 
         {
+            var actionType = GetActionType(input);
+
             IActionParser? actionBuilder = actionType switch
             {
                 ActionType.ArgueTheCall => _serviceProvider.GetService<ArgueTheCallParser>(),
@@ -57,9 +57,11 @@ namespace ActionCalculator
         private static ActionType GetActionType(string input) =>
             IsBlockAction(input)
                 ? ActionType.Block
-                : Enum.IsDefined(typeof(ActionType), (int)input[0])
-                    ? (ActionType)input[0]
-                    : ActionType.Rerollable;
+                : input.Contains("/") 
+                    ? ActionType.NonRerollable 
+                    : Enum.IsDefined(typeof(ActionType), (int)input[0])
+                        ? (ActionType)input[0]
+                        : ActionType.Rerollable;
 
         private static bool IsBlockAction(string input) => input.Skip(1).Contains('D');
     }

@@ -16,11 +16,10 @@ namespace ActionCalculator.Strategies.Fouling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool doubleOnFoul = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool doubleOnFoul = false)
         {
             var player = playerAction.Player;
             var action = (Injury)playerAction.Action;
-            var i = playerAction.Index;
             var modifier = player.CanUseSkill(Skills.DirtyPlayer, usedSkills) ? player.DirtyPlayerValue : 0;
             var success = _d6.Success(2, action.Numerator - modifier);
             

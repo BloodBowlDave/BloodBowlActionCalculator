@@ -1,5 +1,6 @@
 ﻿@using System.Text.RegularExpressions
 @using ActionCalculator.Utilities
+@using System.Linq
 
 <MudPaper Class="player-editor">
     
@@ -7,46 +8,43 @@
         Player @(PlayerNumber.ToString())
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small" OnClick="ClearSelected">Clear</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Size="Size.Small" OnClick="NewPlayer">New</MudButton>
-        <div style="height: 0; clear: both;"></div>
     </h4>
     
-    <MudChipSet MultiSelection="true" Filter="false" @bind-SelectedChips="_selected">
         @foreach (var skill in GetSkills())
         {
-            <MudChip
-                Text="@(skill.ToString().PascalCaseToSpaced())"
-                Variant="Variant.Text"
-                Color="Color.Default"
-                SelectedColor="Color.Primary"
-                Size="Size.Small"
-                OnClick="PlayerChanged">
-            </MudChip>
+            var skillText = skill.ToString().PascalCaseToSpaced();
+            var canUseSkill = CurrentPlayer.CanUseSkill(skill, Skills.None);
 
+            <MudCheckBox T="bool" 
+                         Label="@skillText" 
+                         Checked="canUseSkill" 
+                         CheckedChanged="() => ToggleSkill(skill, !canUseSkill)"
+                         Size="Size.Small"/>
+                         
             @if (skill == Skills.Loner)
             {
-                <div style="display: @(!SkillIsSelected("Loner") ? "none" : "inline-flex")">
-                    <MudNumericField T="int" Min="2" Max="6" Value="_lonerValue" ValueChanged="@(LonerChanged)"/>
+                <div style="display: @(canUseSkill ? "inline-flex" : "none")">
+                    <MudNumericField T="int" Min="2" Max="6" Value="CurrentPlayer.LonerValue" ValueChanged="@LonerChanged"/>
                 </div>
             }
             else if (skill == Skills.MightyBlow)
             {
-                <div style="display: @(!SkillIsSelected("Mighty Blow") ? "none" : "inline-flex")">
-                    <MudNumericField T="int" Min="1" Max="2" Value="_mightyBlowValue" ValueChanged="@(MightyBlowChanged)"/>
+                <div style="display: @(canUseSkill ? "inline-flex" : "none")">
+                    <MudNumericField T="int" Min="1" Max="2" Value="CurrentPlayer.MightyBlowValue" ValueChanged="@MightyBlowChanged"/>
                 </div>
             }
             else if (skill == Skills.DirtyPlayer)
             {
-                <div style="display: @(!SkillIsSelected("Dirty Player") ? "none" : "inline-flex")">
-                    <MudNumericField T="int" Min="1" Max="2" Value="_dirtyPlayerValue" ValueChanged="@(DirtyPlayerChanged)"/>
+                <div style="display: @(canUseSkill ? "inline-flex" : "none")">
+                    <MudNumericField T="int" Min="1" Max="2" Value="CurrentPlayer.DirtyPlayerValue" ValueChanged="@DirtyPlayerChanged"/>
                 </div>
             }
             else if (skill == Skills.BreakTackle)
             {
-                <div style="display: @(!SkillIsSelected("Break Tackle") ? "none" : "inline-flex")">
-                    <MudNumericField T="int" Min="1" Max="2" Value="_breakTackleValue" ValueChanged="@(BreakTackleChanged)"/>
+                <div style="display: @(canUseSkill ? "inline-flex" : "none")">
+                    <MudNumericField T="int" Min="1" Max="2" Value="CurrentPlayer.BreakTackleValue" ValueChanged="@BreakTackleChanged"/>
                 </div>
             }
         }
-    </MudChipSet>
 
 </MudPaper>

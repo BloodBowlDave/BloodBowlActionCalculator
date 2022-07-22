@@ -1,15 +1,12 @@
-﻿@using ActionCalculator.Models
-@using Microsoft.AspNetCore.Components
-
-@{
+﻿@{
     var playerId = Guid.NewGuid();
     var playerNumber = 1;
+    var i = 0;
 }
 
 @if (Calculation.PlayerActions.Any())
 {
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <h3>Calculation</h3>
 
     <MudGrid Spacing="1" Class="calculation-summary">
 
@@ -26,6 +23,7 @@
 
             <ActionSummary 
                 PlayerAction="@playerAction"
+                Index="@i"
                 RemoveAction="RemoveAction"
                 OnToggleBreakTackle="OnToggleBreakTackle"
                 OnToggleDivingTackle="OnToggleDivingTackle"
@@ -33,28 +31,18 @@
                 OnTogglePro="OnTogglePro"
                 OnToggleRerollInaccurate="OnToggleRerollInaccurate"
                 OnToggleRerollFailure="OnToggleRerollFailure"/>
+
+            i++;
         }
         
     </MudGrid>
-
-    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"></MudDivider>
-        
-    <MudPaper Class="calculation-container">
-        <h4>Calculation - @(Calculation.PlayerActions.ToString())</h4>
-        <MudNumericField T="int" Min="0" Max="8" Label="Rerolls" Value="Calculation.Rerolls" ValueChanged="@(RerollsChanged)"/>
-        <MudButton OnClick="SaveCalculation">Save</MudButton>
-        <MudButton OnClick="ClearCalculation">Clear</MudButton>
-    </MudPaper>
 }
 
 @code {
 
     [Parameter] 
     public Calculation Calculation { get; set; } = null!;
-
-    [Parameter]
-    public EventCallback<Calculation> CalculationChanged { get; set; }
-
+    
     [Parameter]
     public EventCallback<Tuple<int, bool>> OnToggleBreakTackle { get; set; } 
 
@@ -75,21 +63,4 @@
 
     [Parameter]
     public EventCallback<int> RemoveAction { get; set; }
-
-    private void RerollsChanged(int i)
-    {
-        Calculation.Rerolls = i;
-        CalculationChanged.InvokeAsync(Calculation);
-    }
-
-    private void SaveCalculation()
-    {
-
-    }
-
-    private void ClearCalculation()
-    {
-        Calculation = new Calculation(new PlayerActions(), Calculation.Rerolls);
-        CalculationChanged.InvokeAsync(Calculation);
-    }
 }

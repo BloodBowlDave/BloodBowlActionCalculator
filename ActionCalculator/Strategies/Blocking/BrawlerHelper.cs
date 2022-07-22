@@ -24,7 +24,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             return r == 0
                    || block.UseBrawler
-                   || successOnOneDie >= success * player.LonerSuccess;
+                   || successOnOneDie >= success * player.LonerSuccess();
         }
 
         public bool UseBrawlerAndPro(Player player, Block block, int r, Skills usedSkills, decimal successOnOneDie, decimal success)

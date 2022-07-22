@@ -29,13 +29,12 @@ namespace ActionCalculator.Strategies.BallHandling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             _outcomes = new Dictionary<Tuple<int, Skills>, decimal>();
             
             var player = playerAction.Player;
             var action = playerAction.Action;
-            var i = playerAction.Index;
             var blastIt = usedSkills.Contains(Skills.BlastIt);
             var canUseDivingCatch = player.CanUseSkill(Skills.DivingCatch, usedSkills);
 

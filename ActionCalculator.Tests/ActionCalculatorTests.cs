@@ -27,9 +27,9 @@ namespace ActionCalculator.Tests
         [InlineData("2,3;4,5,6", 5, 0.01543, 0.05401, 0.09045, 0.10652, 0.10979, 0.11003)]
         [InlineData("5", 1, 0.33333, 0.55556)]
         //alternate branches
-        [InlineData("(X1/2)(X1/4)(X1/4)", 0, 1.00000)]
-        [InlineData("(X1/2,2)(X1/4,3)(X1/4,4)", 0, 0.70833)]
-        [InlineData("2(X1/2)(X1/4)(X1/4)2", 2, 0.69444, 0.92593, 0.94522)]
+        [InlineData("(1/2)(1/4)(1/4)", 0, 1.00000)]
+        [InlineData("(1/2,2)(1/4,3)(1/4,4)", 0, 0.70833)]
+        [InlineData("2(1/2)(1/4)(1/4)2", 2, 0.69444, 0.92593, 0.94522)]
         //block
         [InlineData("-2D2,2,2D3", 3, 0.06944, 0.16011, 0.18872, 0.19129)]
         [InlineData("-3D1", 1, 0.00463, 0.00924)]
@@ -137,13 +137,13 @@ namespace ActionCalculator.Tests
         [InlineData("L2,2D2|1D2", 0, 0.51852)]
         [InlineData("L2,2D2|1D2", 2, 0.46296, 0.75514, 0.79561)]
         [InlineData("P:L3'*,2D2|-2D2", 1, 0.47325, 0.69273)]
-        [InlineData("P:L3'*,2D2|-2D2,X1/2", 1, 0.23663, 0.34636)]
+        [InlineData("P:L3'*,2D2|-2D2,1/2", 1, 0.23663, 0.34636)]
         [InlineData("BR,L4:L3,2D2|-2D2", 0, 0.50617)]
         //loner
         [InlineData("L3:2,2,2,2", 4, 0.48225, 0.69659, 0.73231, 0.73496, 0.73503)]
         [InlineData("L4:2,2", 2, 0.69444, 0.81019, 0.81501)]
         //throw team mate
-        [InlineData("L3:H4-1';(X27/512,G4)(X54/512,G4,R2)(X117/512,G4,R2,R2)", 0, 0.08314)]
+        [InlineData("L3:H4-1';(27/512,G4)(54/512,G4,R2)(117/512,G4,R2,R2)", 0, 0.08314)]
         [InlineData("L3:H4-1';G4", 1, 0.27778, 0.43519)]
         [InlineData("L3:H4-1;G4", 1, 0.16667, 0.41049)]
         [InlineData("L3:H5;G4", 0, 0.33333)]
@@ -201,6 +201,8 @@ namespace ActionCalculator.Tests
         //chainsaw
         [InlineData("W8", 0, 0.41667)]
         [InlineData("W8[:2D2]", 0, 0.74074)]
+
+        [InlineData("DP1:2,2", 2, 0)]
         public void ActionCalculatorReturnsExpectedResult(string playerActionsString, int rerolls, params double[] expected)
         {
             var result = _calculator.Calculate(playerActionsString);

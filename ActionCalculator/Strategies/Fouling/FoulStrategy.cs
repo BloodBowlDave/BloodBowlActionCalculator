@@ -15,13 +15,12 @@ namespace ActionCalculator.Strategies.Fouling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var canUseSkill = player.CanUseSkill;
             var roll = playerAction.Action.Numerator;
             var success = _d6.Success(2, roll);
-            var i = playerAction.Index;
 
             var canUseSneakyGit = canUseSkill(Skills.SneakyGit, usedSkills);
             var rollDouble = canUseSneakyGit ? 0 : _d6.RollDouble(roll, 12);

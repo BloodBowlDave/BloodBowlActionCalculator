@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.BallHandling
             _proHelper = proHelper;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
@@ -31,9 +31,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var inaccurateThrows = 6 - successes - failures;
             var success = successes / 6;
             var failure = failures / 6;
-
-            var i = playerAction.Index;
-
+            
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 
             var inaccurateThrow = inaccurateThrows / 6;

@@ -15,11 +15,10 @@ namespace ActionCalculator.Strategies.BallHandling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool inaccuratePass = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool inaccuratePass = false)
         {
             var player = playerAction.Player;
             var interception = playerAction.Action;
-            var i = playerAction.Index;
 
             var success = _d6.Success(1, inaccuratePass ? interception.Numerator - 1 : interception.Numerator);
             var failure = 1 - success;

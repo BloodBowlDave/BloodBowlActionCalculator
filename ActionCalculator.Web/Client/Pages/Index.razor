@@ -4,13 +4,16 @@
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <h1>Dave's Action Calculator</h1>
-    <PlayerEditor CurrentPlayer="_currentPlayer" OnPlayerChanged="PlayerChanged" PlayerNumber="PlayerNumber()" />
+    <PlayerEditor 
+        CurrentPlayer="CurrentPlayer" 
+        OnPlayerChanged="PlayerChanged" 
+        OnNewPlayer="NewPlayer"
+        PlayerNumber="PlayerNumber()"/>
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
     <ActionsContainer OnAddAction="AddAction" DisableAllButBlock="@DisableAllButBlock()"/>
     
-    <CalculationContainer 
-        Calculation="_calculation" 
-        CalculationChanged="CalculationChanged" 
+    <CalculationSummary 
+        Calculation="_calculations[0]" 
         RemoveAction="RemoveAction"
         OnToggleBreakTackle="ToggleBreakTackle"
         OnToggleDivingTackle="ToggleDivingTackle"
@@ -20,5 +23,20 @@
         OnToggleRerollFailure="ToggleRerollFailure"/>
 
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    <Results Calculation="_calculation" />
+    
+    <MudGrid Spacing="1">
+        
+        @for (var i = 0; i < _calculations.Count; i++)
+        {
+            <CalculationResults
+                Calculation="_calculations[i]"
+                CalculationIndex="i" 
+                Results="GetResults(_calculations[i]).ToList()"
+                OnSaveCalculation="SaveCalculation"
+                OnRerollsChanged="RerollsChanged"
+                OnClearCalculation="ClearCalculation"
+                OnEditCalculation="EditCalculation"/>
+        }
+
+    </MudGrid>
 </MudContainer>

@@ -18,11 +18,10 @@ namespace ActionCalculator.Strategies
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var action = (Injury) playerAction.Action;
-            var i = playerAction.Index;
             var modifier = GetModifier(player, usedSkills);
             var success = _d6.Success(2, action.Numerator - modifier);
             

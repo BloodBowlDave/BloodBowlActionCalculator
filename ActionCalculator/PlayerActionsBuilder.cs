@@ -9,7 +9,6 @@ namespace ActionCalculator
         private readonly IActionParserFactory _actionParserFactory;
         private readonly IPlayerBuilder _playerBuilder;
         private readonly List<PlayerAction> _playerActions = new();
-        private int _index;
 
         public PlayerActionsBuilder(IActionParserFactory actionParserFactory, IPlayerBuilder playerBuilder)
         {
@@ -178,8 +177,7 @@ namespace ActionCalculator
 
         private void AddPlayerAction(Player player, Action action, int depth)
         {
-            _playerActions.Add(new PlayerAction(player, action, depth, _index));
-            _index++;
+            _playerActions.Add(new PlayerAction(player, action, depth));
         }
     }
 }

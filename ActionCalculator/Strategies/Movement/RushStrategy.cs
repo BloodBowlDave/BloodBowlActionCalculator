@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.Movement
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var rush = playerAction.Action;
@@ -25,7 +25,6 @@ namespace ActionCalculator.Strategies.Movement
 
             var success = _d6.Success(1, rush.Numerator);
             var failure = 1 - success;
-            var i = playerAction.Index;
 
             _actionMediator.Resolve(p * success, r, i, usedSkills);
 

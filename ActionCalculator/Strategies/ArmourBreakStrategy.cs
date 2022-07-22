@@ -18,12 +18,11 @@ namespace ActionCalculator.Strategies
             _iD6 = iD6;
         }
 
-        public void Execute(decimal p, int r, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (_, proSuccess, canUseSkill) = player;
             var armourBreak = (ArmourBreak) playerAction.Action;
-            var i = playerAction.Index;
 
             var roll = armourBreak.Numerator;
             var useOldPro = canUseSkill(Skills.OldPro, usedSkills);
