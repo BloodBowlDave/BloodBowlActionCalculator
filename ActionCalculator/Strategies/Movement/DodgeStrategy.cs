@@ -9,13 +9,13 @@ namespace ActionCalculator.Strategies.Movement
 {
     public class DodgeStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
 
-        public DodgeStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
+        public DodgeStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
             _d6 = d6;
         }
@@ -39,14 +39,14 @@ namespace ActionCalculator.Strategies.Movement
                 success -= failureWithDivingTackle;
             }
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * success, r, i, usedSkills);
 
             var successUsingBreakTackle = successIncludingBreakTackle - success;
             failure -= successUsingBreakTackle;
 
             if (useBreakTackleBeforeReroll)
             {
-                _actionMediator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | Skills.BreakTackle);
+                _calculator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | Skills.BreakTackle);
             }
             else if (CanUseBreakTackle(canUseSkill, usedSkills))
             {
@@ -95,8 +95,8 @@ namespace ActionCalculator.Strategies.Movement
 
         private void DodgeReroll(decimal p, int r, int i, Skills usedSkills, decimal failure, decimal success, decimal useDivingTackle)
         {
-            _actionMediator.Resolve(p * failure * success, r, i, usedSkills);
-            _actionMediator.Resolve(p * useDivingTackle * success, r, i, usedSkills | Skills.DivingTackle);
+            _calculator.Resolve(p * failure * success, r, i, usedSkills);
+            _calculator.Resolve(p * useDivingTackle * success, r, i, usedSkills | Skills.DivingTackle);
         }
     }
 }

@@ -9,15 +9,14 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 {
     public partial class ActionSummary
     {
+        private int Successes { get; set; }
+
         [Parameter]
         public PlayerAction PlayerAction { get; set; } = null!;
 
         [Parameter]
         public int Index { get; set; }
-
-        [Parameter]
-        public bool Disabled { get; set; }
-
+        
         [Parameter]
         public EventCallback<int> RemoveAction { get; set; }
 
@@ -38,6 +37,15 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
         [Parameter]
         public EventCallback<Tuple<int, bool>> OnToggleRerollFailure { get; set; }
+
+        [Parameter]
+        public EventCallback<Tuple<int, int>> OnSuccessesChanged { get; set; }
+
+        [Parameter]
+        public ActionType? LastActionType { get; set; }
+
+        [Parameter]
+        public ActionType? PenultimateActionType { get; set; }
 
         private Player Player => PlayerAction.Player;
         private Action Action => PlayerAction.Action;
@@ -92,6 +100,11 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
         private void ToggleRerollFailure()
         {
             OnToggleRerollFailure.InvokeAsync(new Tuple<int, bool>(Index, !RerollFailure()));
+        }
+
+        private void SuccessesChanged(int successes)
+        {
+            OnSuccessesChanged.InvokeAsync(new Tuple<int, int>(Index, successes));
         }
     }
 }

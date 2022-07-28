@@ -1,17 +1,20 @@
 ﻿@{
     var playerId = Guid.NewGuid();
     var playerNumber = 1;
-    var i = 0;
 }
 
 @if (Calculation.PlayerActions.Any())
 {
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
 
-    <MudGrid Spacing="1" Class="calculation-summary">
+    <h3>Calculation - @Calculation.PlayerActions.ToString()</h3>
 
-        @foreach (var playerAction in Calculation.PlayerActions)
+    <MudGrid Spacing="1" Class="calculation-summary">
+        
+        @for (var i = 0; i < Calculation.PlayerActions.Count; i++)
         {
+            var playerAction = Calculation.PlayerActions[i];
+
             if (playerAction.Player.Id != playerId)
             {
                 playerId = playerAction.Player.Id;
@@ -21,18 +24,21 @@
                 playerNumber++;
             }
 
+            var index = i;
+
             <ActionSummary 
                 PlayerAction="@playerAction"
                 Index="@i"
+                LastActionType="@PreviousActionType(index)"
+                PenultimateActionType="@PenultimateActionType(index)"
                 RemoveAction="RemoveAction"
                 OnToggleBreakTackle="OnToggleBreakTackle"
                 OnToggleDivingTackle="OnToggleDivingTackle"
                 OnToggleBrawler="OnToggleBrawler"
                 OnTogglePro="OnTogglePro"
                 OnToggleRerollInaccurate="OnToggleRerollInaccurate"
-                OnToggleRerollFailure="OnToggleRerollFailure"/>
-
-            i++;
+                OnToggleRerollFailure="OnToggleRerollFailure"
+                OnSuccessesChanged="OnSuccessesChanged"/>
         }
         
     </MudGrid>
@@ -42,7 +48,7 @@
 
     [Parameter] 
     public Calculation Calculation { get; set; } = null!;
-    
+
     [Parameter]
     public EventCallback<Tuple<int, bool>> OnToggleBreakTackle { get; set; } 
 
@@ -62,5 +68,12 @@
     public EventCallback<Tuple<int, bool>> OnToggleRerollFailure { get; set; } 
 
     [Parameter]
+    public EventCallback<Tuple<int, int>> OnSuccessesChanged { get; set; } 
+
+    [Parameter]
     public EventCallback<int> RemoveAction { get; set; }
+
+    private ActionType? PreviousActionType(int i) => i > 0 ? Calculation.PlayerActions[i - 1].Action.ActionType : null;
+
+    private ActionType? PenultimateActionType(int i) => i > 1 ? Calculation.PlayerActions[i -2].Action.ActionType : null;
 }

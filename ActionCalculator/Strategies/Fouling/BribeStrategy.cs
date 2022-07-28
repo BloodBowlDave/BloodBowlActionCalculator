@@ -6,12 +6,12 @@ namespace ActionCalculator.Strategies.Fouling
 {
     public class BribeStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly ID6 _d6;
 
-        public BribeStrategy(IActionMediator actionMediator, ID6 d6)
+        public BribeStrategy(ICalculator calculator, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _d6 = d6;
         }
 
@@ -22,12 +22,12 @@ namespace ActionCalculator.Strategies.Fouling
 
             if (nonCriticalFailure)
             {
-                _actionMediator.Resolve(p * success, r, i, usedSkills);
-                _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
+                _calculator.Resolve(p * success, r, i, usedSkills);
+                _calculator.Resolve(p * failure, r, i, usedSkills, true);
                 return;
             }
 
-            _actionMediator.Resolve(p, r, i, usedSkills);
+            _calculator.Resolve(p, r, i, usedSkills);
         }
     }
 }

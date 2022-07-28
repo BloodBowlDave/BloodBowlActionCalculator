@@ -8,12 +8,12 @@ namespace ActionCalculator.Strategies.Movement
 {
     public class ShadowingStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
 
-        public ShadowingStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public ShadowingStrategy(ICalculator calculator, IProHelper proHelper)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
         }
 
@@ -26,7 +26,7 @@ namespace ActionCalculator.Strategies.Movement
             var failure = (decimal)(shadowing.Numerator + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
             var success = 1 - failure;
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * success, r, i, usedSkills);
 
             p *= failure;
 
@@ -42,13 +42,13 @@ namespace ActionCalculator.Strategies.Movement
                 return;
             }
 
-            _actionMediator.Resolve(p, r, i, usedSkills, true);
+            _calculator.Resolve(p, r, i, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal rerollSuccess, decimal success, decimal failure)
         {
-            _actionMediator.Resolve(p * rerollSuccess * success, r, i, usedSkills);
-            _actionMediator.Resolve(p * (1 - rerollSuccess + rerollSuccess * failure), r, i, usedSkills, true);
+            _calculator.Resolve(p * rerollSuccess * success, r, i, usedSkills);
+            _calculator.Resolve(p * (1 - rerollSuccess + rerollSuccess * failure), r, i, usedSkills, true);
         }
     }
 }

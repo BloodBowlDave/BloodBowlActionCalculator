@@ -6,13 +6,13 @@ namespace ActionCalculator.Strategies
 {
     public class RerollableStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
 
-        public RerollableStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
+        public RerollableStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
             _d6 = d6;
         }
@@ -26,17 +26,17 @@ namespace ActionCalculator.Strategies
             var success = _d6.Success(1, action.Numerator);
             var failure = 1 - success;
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * success, r, i, usedSkills);
 
             p *= failure * success;
 
             if (_proHelper.UsePro(player, action, r, usedSkills, success, success))
             {
-                _actionMediator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
+                _calculator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
                 return;
             }
         
-            _actionMediator.Resolve(p * lonerSuccess, r - 1, i, usedSkills);
+            _calculator.Resolve(p * lonerSuccess, r - 1, i, usedSkills);
         }
     }
 }

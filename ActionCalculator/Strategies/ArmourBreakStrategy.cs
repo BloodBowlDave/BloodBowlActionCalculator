@@ -8,13 +8,13 @@ namespace ActionCalculator.Strategies
 {
     public class ArmourBreakStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly ID6 _iD6;
         private const Skills SkillsAffectingArmour = Skills.Ram | Skills.MightyBlow | Skills.Slayer | Skills.CrushingBlow;
 
-        public ArmourBreakStrategy(IActionMediator actionMediator, ID6 iD6)
+        public ArmourBreakStrategy(ICalculator calculator, ID6 iD6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _iD6 = iD6;
         }
 
@@ -30,7 +30,7 @@ namespace ActionCalculator.Strategies
             if (canUseSkill(Skills.Claw, usedSkills) && roll >= 8)
             {
                 var success = _iD6.Success(2, 8);
-                _actionMediator.Resolve(p * success, r, i, usedSkills);
+                _calculator.Resolve(p * success, r, i, usedSkills);
 
                 if (!useOldPro)
                 {
@@ -39,7 +39,7 @@ namespace ActionCalculator.Strategies
 
                 var successesWithOldPro = GetSuccessesWithOldPro(new Dictionary<Skills, int> { { Skills.None, 8 } });
                 var successWithOldPro = (decimal)successesWithOldPro[Skills.None] / 216;
-                _actionMediator.Resolve(p * (1 - success) * proSuccess * successWithOldPro, r, i, usedSkills | Skills.Pro);
+                _calculator.Resolve(p * (1 - success) * proSuccess * successWithOldPro, r, i, usedSkills | Skills.Pro);
 
                 return;
             }
@@ -50,7 +50,7 @@ namespace ActionCalculator.Strategies
             foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
             {
                 var success = _iD6.Success(2, minimumRoll) - succeedWithPreviousSkills;
-                _actionMediator.Resolve(p * success, r, i, usedSkills | skills);
+                _calculator.Resolve(p * success, r, i, usedSkills | skills);
                 succeedWithPreviousSkills += success;
             }
 
@@ -61,7 +61,7 @@ namespace ActionCalculator.Strategies
             
             foreach (var (skills, successes) in GetSuccessesWithOldPro(skillsWithMinimumRoll))
             {
-                _actionMediator.Resolve(p * proSuccess * successes / 216, r, i, usedSkills | skills | Skills.Pro);
+                _calculator.Resolve(p * proSuccess * successes / 216, r, i, usedSkills | skills | Skills.Pro);
             }
         }
 

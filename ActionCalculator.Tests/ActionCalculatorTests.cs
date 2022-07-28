@@ -1,3 +1,4 @@
+using System.Linq;
 using ActionCalculator.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -6,7 +7,8 @@ namespace ActionCalculator.Tests
 {
     public class ActionCalculatorTests
     {
-        private readonly ICalculator _calculator;
+        private readonly ICalculatorForAllRerolls _calculatorForAllRerolls;
+        private readonly IPlayerActionsBuilder _playerActionsBuilder;
 
         public ActionCalculatorTests()
         {
@@ -16,7 +18,8 @@ namespace ActionCalculator.Tests
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _calculator = serviceProvider.GetService<ICalculator>();
+            _calculatorForAllRerolls = serviceProvider.GetService<ICalculatorForAllRerolls>();
+            _playerActionsBuilder = serviceProvider.GetService<IPlayerActionsBuilder>(); ;
         }
 
         [Theory]
@@ -205,16 +208,18 @@ namespace ActionCalculator.Tests
         [InlineData("DP1:2,2", 2, 0)]
         public void ActionCalculatorReturnsExpectedResult(string playerActionsString, int rerolls, params double[] expected)
         {
-            var result = _calculator.Calculate(playerActionsString);
-
-            Assert.Equal(expected.Length, result.Results[rerolls].Length);
+            var result = _calculatorForAllRerolls.CalculateForAllRerolls(playerActionsString).ToList();
+            
+            Assert.Equal(expected.Length, result[rerolls].Results.Length);
 
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal((decimal)expected[i], result.Results[rerolls][i], 5);
+                Assert.Equal((decimal)expected[i], result[rerolls].Results[i], 5);
             }
 
-            Assert.Equal(playerActionsString, result.PlayerActions.ToString());
+            var playerActions = _playerActionsBuilder.Build(playerActionsString);
+
+            Assert.Equal(playerActionsString, playerActions.ToString());
         }
     }
 }

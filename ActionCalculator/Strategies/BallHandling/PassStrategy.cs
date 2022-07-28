@@ -8,12 +8,12 @@ namespace ActionCalculator.Strategies.BallHandling
 {
     public class PassStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
 
-        public PassStrategy(IActionMediator actionMediator, IProHelper proHelper)
+        public PassStrategy(ICalculator calculator, IProHelper proHelper)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
         }
 
@@ -33,7 +33,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var success = successes / 6;
             var failure = failures / 6;
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * success, r, i, usedSkills);
 
             var inaccuratePass = inaccuratePasses / 6;
             var rerollInaccuratePass = pass.RerollInaccuratePass;
@@ -49,7 +49,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             if (_proHelper.UsePro(player, pass, r, usedSkills, success, success))
             {
-                _actionMediator.Resolve(inaccuratePassWithoutReroll, r, i, usedSkills, true);
+                _calculator.Resolve(inaccuratePassWithoutReroll, r, i, usedSkills, true);
 
                 usedSkills |= Skills.Pro;
                 ExecuteReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
@@ -59,17 +59,17 @@ namespace ActionCalculator.Strategies.BallHandling
             if (r > 0 && rerollInaccuratePass)
             {
                 ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills | Skills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
-                _actionMediator.Resolve(p * inaccuratePass * (1 - lonerSuccess), r - 1, i, usedSkills, true);
+                _calculator.Resolve(p * inaccuratePass * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                 return;
             }
 
-            _actionMediator.Resolve(p * inaccuratePass, r, i, usedSkills, true);
+            _calculator.Resolve(p * inaccuratePass, r, i, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal accuratePass, decimal inaccuratePass)
         {
-            _actionMediator.Resolve(p * accuratePass, r, i, usedSkills);
-            _actionMediator.Resolve(p * inaccuratePass, r, i, usedSkills, true);
+            _calculator.Resolve(p * accuratePass, r, i, usedSkills);
+            _calculator.Resolve(p * inaccuratePass, r, i, usedSkills, true);
         }
     }
 }

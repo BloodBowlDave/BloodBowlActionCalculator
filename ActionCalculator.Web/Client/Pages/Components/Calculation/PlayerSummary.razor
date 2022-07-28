@@ -5,7 +5,7 @@
 <MudItem>
     <MudPaper>
         <h6>Player @(PlayerNumber)</h6>
-        <MudText Style="margin:0 3px 0 3px;">@($"Skills: {SkillsString()}")</MudText>
+        <MudText Class="player-skills">@($"Skills: {Player.Description()}")</MudText>
     </MudPaper>
 </MudItem>
 
@@ -15,31 +15,5 @@
     public Player Player { get; set; } = null!;
 
     [Parameter]
-    public int PlayerNumber { get; set; }
-
-    private string SkillsString()
-    {
-        if (Player.Skills == Skills.None)
-        {
-            return "None";
-        }
-
-        var sb = new StringBuilder();
-
-        foreach (var skill in Player.Skills.ToEnumerable(Skills.None))
-        {
-            sb.Append($"{skill.ToString().PascalCaseToSpaced()}{GetSkillValue(skill)}, ");
-        }
-
-        return sb.Remove(sb.Length - 2, 2).ToString();
-    }
-
-    private string GetSkillValue(Skills skill) => skill switch
-    {
-        Skills.Loner => " " + Player.LonerValue + "+",
-        Skills.BreakTackle => " +" + Player.BreakTackleValue,
-        Skills.DirtyPlayer => " +" + Player.DirtyPlayerValue,
-        Skills.MightyBlow => " +" + Player.MightyBlowValue,
-        _ => ""
-    };    
+    public int PlayerNumber { get; set; }  
 }

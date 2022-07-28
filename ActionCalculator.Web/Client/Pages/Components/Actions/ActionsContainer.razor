@@ -1,29 +1,70 @@
 ﻿<MudGrid Spacing="1" Class="actions-container">
-    <Rerollable OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Dodge OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Rush OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <PickUp OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Pass OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Interference OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Catch OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <ThrowTeammate OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Landing OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <HailMaryPass OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Dauntless OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Block OnAddAction="@OnAddAction"/>
-    <ArmourBreak OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Injury OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Foul OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <Bribe OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <ArgueTheCall OnAddAction="@OnAddAction" Disabled="DisableAllButBlock"/>
-    <NonRerollable OnAddAction="OnAddAction" Disabled="DisableAllButBlock"/>
+    <Rerollable OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Rerollable)"/>
+    <Dodge OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Dodge)"/>
+    <Rush OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Rush)"/>
+    <PickUp OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.PickUp)"/>
+    <Pass OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Pass)"/>
+    <Interference OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Interference)"/>
+    <Catch OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Catch)"/>
+    <ThrowTeammate OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.ThrowTeammate)"/>
+    <Landing OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Landing)"/>
+    <HailMaryPass OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.HailMaryPass)"/>
+    <Dauntless OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Dauntless)"/>
+    <Block 
+        OnAddAction="@OnAddAction" 
+        Disabled="!Enabled(ActionType.Block) || MaximumDice() == null"
+        MinimumDice="MinimumDice()"
+        MaximumDice="MaximumDice()"/>
+    <ArmourBreak OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.ArmourBreak)"/>
+    <Injury OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Injury)"/>
+    <Foul OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Foul)"/>
+    <Bribe OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.Bribe)"/>
+    <ArgueTheCall OnAddAction="@OnAddAction" Disabled="!Enabled(ActionType.ArgueTheCall)"/>
+    <NonRerollable OnAddAction="OnAddAction" Disabled="!Enabled(ActionType.NonRerollable)"/>
 </MudGrid>
 
 @code {
-    
+
     [Parameter]
     public EventCallback<Action> OnAddAction { get; set; }
-    
+
     [Parameter]
-    public bool DisableAllButBlock { get; set; }
+    public Calculation Calculation { get; set; } = null!;
+
+    [Inject]
+    public IActionTypeValidator ActionTypeValidator { get; set; } = null!;
+
+    private ActionType? LastActionType() => Calculation.PlayerActions.LastOrDefault()?.Action.ActionType;
+    
+    private ActionType? PenultimateActionType() =>
+        Calculation.PlayerActions.Count < 2 
+            ? null 
+            : Calculation.PlayerActions[^2].Action.ActionType;
+
+    private bool Enabled(ActionType actionType)
+    {
+        var previousActionType = LastActionType();
+        var previousPreviousActionType = PenultimateActionType();
+
+        return ActionTypeValidator.ActionTypeIsValid(actionType, previousActionType, previousPreviousActionType);
+    }
+
+    private int MinimumDice() => LastActionType() == ActionType.Dauntless ? -2 : -3;
+
+    private int? MaximumDice()
+    {
+        if (PenultimateActionType() != ActionType.Dauntless)
+        {
+            return 3;
+        }
+
+        var previousNumberOfDice = ((Models.Actions.Block)Calculation.PlayerActions.Last().Action).NumberOfDice;
+
+        return previousNumberOfDice switch
+        {
+            1 => -2,
+            -3 => null,
+            _ => previousNumberOfDice - 1
+            };
+    }
 }

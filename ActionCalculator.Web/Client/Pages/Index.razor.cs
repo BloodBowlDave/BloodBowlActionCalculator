@@ -1,6 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using FluentValidation;
 using Microsoft.AspNetCore.Components;
 
 namespace ActionCalculator.Web.Client.Pages
@@ -9,13 +10,19 @@ namespace ActionCalculator.Web.Client.Pages
     {
         private List<Calculation> _calculations = new();
 
-        private Dictionary<Tuple<int, string>, decimal[]> _resultsLookup = new();
+        private readonly Dictionary<Tuple<int, string>, CalculationResult> _resultsLookup = new();
 
         [Inject] 
         public IPlayerActionsBuilder PlayerActionsBuilder { get; set; } = null!;
 
         [Inject]
-        public IActionMediator ActionMediator { get; set; } = null!;
+        public ICalculator Calculator { get; set; } = null!;
+
+        [Inject]
+        public IActionTypeValidator ActionTypeValidator { get; set; } = null!;
+
+        [Inject]
+        public IValidator<Calculation> CalculationValidator { get; set; } = null!;
 
         private Calculation CurrentCalculation() => _calculations.First();
 
@@ -103,10 +110,49 @@ namespace ActionCalculator.Web.Client.Pages
             return playerIds.Contains(CurrentPlayer.Id) ? playerCount : playerCount + 1;
         }
 
-        private void RemoveAction(int i)
+        private void RemoveAction(int index)
         {
-            CurrentCalculation().PlayerActions.RemoveAt(i);
+            CurrentCalculation().PlayerActions.RemoveAt(index);
+            
+            RemoveInvalidPlayerActions();
+            
+            if (!CurrentCalculation().PlayerActions.Any() && _calculations.Count > 1)
+            {
+                _calculations.RemoveAt(0);
+            }
+
             CurrentPlayer = CurrentCalculation().PlayerActions.Last().Player;
+        }
+
+        private void RemoveInvalidPlayerActions()
+        {
+            while (true)
+            {
+                var invalidPlayerActionIndexes = new List<int>();
+
+                for (var i = 0; i < CurrentCalculation().PlayerActions.Count; i++)
+                {
+                    var actionType = CurrentCalculation().PlayerActions[i].Action.ActionType;
+                    ActionType? previousActionType = i > 0 ? CurrentCalculation().PlayerActions[i - 1].Action.ActionType : null;
+                    ActionType? previousPreviousActionType =
+                        i > 1 ? CurrentCalculation().PlayerActions[i - 2].Action.ActionType : null;
+
+                    if (!ActionTypeValidator.ActionTypeIsValid(actionType, previousActionType, previousPreviousActionType))
+                    {
+                        invalidPlayerActionIndexes.Add(i);
+                    }
+                }
+
+                foreach (var invalidPlayerActionIndex in invalidPlayerActionIndexes)
+                {
+                    CurrentCalculation().PlayerActions.RemoveAt(invalidPlayerActionIndex);
+                }
+
+                if (!invalidPlayerActionIndexes.Any())
+                {
+                    break;
+                }
+            }
         }
 
         private void ToggleBreakTackle(Tuple<int, bool> indexAndValue)
@@ -162,34 +208,32 @@ namespace ActionCalculator.Web.Client.Pages
             ((Dauntless)action).RerollFailure = value;
         }
 
-        private bool DisableAllButBlock()
+        private void SuccessesChanged(Tuple<int, int> indexAndValue)
         {
-            var playerActionCount = CurrentCalculation().PlayerActions.Count;
-            var lastActionIsDauntless = CurrentCalculation().PlayerActions.LastOrDefault()?.Action.ActionType == ActionType.Dauntless;
-            var penultimateActionIsDauntless = playerActionCount > 1 && CurrentCalculation().PlayerActions[playerActionCount - 2].Action.ActionType == ActionType.Dauntless;
-
-            return lastActionIsDauntless || penultimateActionIsDauntless;
+            var (index, value) = indexAndValue;
+            var action = CurrentCalculation().PlayerActions[index].Action;
+            ((Block)action).NumberOfSuccessfulResults = value;
         }
 
         private IEnumerable<Tuple<int, decimal>> GetResults(Calculation calculation)
         {
             var key = new Tuple<int, string>(calculation.Rerolls, calculation.PlayerActions.ToString());
-            decimal[] results;
+            CalculationResult result;
 
             if (_resultsLookup.ContainsKey(key))
             {
-                results = _resultsLookup[key];
+                result = _resultsLookup[key];
             }
             else
             {
-                results = ActionMediator.Calculate(calculation);
+                result = Calculator.Calculate(calculation);
 
-                _resultsLookup.Add(key, results);
+                _resultsLookup.Add(key, result);
             }
 
-            for (var i = 0; i < results.Length; i++)
+            for (var i = 0; i < result.Results.Length; i++)
             {
-                yield return new Tuple<int, decimal>(i, results[i]);
+                yield return new Tuple<int, decimal>(i, result.Results[i]);
             }
         }
     }

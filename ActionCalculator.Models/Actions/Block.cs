@@ -15,27 +15,21 @@
 
         public bool UseBrawler { get; set; }
         public int NumberOfDice { get; }
-        public int NumberOfSuccessfulResults { get; }
+        public int NumberOfSuccessfulResults { get; set; }
         public int NumberOfNonCriticalFailures { get; }
         public bool RerollNonCriticalFailure { get; }
 
         public override string ToString() => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}";
 
-        public override string GetDescription()
-        {
-	        var successString = NumberOfSuccessfulResults > 1
-		        ? $"{NumberOfSuccessfulResults} Successes"
-		        : "1 Success";
-
-	        return NumberOfDice switch
-	        {
-		        3 => $"3 Dice Block {successString}",
-		        2 => $"2 Dice Block {successString}",
-		        1 => $"1 Die Block {successString}",
-		        -2 => $"2 Red Dice Block {successString}",
-		        -3 => $"3 Red Dice Block {successString}",
-		        _ => throw new ArgumentOutOfRangeException()
-	        };
-        }
+        public override string GetDescription() =>
+            NumberOfDice switch
+            {
+                3 => "Three Dice Block",
+                2 => "Two Dice Block",
+                1 => "One Die Block",
+                -2 => "Half Dice Block",
+                -3 => "Third Dice Block",
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

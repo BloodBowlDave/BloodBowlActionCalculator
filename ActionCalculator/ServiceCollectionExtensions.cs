@@ -2,12 +2,14 @@
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Abstractions.Strategies.Blocking;
 using ActionCalculator.ActionBuilders;
+using ActionCalculator.Models;
 using ActionCalculator.Strategies;
 using ActionCalculator.Strategies.BallHandling;
 using ActionCalculator.Strategies.Blocking;
 using ActionCalculator.Strategies.Fouling;
 using ActionCalculator.Strategies.Movement;
 using ActionCalculator.Utilities;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ActionCalculator
@@ -17,15 +19,17 @@ namespace ActionCalculator
         public static void AddActionCalculatorServices(this IServiceCollection services)
         {
             services.AddSingleton<IActionParserFactory, ActionParserFactory>();
-            services.AddSingleton<IActionMediator, ActionMediator>();
-            services.AddSingleton<IBrawlerHelper, BrawlerHelper>();
+            services.AddSingleton<IActionTypeValidator, ActionTypeValidator>();
             services.AddSingleton<ICalculator, Calculator>();
+            services.AddSingleton<IBrawlerHelper, BrawlerHelper>();
+            services.AddSingleton<ICalculatorForAllRerolls, CalculatorForAllRerolls>();
             services.AddSingleton<ID6, D6>();
             services.AddSingleton<IEqualityComparer<decimal>, ProbabilityComparer>();
             services.AddSingleton<IPlayerActionsBuilder, PlayerActionsBuilder>();
             services.AddSingleton<IPlayerBuilder, PlayerBuilder>();
             services.AddSingleton<IProHelper, ProHelper>();
             services.AddSingleton<IStrategyFactory, StrategyFactory>();
+            services.AddSingleton<IValidator<Calculation>, CalculationValidator>();
 
             AddActionBuilders(services);
             AddActionStrategies(services);
@@ -51,7 +55,7 @@ namespace ActionCalculator
             services.AddSingleton<NonRerollableStrategy>();
             services.AddSingleton<PassStrategy>();
             services.AddSingleton<PickUpStrategy>();
-            services.AddSingleton<RedDiceBlockStrategy>();
+            services.AddSingleton<FractionalDiceBlockStrategy>();
             services.AddSingleton<RerollableStrategy>();
             services.AddSingleton<RushStrategy>();
             services.AddSingleton<ShadowingStrategy>();

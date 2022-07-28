@@ -6,12 +6,12 @@ namespace ActionCalculator.Strategies
 {
     public class StabStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly ID6 _d6;
         
-        public StabStrategy(IActionMediator actionMediator, ID6 d6)
+        public StabStrategy(ICalculator calculator, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _d6 = d6;
         }
 
@@ -20,8 +20,8 @@ namespace ActionCalculator.Strategies
             var action = playerAction.Action;
             var success = _d6.Success(2, action.Numerator);
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
-            _actionMediator.Resolve(p * (1 - success), r, i, usedSkills, true);
+            _calculator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * (1 - success), r, i, usedSkills, true);
         }
     }
 }

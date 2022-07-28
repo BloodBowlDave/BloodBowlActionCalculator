@@ -7,7 +7,7 @@ namespace ActionCalculator.Strategies.BallHandling
 {
 	public class CatchInaccuratePassStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
 
@@ -22,9 +22,9 @@ namespace ActionCalculator.Strategies.BallHandling
 
         private Dictionary<Tuple<int, Skills>, decimal> _outcomes = new();
 
-        public CatchInaccuratePassStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
+        public CatchInaccuratePassStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
             _d6 = d6;
         }
@@ -52,7 +52,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             foreach (var ((rerolls, skills), value) in _outcomes)
             {
-                _actionMediator.Resolve(p * value, rerolls, i, skills);
+                _calculator.Resolve(p * value, rerolls, i, skills);
             }
         }
 

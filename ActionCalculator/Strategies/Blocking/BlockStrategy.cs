@@ -8,7 +8,7 @@ namespace ActionCalculator.Strategies.Blocking
 {
     public class BlockStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IBrawlerHelper _brawlerHelper;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
@@ -24,9 +24,9 @@ namespace ActionCalculator.Strategies.Blocking
         private decimal _proSuccess;
         private decimal _lonerSuccess;
 
-        public BlockStrategy(IActionMediator actionMediator, IBrawlerHelper brawlerHelper, IProHelper proHelper, ID6 d6)
+        public BlockStrategy(ICalculator calculator, IBrawlerHelper brawlerHelper, IProHelper proHelper, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _brawlerHelper = brawlerHelper;
             _proHelper = proHelper;
             _d6 = d6;
@@ -38,7 +38,7 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 var ((outcomeNonCriticalFailure, rerollsRemaining, outcomeSkillsUsed), pOutcome) = outcome;
                 
-                _actionMediator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
+                _calculator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
             }
         }
         

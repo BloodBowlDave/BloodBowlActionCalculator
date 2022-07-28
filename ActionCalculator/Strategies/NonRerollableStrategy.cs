@@ -8,12 +8,12 @@ namespace ActionCalculator.Strategies
 {
     public class NonRerollableStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly ID6 _d6;
 
-        public NonRerollableStrategy(IActionMediator actionMediator, ID6 d6)
+        public NonRerollableStrategy(ICalculator calculator, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _d6 = d6;
         }
 
@@ -28,11 +28,11 @@ namespace ActionCalculator.Strategies
             
             var failure = 1 - success;
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
+            _calculator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
 
             if (player.CanUseSkill(Skills.WhirlingDervish, usedSkills) && !usedSkills.Contains(Skills.WhirlingDervish) && denominator == 6)
             {
-                _actionMediator.Resolve(p * failure * success, r, i, usedSkills | Skills.WhirlingDervish);
+                _calculator.Resolve(p * failure * success, r, i, usedSkills | Skills.WhirlingDervish);
             }
         }
     }

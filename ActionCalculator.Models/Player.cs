@@ -1,4 +1,5 @@
-﻿using ActionCalculator.Utilities;
+﻿using System.Text;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Models
 {
@@ -77,5 +78,31 @@ namespace ActionCalculator.Models
         {
             return Skills.Contains(Skills.Loner) ? (7m - LonerValue) / 6 : 1;
         }
+
+        public string Description()
+        {
+            if (Skills == Skills.None)
+            {
+                return "None";
+            }
+
+            var sb = new StringBuilder();
+
+            foreach (var skill in Skills.ToEnumerable(Skills.None))
+            {
+                sb.Append($"{skill.ToString().PascalCaseToSpaced()}{GetSkillValue(skill)}, ");
+            }
+
+            return sb.Remove(sb.Length - 2, 2).ToString();
+        }
+
+        private string GetSkillValue(Skills skill) => skill switch
+        {
+            Skills.Loner => " " + LonerValue + "+",
+            Skills.BreakTackle => " +" + BreakTackleValue,
+            Skills.DirtyPlayer => " +" + DirtyPlayerValue,
+            Skills.MightyBlow => " +" + MightyBlowValue,
+            _ => ""
+        };
     }
 }

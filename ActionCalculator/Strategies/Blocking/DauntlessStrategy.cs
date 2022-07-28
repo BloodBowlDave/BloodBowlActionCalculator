@@ -7,13 +7,13 @@ namespace ActionCalculator.Strategies.Blocking
 {
     public class DauntlessStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
 
-        public DauntlessStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
+        public DauntlessStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
             _d6 = d6;
         }
@@ -27,7 +27,7 @@ namespace ActionCalculator.Strategies.Blocking
             var success = _d6.Success(1, dauntless.Numerator);
             var failure = 1 - success;
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * success, r, i, usedSkills);
             
             p *= failure;
 
@@ -47,7 +47,7 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (r > 0)
                 {
-                    _actionMediator.Resolve(p * (1 - lonerSuccess), r - 1, i, usedSkills, true);
+                    _calculator.Resolve(p * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                     ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills, success, failure);
                     return;
                 }
@@ -59,13 +59,13 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            _actionMediator.Resolve(p, r, i, usedSkills, true);
+            _calculator.Resolve(p, r, i, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal success, decimal failure)
         {
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
-            _actionMediator.Resolve(p * failure, r, i, usedSkills, true);
+            _calculator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * failure, r, i, usedSkills, true);
         }
     }
 }

@@ -74,6 +74,10 @@ a, .btn-link {
     width: 70px;
 }
 
+.injury-action .mud-input-number-control {
+    width: 90px;
+}
+
 .actions-container .mud-button-outlined, .calculation-results .mud-button-outlined {
     margin-top: 12px;
     min-width: auto !important;
@@ -159,10 +163,25 @@ a, .btn-link {
     right: 2px;
 }
 
+.calculation-summary .mud-paper {
+    height: 75px;
+}
+
+.calculation-summary .player-skills {
+    margin: 27px 3px 0 3px;
+}
+
 .action-summary p {
     height: 23px;
 }
 
+.action-summary .mud-checkbox {
+    margin-top: 20px;
+}
+
+.action-summary .mud-input-number-control {
+    margin-right: 3px;
+}
 
 .calculation-results h4 {
     padding-right: 30px;

@@ -8,13 +8,13 @@ namespace ActionCalculator.Strategies
 {
     public class InjuryStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly ID6 _d6;
         private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer;
 
-        public InjuryStrategy(IActionMediator actionMediator, ID6 d6)
+        public InjuryStrategy(ICalculator calculator, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _d6 = d6;
         }
 
@@ -25,11 +25,11 @@ namespace ActionCalculator.Strategies
             var modifier = GetModifier(player, usedSkills);
             var success = _d6.Success(2, action.Numerator - modifier);
             
-            _actionMediator.Resolve(p * success, r, i, usedSkills);
+            _calculator.Resolve(p * success, r, i, usedSkills);
 
             if (player.CanUseSkill(Skills.SavageMauling, usedSkills))
             {
-                _actionMediator.Resolve(p * (1 - success) * success, r, i, usedSkills);
+                _calculator.Resolve(p * (1 - success) * success, r, i, usedSkills);
             }
         }
 

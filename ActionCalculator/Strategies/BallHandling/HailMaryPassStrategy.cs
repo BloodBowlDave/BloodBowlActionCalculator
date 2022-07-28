@@ -6,13 +6,13 @@ namespace ActionCalculator.Strategies.BallHandling
 {
     public class HailMaryPassStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
 
-        public HailMaryPassStrategy(IActionMediator actionMediator, IProHelper proHelper, ID6 d6)
+        public HailMaryPassStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _proHelper = proHelper;
             _d6 = d6;
         }
@@ -31,15 +31,15 @@ namespace ActionCalculator.Strategies.BallHandling
                 usedSkills |= Skills.BlastIt;
             }
 
-            _actionMediator.Resolve(p * success, r, i, usedSkills, true);
+            _calculator.Resolve(p * success, r, i, usedSkills, true);
 
             if (_proHelper.UsePro(player, hailMaryPass, r, usedSkills, success, success))
             {
-                _actionMediator.Resolve(p * failure * proSuccess * success, r, i, usedSkills | Skills.Pro, true);
+                _calculator.Resolve(p * failure * proSuccess * success, r, i, usedSkills | Skills.Pro, true);
                 return;
             }
             
-            _actionMediator.Resolve(p * failure * lonerSuccess * success, r - 1, i, usedSkills, true);
+            _calculator.Resolve(p * failure * lonerSuccess * success, r - 1, i, usedSkills, true);
         }
     }
 }

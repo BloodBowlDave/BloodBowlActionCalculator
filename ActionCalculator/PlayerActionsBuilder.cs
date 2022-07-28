@@ -8,7 +8,7 @@ namespace ActionCalculator
     {
         private readonly IActionParserFactory _actionParserFactory;
         private readonly IPlayerBuilder _playerBuilder;
-        private readonly List<PlayerAction> _playerActions = new();
+        private List<PlayerAction> _playerActions = new();
 
         public PlayerActionsBuilder(IActionParserFactory actionParserFactory, IPlayerBuilder playerBuilder)
         {
@@ -18,6 +18,8 @@ namespace ActionCalculator
 
         public PlayerActions Build(string playerActionsString)
         {
+            _playerActions = new List<PlayerAction>();
+
             BuildPlayerActions(playerActionsString, new Player(), 0);
 
             var playerActions = new PlayerActions();

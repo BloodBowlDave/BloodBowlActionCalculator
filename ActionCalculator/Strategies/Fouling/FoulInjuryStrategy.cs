@@ -7,12 +7,12 @@ namespace ActionCalculator.Strategies.Fouling
 {
     public class FoulInjuryStrategy : IActionStrategy
     {
-        private readonly IActionMediator _actionMediator;
+        private readonly ICalculator _calculator;
         private readonly ID6 _d6;
 
-        public FoulInjuryStrategy(IActionMediator actionMediator, ID6 d6)
+        public FoulInjuryStrategy(ICalculator calculator, ID6 d6)
         {
-            _actionMediator = actionMediator;
+            _calculator = calculator;
             _d6 = d6;
         }
 
@@ -25,13 +25,13 @@ namespace ActionCalculator.Strategies.Fouling
             
             if (doubleOnFoul)
             {
-                _actionMediator.Resolve(p * success, r, i, usedSkills, true);
+                _calculator.Resolve(p * success, r, i, usedSkills, true);
                 return;
             }
 
             var successAndDoubleOnInjury = _d6.RollDouble(action.Numerator - modifier, 12);
-            _actionMediator.Resolve(p * (success - successAndDoubleOnInjury), r, i, usedSkills);
-            _actionMediator.Resolve(p * successAndDoubleOnInjury, r, i, usedSkills, true);
+            _calculator.Resolve(p * (success - successAndDoubleOnInjury), r, i, usedSkills);
+            _calculator.Resolve(p * successAndDoubleOnInjury, r, i, usedSkills, true);
         }
     }
 }

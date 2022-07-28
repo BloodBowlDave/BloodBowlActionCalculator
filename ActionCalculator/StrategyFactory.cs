@@ -21,7 +21,7 @@ namespace ActionCalculator
             _serviceProvider = serviceProvider;
         }
 
-        public IActionStrategy GetActionStrategy(Action action, IActionMediator actionMediator, ActionType? previousActionType, bool nonCriticalFailure)
+        public IActionStrategy GetActionStrategy(Action action, ICalculator calculator, ActionType? previousActionType, bool nonCriticalFailure)
         {
             var actionType = action.ActionType;
 
@@ -31,7 +31,7 @@ namespace ActionCalculator
                 ActionType.ArmourBreak => _serviceProvider.GetService<ArmourBreakStrategy>(),
                 ActionType.Block => ((Block)action).NumberOfDice > 0 
                     ? _serviceProvider.GetService<BlockStrategy>() 
-                    : _serviceProvider.GetService<RedDiceBlockStrategy>(),
+                    : _serviceProvider.GetService<FractionalDiceBlockStrategy>(),
                 ActionType.Bribe => _serviceProvider.GetService<BribeStrategy>(),
                 ActionType.Catch => nonCriticalFailure 
                     ? _serviceProvider.GetService<CatchInaccuratePassStrategy>() 
