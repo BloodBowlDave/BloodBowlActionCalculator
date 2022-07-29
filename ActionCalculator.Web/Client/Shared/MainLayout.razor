@@ -1,11 +1,54 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<link href="https://use.fontawesome.com/releases/v6.1.2/css/all.css" rel="stylesheet">
+
 <MudLayout>
-    <MudMainContent>
+    <AppBar OnThemeToggled="ToggleTheme"/>
+
+    <MudMainContent Style="padding-bottom:70px;">
         @Body
     </MudMainContent>
+    
+    <MudAppBar Dense="true" Bottom="true" Fixed="true">
+        <MudSpacer/>
+        <MudIconButton 
+            Icon="@Icons.Filled.AttachMoney" 
+            Color="Color.Inherit" 
+            Href="https://www.paypal.com/donate/?business=WQ34J329C4RVJ&no_recurring=1&item_name=I+build+things+for+the+Blood+Bowl+community.+Donations+are+not+required%2C+but+help+with+running+costs+and+future+projects.&currency_code=GBP"
+            Target="_blank"/>
+        <MudIconButton 
+            Icon="@Icons.Custom.Brands.Discord" 
+            Color="Color.Inherit" 
+            Href="https://discord.gg/b2Xvc7jgXZ"
+            Target="_blank"/>
+        <MudIconButton 
+            Icon="@Icons.Custom.Brands.YouTube" 
+            Color="Color.Inherit" 
+            Href="https://www.youtube.com/channel/UC6MH4zPPizYy57EDbsv3Vug"
+            Target="_blank"/>
+        <MudIconButton 
+            Icon="fa-brands fa-twitch" 
+            Color="Color.Inherit" 
+            Href="https://www.twitch.tv/bloodbowldave"
+            Target="_blank"/>
+        <MudIconButton 
+            Icon="@Icons.Custom.Brands.GitHub" 
+            Color="Color.Inherit" 
+            Href="https://github.com/BloodBowlDave/BloodBowlActionCalculator"
+            Target="_blank"/>
+    </MudAppBar>
 </MudLayout>
+
+<MudThemeProvider @bind-IsDarkMode="_isDarkMode" />
+
+@code {
+    private bool _isDarkMode;
+    private bool _sidebarOpen;
+
+    private void ToggleTheme(bool isLightMode) => _isDarkMode = !isLightMode;
+
+    private void ToggleSidebar() => _sidebarOpen = !_sidebarOpen;
+}

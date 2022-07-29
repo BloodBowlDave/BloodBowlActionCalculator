@@ -63,11 +63,13 @@
         
         @if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
         {
-            <MudCheckBox T="bool" 
-                         Label="Reroll Inaccurate" 
-                         Size="Size.Small" 
-                         Checked="RerollInaccurate()"
-                         CheckedChanged="@(ToggleRerollInaccurate)"/>
+            <MudTooltip Text="Diving tackle will be triggered on this dodge if it would cause a reroll or turnover">
+                <MudCheckBox T="bool" 
+                             Label="Reroll Inaccurate" 
+                             Size="Size.Small" 
+                             Checked="RerollInaccurate()"
+                             CheckedChanged="@(ToggleRerollInaccurate)"/>
+            </MudTooltip>
         }
         
         @if (Action.ActionType is ActionType.Dauntless)

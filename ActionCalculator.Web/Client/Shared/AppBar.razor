@@ -1,0 +1,17 @@
+﻿<MudAppBar Dense="true">
+    
+    <MudIconButton Href="/" Icon="@Icons.Filled.Calculate" Color="Color.Inherit" Title="Calculator"/>
+    <MudIconButton Href="/faq" Icon="@Icons.Filled.QuestionAnswer" Color="Color.Inherit" Title="FAQ"/>
+    <MudIconButton Href="/about" Icon="@Icons.Filled.Info" Color="Color.Inherit" Title="About"/>
+
+    <MudSpacer/>
+
+    @if (_isLightMode)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme"/>
+    }
+    else
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness5" Color="Color.Inherit" OnClick="ToggleTheme"/>
+    }
+</MudAppBar>

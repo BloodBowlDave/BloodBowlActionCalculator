@@ -3,7 +3,7 @@
 <PageTitle>Dave's Action Calculator</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large">
-    <h1>Dave's Action Calculator</h1>
+    <h2 style="margin-top: 10px;">Dave's Action Calculator</h2>
 
     <PlayerEditor 
         CurrentPlayer="CurrentPlayer" 
@@ -31,7 +31,7 @@
     
     @if (_calculations.Any(x => CalculationValidator.Validate(x).IsValid))
     {
-        <h3>Results</h3>
+        <h4>Results</h4>
     }
 
     <MudGrid Spacing="1">

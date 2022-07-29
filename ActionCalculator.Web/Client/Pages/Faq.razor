@@ -1,0 +1,76 @@
+﻿@page "/faq"
+
+<PageTitle>Frequently Asked Questions</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <h2 style="margin-top: 10px; margin-bottom: 10px;">Frequently Asked Questions</h2>
+    
+    <h6>Why did you build a Blood Bowl action calculator?</h6>
+    <p>
+        Since the rules for Blood Bowl 2020 came out, the previously used calculator (<a href="http://www.elyoukey.com/sac/" target="_blank">Samba Action Calculator</a>)
+        became obsolete for games using the new rules such as <a href="https://fumbbl.com/" target="_blank">FUMBBL</a> and
+        <a href="https://bloodbowl-thegame.com/" target="_blank">Blood Bowl 3</a> and I thought it would be a fun project.
+    </p>
+
+    <h6>What are the differences between the old and the new rules?</h6>
+    <p>
+        Along with changing the skills in the game and adding new ones, you can now use multiple rerolls per turn, which makes the calculations required more complex.
+        Some of the skill changes are also tricky such as pro and brawler allowing you to reroll one dice as part of a dice pool.
+    </p>
+
+    <h6>How come there are a lot more options than Samba?</h6>
+    <p>
+        I enjoyed thinking of how to solve the more complicated calculations, such as when to reroll a failed dauntless or when you shouldn't reroll an inaccurate pass. 
+        There are more actions and skills that I have not put on the user interface, but are fully implemented in the code library.
+    </p>
+    
+    <h6>I have found a bug!</h6>
+    <p>
+        Great! You can contact me on <a href="https://discord.gg/b2Xvc7jgXZ" target="_blank">discord</a> or check out 
+        <a href="https://github.com/BloodBowlDave/BloodBowlActionCalculator" target="_blank">the code</a> yourself. 
+        <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a> is free to use and should let you step through it.
+    </p>
+    
+    <h6>When I use the calculator, it shows me a weird sequence of characters. What is this?</h6>
+    <p>
+        In order to test different sequences of actions, I created a domain-specific language to succinctly define a calculation. 
+        It is URL-friendly and should be able to represent any sequence of actions. It is my hope that this notation becomes a standard way of describing actions among the Blood Bowl community. 
+        You can see all of the calculations I have tested in the tests that are in the code repository.
+    </p>
+    
+    <h6>I used your calculator to help me choose a play and I got a turnover!</h6>
+    <p>
+        This calculator will not tell you the outcome of dice you are about to roll and there may be bugs in the code that give an incorrect result. 
+        A calculation with a lower chance of success might result in a better board state if there is a turnover. Unfortunately this is something you will need to judge yourself!
+    </p>
+    
+    <h6>The calculation take a long time. How come?</h6>
+    <p>
+        The calculation is done by your browser, so it will depend slightly on the speed of your computer. 
+        Calculations with large number of actions and rerolls can also take a long time since each extra action can double the number of possibilities.
+    </p>
+    
+    <h6>Can I use this calculator during a competitive league?</h6>
+    <p>
+        Please ask the league administrators before using this in any competitive setting. 
+        Although this is a tool built out of curiosity, some people may consider it cheating because being able to chose the best play out of many is a skill that Blood Bowl coaches will acquire with experience.
+    </p>
+    
+    <h6>I want to give you money!</h6>
+    <p>
+        This is not needed at all, but here is my <a href="https://www.paypal.com/donate/?business=WQ34J329C4RVJ&no_recurring=1&item_name=I+build+things+for+the+Blood+Bowl+community.+Donations+are+not+required%2C+but+help+with+running+costs+and+future+projects.&currency_code=GBP" target="_blank">paypal</a>.
+    </p>
+
+    <h6>What future plans do you have?</h6>
+    <p>
+        I was very motivated to get a version of the calculator finished, and there are no fixed goals after that. 
+        If there is interest, then I can make a more advanced UI including a calculation tester that would let people input calculations manually. 
+        Otherwise, I would like to do a blog to go into some Blood Bowl topics in more detail, and build an AI that would use the results of calculations to decide between multiple different plays.
+    </p>
+    
+    <h6>I want to help!</h6>
+    <p>
+        Awesome! Hit me up on discord and let me know what you would like to do.
+    </p>
+
+</MudContainer>
