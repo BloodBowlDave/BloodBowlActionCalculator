@@ -11,17 +11,12 @@ namespace ActionCalculator.Web.Client.Shared
 
         [Parameter]
         public EventCallback<bool> OnThemeToggled { get; set; }
-
+        
         private async Task ToggleTheme()
         {
             _isLightMode = !_isLightMode;
-
+            
             await OnThemeToggled.InvokeAsync(_isLightMode);
-        }
-        
-        private void ToggleSidebar()
-        {
-            OnSidebarToggled.InvokeAsync();
         }
     }
 }
