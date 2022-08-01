@@ -46,9 +46,14 @@
 
 @code {
     private bool _isDarkMode;
-    private bool _sidebarOpen;
+    
+    [Inject]
+    public Blazored.LocalStorage.ILocalStorageService LocalStore { get; set; } = null!;
 
     private void ToggleTheme(bool isLightMode) => _isDarkMode = !isLightMode;
-
-    private void ToggleSidebar() => _sidebarOpen = !_sidebarOpen;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _isDarkMode = !await LocalStore.GetItemAsync<bool>("IsLightMode");
+    }
 }

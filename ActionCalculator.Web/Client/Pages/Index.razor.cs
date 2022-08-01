@@ -57,6 +57,11 @@ namespace ActionCalculator.Web.Client.Pages
             CurrentPlayer = new Player();
         }
 
+        private void EditPlayer(Guid playerId)
+        {
+            CurrentPlayer = CurrentCalculation().PlayerActions.First(x => x.Player.Id == playerId).Player;
+        }
+
         private void ClearCalculation(int index)
         {
             _calculations.RemoveAt(index);
@@ -106,8 +111,9 @@ namespace ActionCalculator.Web.Client.Pages
         {
             var playerIds = CurrentCalculation().PlayerActions.Select(x => x.Player.Id).Distinct().ToList();
             var playerCount = playerIds.Count;
-
-            return playerIds.Contains(CurrentPlayer.Id) ? playerCount : playerCount + 1;
+            var playerIndex = playerIds.IndexOf(CurrentPlayer.Id);
+            
+            return playerIndex != -1 ? playerIndex + 1 : playerCount + 1;
         }
 
         private void RemoveAction(int index)

@@ -168,7 +168,7 @@ a, .btn-link {
 }
 
 .calculation-summary .player-skills {
-    margin: 27px 3px 0 3px;
+    margin: 17px 3px 0 3px;
 }
 
 .action-summary p {
@@ -176,11 +176,12 @@ a, .btn-link {
 }
 
 .action-summary .mud-checkbox {
-    margin-top: 20px;
+    margin-top: 18px;
 }
 
 .action-summary .mud-input-number-control {
     margin-right: 3px;
+    margin-top: -2px !important;
 }
 
 .calculation-results h4 {
@@ -202,4 +203,12 @@ a, .btn-link {
 .calculation-results .mud-input-number-control {
     margin-left: 17px !important;
     margin-right: 17px !important;
+}
+
+.player-summary p, .player-summary button {
+    display: inline-flex;
+}
+
+.player-summary button {
+    margin-left: 5px;
 }

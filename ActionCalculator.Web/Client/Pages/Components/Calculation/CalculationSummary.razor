@@ -19,7 +19,11 @@
             {
                 playerId = playerAction.Player.Id;
 
-                <PlayerSummary Player="@playerAction.Player" PlayerNumber="playerNumber"/>
+                <PlayerSummary 
+                    Player="@playerAction.Player" 
+                    PlayerNumber="playerNumber"
+                    CurrentPlayerId="CurrentPlayerId"
+                    OnEditPlayer="OnEditPlayer"/>
 
                 playerNumber++;
             }
@@ -50,6 +54,9 @@
     public Calculation Calculation { get; set; } = null!;
 
     [Parameter]
+    public Guid CurrentPlayerId { get; set; }
+
+    [Parameter]
     public EventCallback<Tuple<int, bool>> OnToggleBreakTackle { get; set; } 
 
     [Parameter]
@@ -72,6 +79,9 @@
 
     [Parameter]
     public EventCallback<int> RemoveAction { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnEditPlayer { get; set; }
 
     private ActionType? PreviousActionType(int i) => i > 0 ? Calculation.PlayerActions[i - 1].Action.ActionType : null;
 
