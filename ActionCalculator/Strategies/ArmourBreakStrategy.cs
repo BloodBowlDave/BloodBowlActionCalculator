@@ -24,7 +24,7 @@ namespace ActionCalculator.Strategies
             var (_, proSuccess, canUseSkill) = player;
             var armourBreak = (ArmourBreak) playerAction.Action;
 
-            var roll = armourBreak.Numerator;
+            var roll = armourBreak.Roll;
             var useOldPro = canUseSkill(Skills.OldPro, usedSkills);
 
             if (canUseSkill(Skills.Claw, usedSkills) && roll >= 8)

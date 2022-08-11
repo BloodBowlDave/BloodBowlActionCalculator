@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies.Movement
             var rush = playerAction.Action;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
-            var success = _d6.Success(1, rush.Numerator);
+            var success = _d6.Success(1, rush.Roll);
             var failure = 1 - success;
 
             _calculator.Resolve(p * success, r, i, usedSkills);

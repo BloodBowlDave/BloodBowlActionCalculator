@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies
             var action = playerAction.Action;
             var (lonerSuccess, proSuccess, _) = player;
 
-            var success = _d6.Success(1, action.Numerator);
+            var success = _d6.Success(1, action.Roll);
             var failure = 1 - success;
 
             _calculator.Resolve(p * success, r, i, usedSkills);

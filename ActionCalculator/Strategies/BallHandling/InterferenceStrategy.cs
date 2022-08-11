@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var player = playerAction.Player;
             var interception = playerAction.Action;
 
-            var success = _d6.Success(1, inaccuratePass ? interception.Numerator - 1 : interception.Numerator);
+            var success = _d6.Success(1, inaccuratePass ? interception.Roll - 1 : interception.Roll);
             var failure = 1 - success;
 
             if (player.CanUseSkill(Skills.CloudBurster, usedSkills))

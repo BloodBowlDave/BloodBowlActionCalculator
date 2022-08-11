@@ -19,7 +19,7 @@ namespace ActionCalculator.Strategies.Fouling
         {
             var player = playerAction.Player;
             var canUseSkill = player.CanUseSkill;
-            var roll = playerAction.Action.Numerator;
+            var roll = playerAction.Action.Roll;
             var success = _d6.Success(2, roll);
 
             var canUseSneakyGit = canUseSkill(Skills.SneakyGit, usedSkills);

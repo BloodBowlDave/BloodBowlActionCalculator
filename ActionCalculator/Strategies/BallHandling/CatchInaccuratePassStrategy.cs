@@ -38,13 +38,13 @@ namespace ActionCalculator.Strategies.BallHandling
             var blastIt = usedSkills.Contains(Skills.BlastIt);
             var canUseDivingCatch = player.CanUseSkill(Skills.DivingCatch, usedSkills);
 
-            var scatteredPassRoll = action.Numerator + (blastIt ? 0 : 1) + (canUseDivingCatch ? 1 : 0);
+            var scatteredPassRoll = action.Roll + (blastIt ? 0 : 1) + (canUseDivingCatch ? 1 : 0);
             var success = _d6.Success(1, scatteredPassRoll);
             var failure = 1 - success;
 
             CatchScatteredPass(r, playerAction, usedSkills, success, failure);
 
-            var bouncingBallRoll = action.Numerator + 1 + (canUseDivingCatch ? 1 : 0);
+            var bouncingBallRoll = action.Roll + 1 + (canUseDivingCatch ? 1 : 0);
             success = _d6.Success(1, bouncingBallRoll);
             failure = 1 - success;
 
@@ -126,7 +126,7 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var success = _d6.Success(1, playerAction.Action.Numerator);
+            var success = _d6.Success(1, playerAction.Action.Roll);
             
             AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills), successNoReroll);
             

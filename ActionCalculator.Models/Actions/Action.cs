@@ -8,17 +8,17 @@ namespace ActionCalculator.Models.Actions
         {
             ActionType = actionType;
             UsePro = usePro;
-            Numerator = roll;
+            Roll = roll;
         }
 
         public ActionType ActionType { get; }
         public bool UsePro { get; set; }
-        public int Numerator { get; }
+        public int Roll { get; }
         
         public virtual bool IsRerollable() => true;
 
-        public override string ToString() => $"{(char) ActionType}{Numerator}{(UsePro ? "*" : "")}";
+        public override string ToString() => $"{(char) ActionType}{Roll}{(UsePro ? "*" : "")}";
 
-        public virtual string GetDescription() => $"{Numerator}+ {ActionType.ToString().PascalCaseToSpaced()}";
+        public virtual string GetDescription() => $"{Roll}+ {ActionType.ToString().PascalCaseToSpaced()}";
     }
 }

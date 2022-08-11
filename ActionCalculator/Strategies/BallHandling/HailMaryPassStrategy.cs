@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var hailMaryPass = playerAction.Action;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
-            var success = _d6.Success(1, hailMaryPass.Numerator);
+            var success = _d6.Success(1, hailMaryPass.Roll);
             var failure = 1 - success;
 
             if (canUseSkill(Skills.BlastIt, usedSkills))

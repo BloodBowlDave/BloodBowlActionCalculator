@@ -9,8 +9,10 @@ namespace ActionCalculator.ActionBuilders
         public Action Parse(string input)
 		{
 			var usePro = input.Contains("*");
+
+            input = input.Replace("*", "");
 			
-			var roll = int.Parse(input.First().ToString());
+			var roll = int.Parse(input);
 
 			return new Rerollable(roll, usePro);
 		}

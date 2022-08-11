@@ -62,7 +62,11 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
-    
+
+h2 {
+    margin: 10px 0 10px 0;
+}
+
 .mud-input-number-control {
     margin-top: 0 !important;
     width: 58px;

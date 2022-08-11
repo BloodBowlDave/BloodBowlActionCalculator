@@ -1,5 +1,5 @@
-using System.Linq;
 using ActionCalculator.Abstractions;
+using ActionCalculator.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -7,7 +7,7 @@ namespace ActionCalculator.Tests
 {
     public class ActionCalculatorTests
     {
-        private readonly ICalculatorForAllRerolls _calculatorForAllRerolls;
+        private readonly ICalculator _calculator;
         private readonly IPlayerActionsBuilder _playerActionsBuilder;
 
         public ActionCalculatorTests()
@@ -18,8 +18,8 @@ namespace ActionCalculator.Tests
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _calculatorForAllRerolls = serviceProvider.GetService<ICalculatorForAllRerolls>();
-            _playerActionsBuilder = serviceProvider.GetService<IPlayerActionsBuilder>(); ;
+            _calculator = serviceProvider.GetService<ICalculator>();
+            _playerActionsBuilder = serviceProvider.GetService<IPlayerActionsBuilder>();
         }
 
         [Theory]
@@ -204,20 +204,18 @@ namespace ActionCalculator.Tests
         //chainsaw
         [InlineData("W8", 0, 0.41667)]
         [InlineData("W8[:2D2]", 0, 0.74074)]
-
-        [InlineData("DP1:2,2", 2, 0)]
         public void ActionCalculatorReturnsExpectedResult(string playerActionsString, int rerolls, params double[] expected)
         {
-            var result = _calculatorForAllRerolls.CalculateForAllRerolls(playerActionsString).ToList();
-            
-            Assert.Equal(expected.Length, result[rerolls].Results.Length);
+            var playerActions = _playerActionsBuilder.Build(playerActionsString);
+            var result = _calculator.Calculate(new Calculation(playerActions, rerolls));
+
+            Assert.Equal(expected.Length, result.Results.Length);
 
             for (var i = 0; i < expected.Length; i++)
             {
-                Assert.Equal((decimal)expected[i], result[rerolls].Results[i], 5);
+                Assert.Equal((decimal)expected[i], result.Results[i], 5);
             }
 
-            var playerActions = _playerActionsBuilder.Build(playerActionsString);
 
             Assert.Equal(playerActionsString, playerActions.ToString());
         }

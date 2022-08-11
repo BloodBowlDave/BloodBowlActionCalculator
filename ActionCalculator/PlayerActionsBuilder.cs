@@ -20,7 +20,15 @@ namespace ActionCalculator
         {
             _playerActions = new List<PlayerAction>();
 
-            BuildPlayerActions(playerActionsString, new Player(), 0);
+            try
+            {
+                BuildPlayerActions(playerActionsString, new Player(), 0);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new PlayerActions();
+            }
 
             var playerActions = new PlayerActions();
             playerActions.AddRange(_playerActions);

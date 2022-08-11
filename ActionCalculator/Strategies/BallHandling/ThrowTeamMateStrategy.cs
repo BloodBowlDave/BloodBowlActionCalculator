@@ -24,7 +24,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var throwTeamMate = (ThrowTeammate) playerAction.Action;
 
             var modifier = throwTeamMate.Modifier;
-            var modifiedRoll = throwTeamMate.Numerator - modifier;
+            var modifiedRoll = throwTeamMate.Roll - modifier;
 
             var successes = (7m - modifiedRoll).ThisOrMinimum(1).ThisOrMaximum(5);
             var failures = (1m - modifier).ThisOrMinimum(1).ThisOrMaximum(5);

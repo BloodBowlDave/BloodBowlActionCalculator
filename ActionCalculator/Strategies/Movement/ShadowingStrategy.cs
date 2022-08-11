@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies.Movement
             var (lonerSuccess, proSuccess, _) = player;
             var shadowing = (Shadowing) playerAction.Action;
 
-            var failure = (decimal)(shadowing.Numerator + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
+            var failure = (decimal)(shadowing.Roll + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
             var success = 1 - failure;
 
             _calculator.Resolve(p * success, r, i, usedSkills);

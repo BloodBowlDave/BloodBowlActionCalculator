@@ -1,0 +1,208 @@
+﻿@page "/glossary"
+@using ActionCalculator.Utilities
+
+<PageTitle>Glossary</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <h2>Glossary</h2>
+    <p>This page contains a glossary of symbols used to describe an arbitrary Blood Bowl calculation in the notation used by the action calculator. Calculations can be tested on the <MudLink Href="/advanced">advanced calculator</MudLink>.</p>
+    
+    <MudExpansionPanels MultiExpansion="true" Dense="true">
+        <MudExpansionPanel Text="Skills">
+            
+            <p>Below are listed all of the skills which can affect a Blood Bowl calculation. Not all of the skills in the game are listed since they can be included implicitly by modifying the calculation appropriately. For example, block is not listed because you would simply increase the number of successful results on a block by 1.</p>
+            <p>In a situation where a player has a skill but it does not affect the outcome of the calculation, do not include it. For example, sure feet if the player is not doing any rush actions, or brawler if both down is a successful outcome of a block action.</p>
+
+            <MudTable Items="@GetSkills()" Striped="true">
+                <HeaderContent>
+                    <MudTh>Skill</MudTh>
+                    <MudTh>Symbol</MudTh>
+                    <MudTh>Description</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Skill">@context.Item1.ToString().PascalCaseToSpaced()</MudTd>
+                    <MudTd DataLabel="Symbol">@(context.Item1 == Skills.DivingTackle ? "\"" : context.Item1.GetDescriptionFromValue())</MudTd>
+                    <MudTd DataLabel="Description">@context.Item2</MudTd>
+                </RowTemplate>   
+            </MudTable>
+
+        </MudExpansionPanel>
+        
+        <MudExpansionPanel Text="Action Types">
+            
+            <p>Below are listed the action types supported by the calculator. Not all action types are included since they do not all have special rules or skills governing them and they can be treated simply as rerollable or non-rerollable actions.</p>
+            <p>All rerollable action types can be rerolled with a team reroll or the pro skill.</p>
+
+            <MudTable Items="@GetActionTypes()" Striped="true">
+                <HeaderContent>
+                    <MudTh>Action Type</MudTh>
+                    <MudTh>Symbol</MudTh>
+                    <MudTh>Rerollable</MudTh>
+                    <MudTh>Information</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Action Type">@context.Item1.ToString().PascalCaseToSpaced()</MudTd>
+                    <MudTd DataLabel="Symbol">@((char)context.Item1)</MudTd>
+                    <MudTd DataLabel="Rerollable">@context.Item2</MudTd>
+                    <MudTd DataLabel="Information">@context.Item3</MudTd>
+                </RowTemplate>   
+            </MudTable>
+
+        </MudExpansionPanel>
+        
+        <MudExpansionPanel Text="Symbols">
+            
+            <p>Below are listed some symbols used in the calculation that describe the syntax of the notation used by the calculator.</p>
+
+            <MudTable Items="@GetSymbols()" Striped="true">
+                <HeaderContent>
+                    <MudTh>Symbol</MudTh>
+                    <MudTh>Description</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Symbol">@context.Item1</MudTd>
+                    <MudTd DataLabel="Description">@context.Item2</MudTd>
+                </RowTemplate>   
+            </MudTable>
+
+        </MudExpansionPanel>
+
+        <MudExpansionPanel Text="Sample Calculations">
+            
+            <p>Below are listed some sample calculations to illustrate the possibilities of the action calculator. </p>
+
+            <MudTable Items="@GetSampleCalculations()" Striped="true"> 
+                <HeaderContent>
+                    <MudTh>Calculation</MudTh>
+                    <MudTh>Description</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Calculation"><MudLink Href="@($"/advanced?c={context.Item1}")">@context.Item1</MudLink></MudTd>
+                    <MudTd DataLabel="Description">@context.Item2</MudTd>
+                </RowTemplate>   
+            </MudTable>
+
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+    
+</MudContainer>
+
+@code
+{
+    private static IEnumerable<Tuple<Skills, string>> GetSkills() => 
+        typeof(Skills).ToEnumerable<Skills>()
+            .Where(x => x != Skills.None)
+            .Select(x => new Tuple<Skills, string>(x, GetSkillSummary(x)))
+            .OrderBy(x => x.ToString());
+
+    private static string GetSkillSummary(Skills skill) => skill switch {
+        Skills.None => "",
+        Skills.Dodge => "Provides a free reroll on a failed dodge.",
+        Skills.BreakTackle => "Reduces the required dodge roll by the player's break tackle value (1 or 2). Will be automatically applied if it would cause the dodge to succeed.",
+        Skills.SureHands => "Provides a free reroll on a failed pick up.",
+        Skills.SureFeet => "Provides a free reroll on a failed rush.",
+        Skills.Pass => "Provides a free reroll on a failed pass.",
+        Skills.CloudBurster => "Forces a successful passing interference to be rerolled on a long pass or long bomb.",
+        Skills.Catch => "Provides a free reroll on a failed catch.",
+        Skills.DivingCatch => "The player can attempt to catch a ball if it would land adjacent to them. It also applies +1 to catch an accurate pass. Please include the +1 in the original roll, e.g. an unmarked player with agility 3+ and diving catch should have a catch action described as C2.",
+        Skills.Brawler => "Allows a single both down result to be rerolled as part of a block. Brawler will be automatically used in situations where it has a higher chance of success than using a team reroll such as a red dice block that already has on successful result. If both down is a successful result, do not include this skill in the calculation.",
+        Skills.Claw => "An unmodified roll of 8+ will automatically break armour when a player is knocked down as part of a block.",
+        Skills.MightyBlow => "Either the armour or injury roll will be modified by the player's mighty blow value (1 or 2) after a knock down as part of a block.",
+        Skills.Pro => "One dice that is not part of an armour, injury or casualty roll may be rerolled if a roll of 3+ is successful. Pro will be automatically used in situations where it has a higher chance of success than using a team reroll, such as if a player has loner or as part of a half die block where there is already one successful roll.",
+        Skills.Loner => "A roll that must be passed by a player in order to use a team reroll.",
+        Skills.DirtyPlayer => "Either the armour or injury roll will be modifier by the player's dirty player value (1 or 2) as part of a foul action.",
+        Skills.SneakyGit => "The player is not sent off for rolling a double on the armour roll as part of a foul. They may also move after committing a foul.",
+        Skills.DivingTackle => "When a player attempts to leave a square marked by a player with diving tackle, they may be placed prone in order to subtract 2 from the result of the roll. If multiple players are attempting to leave a square marked by diving tackle, it is assumed that there is only one player with diving tackle. Since diving tackle is an opposition skill, it does not have a two letter code, but instead the \" symbol is used to modify a dodge roll.",
+        Skills.ConsummateProfessional => "Once per game, one dice that is not part of an armour, injury or casualty roll may be rerolled. Consummate professional will be automatically used in situations where it has a higher chance of success than using a team reroll, such as if a player has loner or as part of a half die block where there is already one successful roll.",
+        Skills.OldPro => "Once per game, the pro skill may be used on a dice rolled as part of an armour roll.",
+        Skills.TheBallista => "Once per game, provides a free reroll on a failed pass or throw teammate action.",
+        Skills.MesmerisingDance => "Once per game, provides a free reroll on a failed hypnotic gaze.",
+        Skills.Ram => "Once per game, when a player is knocked down as part of a block, you may apply +1 to either the armour or injury roll. This can be combined with other skills that modify armour or injury rolls such as mighty blow.",
+        Skills.BrutalBlock => "Once per game, when a player is knocked down as part of a block, you may add +1 to the injury roll. This can be combined with other skills that modify injury rolls such as mighty blow.",
+        Skills.SavageMauling => "Once per game, you may reroll an injury roll.",
+        Skills.CrushingBlow => "Once per game, you may apply an additional +1 modifier to an armour roll. This can be combined with other skills that modify armour rolls such as mighty blow.",
+        Skills.Slayer => "Once per game, when a player with strength 5 or more is knocked down as part of a block, you may apply a +1 modifier to either the armour or injury roll. This can be combined with other skills that modify armour or injury rolls such as mighty blow.",
+        Skills.Incorporeal => "Once per game, you may choose to modify a dodge roll by the player's strength.",
+        Skills.BlindRage => "Provides a free reroll on a failed dauntless.",
+        Skills.BlastIt => "Once per game, when making a Hail Mary Pass, you may reroll any scatter result before the ball lands, and any attempt to catch the ball gains +1.",
+        Skills.WhirlingDervish => "Once per activation, you may reroll the d6 when determining which direction a ball and chain player moves. This skill will only apply if the action type is non-rerollable and the denominator is 6.",
+        _ => throw new ArgumentOutOfRangeException(nameof(skill), skill, null)};
+
+    private static IEnumerable<Tuple<ActionType, bool, string>> GetActionTypes() => 
+        typeof(ActionType).ToEnumerable<ActionType>()
+            .Select(x =>
+            {
+                var (rerollable, summary) = GetActionTypeSummary(x);
+                return new Tuple<ActionType, bool, string>(x, rerollable, summary);
+            });
+
+    private static Tuple<bool, string> GetActionTypeSummary(ActionType actionType) => actionType switch {
+        ActionType.Rerollable => new Tuple<bool, string>(true, "Used to describe most rolls in the game in the absence of any player skills."),
+        ActionType.Dodge => new Tuple<bool, string>(true, "Affected by the skills dodge, break tackle, diving tackle and incorporeal."),
+        ActionType.Rush => new Tuple<bool, string>(true, "Affected by the skill sure feet."),
+        ActionType.PickUp => new Tuple<bool, string>(true, "Affected by the skill sure hands."),
+        ActionType.Pass => new Tuple<bool, string>(true, "Affected by the pass skill. The player's passing attribute and any modifiers on the roll are stored separately so that the chance of an inaccurate pass can be calculated. " +
+                                                         "Although the position of the players would need to be known to accurately calculate the chance of a successful scatter, I have included it in the calculation and assumed that the receiver is unmarked as there is around a 5% chance of a direct scatter and also around a 5% chance of scattering then bouncing to the target. " +
+                                                         "Wildly inaccurate passes are not included as they rely on specific positioning to result in a successful catch, however if you have the option of standing 3 squares away from the receiver either orthogonally or diagonally you will increase the chance of success slightly in the case where you throw a wildly inaccurate pass. " +
+                                                         "A pass with no subsequent actions is assumed to be a punt, and an inaccurate pass is treated as a success."),
+        ActionType.Block => new Tuple<bool, string>(true, "Affected by the brawler skill. Supports the ability to define a non-critical failure (i.e. a push) that would result in possible follow-up actions."),
+        ActionType.Catch => new Tuple<bool, string>(true, "Affected by the skills catch and diving catch."),
+        ActionType.Foul => new Tuple<bool, string>(false, "Affected by the skills dirty player and sneaky git. If a double is rolled on the foul, then they player will be sent off if there are any subsequent actions, otherwise a send off is considered a successful outcome."),
+        ActionType.ArmourBreak => new Tuple<bool, string>(false, "Affected by mighty blow, ram, slayer, crushing blow, claw and old pro."),
+        ActionType.NonRerollable => new Tuple<bool, string>(false, "Used for rolls which cannot be rerolled such as bounces and throw-ins. If the denominator is set to 12, a 2d6 is used rather than a d12. Affected by whirling dervish if the denominator is set to 6."),
+        ActionType.ThrowTeammate => new Tuple<bool, string>(true, "Affected by the ballista. The player's passing attribute and any modifiers on the roll are stored separately so that the chance of a superb throw can be calculated."),
+        ActionType.Dauntless => new Tuple<bool, string>(true, "Affected by blind rage. A dauntless action should be followed by two block actions, where the first one happens if dauntless succeeds and the second one happens if dauntless fails."),
+        ActionType.Interference => new Tuple<bool, string>(false, "Affected by cloud burster. Since the interference roll is made by your opponent, an easier roll will reduce the odds of success."),
+        ActionType.Tentacles => new Tuple<bool, string>(true, "A failed tentacles roll is treated as a non-critical failure since it does not result in a turnover and can execute a different sequence of actions depending on whether it succeeds or fails. For example, a player can attempt to escape tentacles and pick up the ball, but if the tentacles roll fails a different player may attempt to pick up the ball."),
+        ActionType.Shadowing => new Tuple<bool, string>(true, "A failed shadowing roll is treated as a non-critical failure since it does not result in a turnover and can execute a different sequence of actions depending on whether it succeeds or fails. For example, a player may fail a shadowing roll and then have to make another dodge and shadowing roll depending on how many times you are prepared to keep attempting to escape."),
+        ActionType.ArgueTheCall => new Tuple<bool, string>(false, "Will not increase the chance of success for a calculation unless it is followed by another action (other than bribes), i.e. a send off is treated as a success unless there are subsequent actions."),
+        ActionType.Bribe => new Tuple<bool, string>(false, "Will not increase the chance of success for a calculation unless it is followed by another action (other than bribes or argue the call), i.e. a send off is treated as a success unless there are subsequent actions."),
+        ActionType.Injury => new Tuple<bool, string>(false, "Affected by mighty blow, slayer, ram, brutal block and savage mauling if it is following a block and affected by dirty player if it is followed by a foul."),
+        ActionType.Landing => new Tuple<bool, string>(true, "Will add +1 to the roll if the throw is superb."),
+        ActionType.HailMaryPass => new Tuple<bool, string>(true, "If followed by a catch, requires a successful scatter or bounce to the target, otherwise it is treated as a punt."),
+        ActionType.Hypnogaze => new Tuple<bool, string>(true, "Affected by mesmerising gaze. A failed hypnogaze roll is treated as a non-critical failure since it does not result in a turnover and can execute a different sequence of actions depending on whether it succeeds or fails. For example, a player might attempt a hypnogaze and be forced to dodge if the roll fails."),
+        ActionType.Stab => new Tuple<bool, string>(true, "A failed stab roll is treated as a non-critical failure since it does not result in a turnover and can execute a different sequence of actions depending on whether it succeeds or fails. For example, a player might attempt a stab and be forced to dodge if the roll fails."),
+        ActionType.Chainsaw => new Tuple<bool, string>(true, "A failed chainsaw roll is treated as a non-critical failure since it does not result in a turnover and can execute a different sequence of actions depending on whether it succeeds or fails. For example, a player might attempt a stab and be forced to dodge if the roll fails."),
+        _ => throw new ArgumentOutOfRangeException(nameof(actionType), actionType, null)};
+
+    private static IEnumerable<Tuple<string, string>> GetSymbols() => new List<Tuple<string, string>>
+    {
+        new(",", "Separates subsequent actions by the same player, e.g. 2,2,2 is 3 rerollable 2+ actions in a row."),
+        new(":", "Indicates the start of a player's actions, and is usually preceded by a players skills, e.g. D:D2 is a 2+ dodge for a player with the dodge skill."),
+        new(";", "Separates subsequent players, e.g. D:D2;D3 is a 2+ dodge for a player with the dodge skill followed by a 3+ dodge by a different player."),
+        new("|", "Separates two blocks which follow a dauntless roll. The first block will result if dauntless succeeds and the second block will result if the dauntless fails, e.g. L3,1D2|-2D2 represents a 3+ dauntless roll with a 1 dice block if it succeeds and a half dice block if it fails."),
+        new("'", "Indicates that a non-critical failure will not be rerolled, e.g. Y3' represents a 3+ hypnogaze that will not be rerolled if it fails."),
+        new("^", "Indicates that pro will be used instead of a team reroll. Note that pro will automatically be used if it has a higher chance of success than using a team reroll. e.g. P:4^,3,2 is 4+ 3+ 2+ where pro will be used if the first roll fails."),
+        new("*", "Indicates that brawler will be used instead of a team reroll. Note that brawler will automatically be used if it has a higher chance of success than using a team reroll. e.g. B:2D2* is a 2 dice block with 2 successes where brawler will be used ahead of a reroll."),
+        new("¬", "Indicates that break tackle will not be used ahead of a team reroll or the dodge skill. Note that if the dodge cannot be rerolled, break tackle will still be used. e.g. BT2:D3¬,D4 is a 3+ dodge and a 4+ dodge where break tackle will not be used on the first dodge ahead of a team reroll."),
+        new("\"", "Indicates that diving tackle will be triggered on a dodge if it would cause a reroll or turnover, e.g. D4\" is a 4+ dodge which would become a 6+ dodge if diving tackle is used."),
+        new("{", "Indicates the beginning of a subsequence of actions which follow a non-critical failure, e.g. Y3{D2}U2 is a 3+ hypnogaze and a 2+ pick up where if the hypnogaze fails, a 2+ dodge needs to be made. These subsequences can be nested."),
+        new("}", "Indicates the end of a subsequence of actions which follow a non-critical failure."),
+        new("[", "Indicates the beginning of a subsequence of actions which follow a non-critical failure and will terminate the calculation, e.g. N+3[:N+2,D3]D2 represents a 3+ tentacles roll followed by a 2+ dodge, but if the tentacles roll is failed then a 2+ tentacles roll will be made with a 3+ dodge instead of the 2+ dodge. These subsequences can be nested."),
+        new("]", "Indicates the end of a subsequence of actions which follow a non-critical failure."),
+        new("(", "Indicates the start of an alternate branch of actions, e.g. (3/8,U3)(2/8,U3,R2)(3/8,U3,R2,R2) represents 3 possible sequences of actions depending on the outcome of a scatter, either a 3+ pick up, a 3+ pick up with a 2+ rush or a 3+ pick up with 2 2+ rushes. These subsequences cannot be nested."),
+        new(")", "Indicates the end of an alternate branch of actions.")
+    };
+
+    private static IEnumerable<Tuple<string, string>> GetSampleCalculations() => new List<Tuple<string, string>>
+    {
+        new("2,2", "A simple calculation for 2 rerollable 2+ rolls."),
+        new("D:D2,D2", "Two 2+ dodges from a player with dodge."),
+        new("2D4", "A two dice block with four successful results. A two dice block where a defender down, defender stumbles or push is a successful outcome."),
+        new("2D3,B8,J8", "A two dice block with three successful results, followed by an 8+ armour break and an 8+ injury roll, i.e. a KO."),
+        new("B,P:1D1^*", "A one dice block with one success from a player with brawler and pro where brawler or pro will be used ahead of a reroll."),
+        new("2D2!2'{1D2}", "A two dice block with two successes and two non-critical failures (pushes) where the pushes will not be rerolled. If the first block is a push, there will be a second block which has one dice and two successes."),
+        new("L2',2D2|1D2", "A 2+ dauntless roll which won't be rerolled if it fails followed by a two dice block with two successes if the dauntless roll is successful or a one dice block with two successes if dauntless fails."),
+        new("BT1:D3\",D4\"", "A 3+ dodge and a 4+ dodge affected by diving tackle from a player with break tackle."),
+        new("CL,MB1:2D3,B8,J8", "A two dice block with three successes followed by an 8+ armour break and an 8+ injury from a player with claw and mighty blow."),
+        new("D:D3,S+2{D3,S+2{D3}}", "A 3+ dodge from a player with dodge away from a player with shadowing. If the +2 shadowing roll is failed, then another 3+ dodge and +2 shadowing roll is required. If the second shadowing roll is failed then a further 3+ dodge is required."),
+        new("N+3[:N+2,D3]D2", "A +3 tentacles roll followed by a 2+ dodge. If the tentacles roll is failed, then instead of a 2+ dodge there is a +2 tentacles roll and a 3+ dodge from a different player instead."),
+        new("DP1:F8,J8", "An 8+ foul and an 8+ injury from a player with dirty player."),
+        new("PA:P2;C2", "A 2+ pass from a player with pass followed by a 2+ catch."),
+        new("L3:H4-1';G4", "A 4+ throw with a -1 modifier where an inaccurate throw will not be rerolled followed by a 4+ landing."),
+        new("M2;DC:C2", "A 2+ Hail Mary Pass followed by a 2+ catch with diving catch."),
+        new("Y3;{D2}U2", "A 3+ hypnogaze followed by a 2+ pick up. If the hypnogaze roll fails then a 2+ dodge needs to be made before the pick up."),
+        new("T8[:2D2]", "An 8+ stab, where if the roll fails a different player will make a two dice block with two successes."),
+    };
+
+}

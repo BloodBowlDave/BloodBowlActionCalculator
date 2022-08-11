@@ -9,6 +9,6 @@
     
 		public bool RerollFailure { get; set; }
 
-        public override string ToString() => $"{(char) ActionType}{Numerator}{(!RerollFailure ? "'" : "")}{(UsePro ? "*" : "")}";
+        public override string ToString() => $"{(char) ActionType}{Roll}{(!RerollFailure ? "'" : "")}{(UsePro ? "*" : "")}";
 	}
 }

@@ -21,7 +21,7 @@ namespace ActionCalculator.Strategies
         {
             var player = playerAction.Player;
             var action = (NonRerollable) playerAction.Action;
-            var roll = action.Numerator;
+            var roll = action.Roll;
             var denominator = action.Denominator;
 
             var success = denominator == 12 ? _d6.Success(2, roll) : (decimal)roll / denominator;

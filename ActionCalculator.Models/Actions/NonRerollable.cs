@@ -1,4 +1,6 @@
-﻿namespace ActionCalculator.Models.Actions
+﻿using ActionCalculator.Utilities;
+
+namespace ActionCalculator.Models.Actions
 {
 	public class NonRerollable : Action
 	{
@@ -9,8 +11,10 @@
     
 		public int Denominator { get; }
 
-		public override string ToString() => $"{Numerator}/{Denominator}";
+		public override string ToString() => $"{Roll}/{Denominator}";
 
-		public override bool IsRerollable() => false;
+        public override string GetDescription() => $"{Roll}/{Denominator} {ActionType.ToString().PascalCaseToSpaced()}";
+
+        public override bool IsRerollable() => false;
 	}
 }

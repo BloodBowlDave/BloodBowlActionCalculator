@@ -21,7 +21,7 @@ namespace ActionCalculator.Strategies.Fouling
             if (nonCriticalFailure)
             {
                 var argueTheCall = (ArgueTheCall)playerAction.Action;
-                var success = _d6.Success(1, argueTheCall.Numerator);
+                var success = _d6.Success(1, argueTheCall.Roll);
                 var failure = 1 - success - 1m / 6;
 
                 _calculator.Resolve(p * success, r, i, usedSkills);
