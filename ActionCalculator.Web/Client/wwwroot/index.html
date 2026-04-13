@@ -22,65 +22,22 @@
             #bb-loader {
                 position: fixed;
                 inset: 0;
-                background: radial-gradient(ellipse at center, #1c3a1c 0%, #0d1f0d 60%, #050f05 100%);
+                background: #1a1a27;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                font-family: Georgia, 'Times New Roman', serif;
+                font-family: Roboto, sans-serif;
                 text-align: center;
                 padding: 24px;
             }
 
-            #bb-loader::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background-image: repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 59px,
-                    rgba(255, 255, 255, 0.03) 59px,
-                    rgba(255, 255, 255, 0.03) 60px
-                ),
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 59px,
-                    rgba(255, 255, 255, 0.03) 59px,
-                    rgba(255, 255, 255, 0.03) 60px
-                );
-                pointer-events: none;
-            }
-
-            .bb-title {
-                font-size: clamp(2rem, 6vw, 3.2rem);
-                font-weight: bold;
-                color: #e8c060;
-                text-shadow: 0 0 30px rgba(232, 192, 96, 0.5), 3px 3px 8px rgba(0, 0, 0, 0.9);
-                letter-spacing: 5px;
-                text-transform: uppercase;
-                margin-bottom: 6px;
-                position: relative;
-                z-index: 1;
-            }
-
-            .bb-subtitle {
-                font-size: clamp(0.75rem, 2vw, 0.95rem);
-                color: #7a9a5a;
-                letter-spacing: 4px;
-                text-transform: uppercase;
-                margin-bottom: 52px;
-                position: relative;
-                z-index: 1;
-            }
-
             .bb-gif-frame {
-                border: 2px solid #c8a44a;
+                border: 2px solid #594AE2;
                 border-radius: 8px;
                 overflow: hidden;
                 margin-bottom: 28px;
-                box-shadow: 0 0 32px rgba(200, 164, 74, 0.25);
+                box-shadow: 0 0 32px rgba(89, 74, 226, 0.3);
                 max-width: min(320px, 80vw);
                 position: relative;
                 z-index: 1;
@@ -95,15 +52,15 @@
             .bb-die {
                 width: 56px;
                 height: 56px;
-                background: linear-gradient(145deg, #3a1a06, #1a0a02);
-                border: 2px solid #c8a44a;
+                background: #27273f;
+                border: 2px solid #594AE2;
                 border-radius: 11px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 2rem;
                 margin-bottom: 28px;
-                box-shadow: 0 0 28px rgba(200, 164, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+                box-shadow: 0 0 20px rgba(89, 74, 226, 0.25);
                 animation: dieRock 0.7s ease-in-out infinite alternate;
                 position: relative;
                 z-index: 1;
@@ -117,7 +74,7 @@
             .bb-message {
                 font-size: clamp(1rem, 3vw, 1.2rem);
                 font-style: italic;
-                color: #c8a44a;
+                color: rgba(255, 255, 255, 0.7);
                 margin-bottom: 36px;
                 min-height: 1.8em;
                 max-width: 420px;
@@ -135,7 +92,7 @@
             .bb-progress {
                 width: min(280px, 72vw);
                 height: 3px;
-                background: rgba(200, 164, 74, 0.12);
+                background: rgba(89, 74, 226, 0.15);
                 border-radius: 2px;
                 overflow: hidden;
                 position: relative;
@@ -148,7 +105,7 @@
                 left: 0;
                 width: 45%;
                 height: 100%;
-                background: linear-gradient(90deg, transparent, #c8a44a, #f0d070, #c8a44a, transparent);
+                background: linear-gradient(90deg, transparent, #594AE2, #7c6ee8, #594AE2, transparent);
                 border-radius: 2px;
                 animation: progressSlide 1.8s ease-in-out infinite;
             }
@@ -160,8 +117,6 @@
         </style>
 
         <div id="bb-loader">
-            <div class="bb-title">Blood Bowl</div>
-            <div class="bb-subtitle">Action Calculator</div>
             <div class="bb-gif-frame">
                 <img id="bb-gif" src="" alt="Blood Bowl" />
             </div>
