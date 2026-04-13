@@ -68,8 +68,8 @@ h2 {
 }
 
 .season-select {
-    flex: 0 0 105px !important;
-    width: 105px !important;
+    flex: 0 0 120px !important;
+    width: 120px !important;
     min-width: 0 !important;
     margin-right: 8px;
     align-self: center;
