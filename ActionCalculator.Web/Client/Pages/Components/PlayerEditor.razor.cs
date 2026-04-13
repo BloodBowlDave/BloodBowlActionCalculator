@@ -20,18 +20,15 @@ namespace ActionCalculator.Web.Client.Pages.Components
         
         private IEnumerable<Skills> GetSkills() =>
             typeof(Skills).ToEnumerable<Skills>().Where(x => x is > 0 and < Skills.DivingTackle);
-        
-        private void ToggleSkill(Skills skill, bool isSelected)
-        {
-            if (isSelected)
-            {
-                CurrentPlayer.Skills |= skill;
-            }
-            else
-            {
-                CurrentPlayer.Skills &= ~skill;
-            }
 
+        private IReadOnlyCollection<Skills> SelectedSkills =>
+            GetSkills().Where(s => CurrentPlayer.CanUseSkill(s, Skills.None)).ToList();
+
+        private void SkillsChanged(IEnumerable<Skills> selected)
+        {
+            CurrentPlayer.Skills = Skills.None;
+            foreach (var skill in selected)
+                CurrentPlayer.Skills |= skill;
             PlayerChanged();
         }
 
