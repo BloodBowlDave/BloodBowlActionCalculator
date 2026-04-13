@@ -9,57 +9,59 @@
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Size="Size.Small" OnClick="NewPlayer">New</MudButton>
     </h4>
 
-    <MudSelect T="Skills"
-               MultiSelection="true"
-               SelectedValues="SelectedSkills"
-               SelectedValuesChanged="SkillsChanged"
-               Label="Skills"
-               Variant="Variant.Outlined"
-               Dense="true"
-               AnchorOrigin="Origin.BottomCenter"
-               Style="width: 240px"
-               MultiSelectionTextFunc="@(selected => selected.Count == 0 ? "None" : string.Join(", ", selected))">
-        @foreach (var skill in GetSkills())
-        {
-            <MudSelectItem T="Skills" Value="skill">@skill.ToString().PascalCaseToSpaced()</MudSelectItem>
-        }
-    </MudSelect>
+    <div class="player-skills-row">
+        <MudSelect T="Skills"
+                   MultiSelection="true"
+                   SelectedValues="SelectedSkills"
+                   SelectedValuesChanged="SkillsChanged"
+                   Label="Skills"
+                   Variant="Variant.Outlined"
+                   Dense="true"
+                   AnchorOrigin="Origin.BottomCenter"
+                   Style="width: 240px"
+                   MultiSelectionTextFunc="@(selected => selected.Count == 0 ? "None" : string.Join(", ", selected))">
+            @foreach (var skill in GetSkills())
+            {
+                <MudSelectItem T="Skills" Value="skill">@skill.ToString().PascalCaseToSpaced()</MudSelectItem>
+            }
+        </MudSelect>
 
-    @if (CurrentPlayer.CanUseSkill(Skills.Loner, Skills.None))
-    {
-        <div class="skill-value-row">
-            <span>Loner</span>
-            <MudNumericField T="int" Min="2" Max="6"
-                             Value="CurrentPlayer.LonerValue"
-                             ValueChanged="@LonerChanged" />
-        </div>
-    }
-    @if (CurrentPlayer.CanUseSkill(Skills.MightyBlow, Skills.None))
-    {
-        <div class="skill-value-row">
-            <span>Mighty Blow</span>
-            <MudNumericField T="int" Min="1" Max="2"
-                             Value="CurrentPlayer.MightyBlowValue"
-                             ValueChanged="@MightyBlowChanged" />
-        </div>
-    }
-    @if (CurrentPlayer.CanUseSkill(Skills.DirtyPlayer, Skills.None))
-    {
-        <div class="skill-value-row">
-            <span>Dirty Player</span>
-            <MudNumericField T="int" Min="1" Max="2"
-                             Value="CurrentPlayer.DirtyPlayerValue"
-                             ValueChanged="@DirtyPlayerChanged" />
-        </div>
-    }
-    @if (CurrentPlayer.CanUseSkill(Skills.BreakTackle, Skills.None))
-    {
-        <div class="skill-value-row">
-            <span>Break Tackle</span>
-            <MudNumericField T="int" Min="1" Max="2"
-                             Value="CurrentPlayer.BreakTackleValue"
-                             ValueChanged="@BreakTackleChanged" />
-        </div>
-    }
+        @if (CurrentPlayer.CanUseSkill(Skills.Loner, Skills.None))
+        {
+            <div class="skill-value-row">
+                <span>Loner</span>
+                <MudNumericField T="int" Min="2" Max="6"
+                                 Value="CurrentPlayer.LonerValue"
+                                 ValueChanged="@LonerChanged" />
+            </div>
+        }
+        @if (CurrentPlayer.CanUseSkill(Skills.MightyBlow, Skills.None))
+        {
+            <div class="skill-value-row">
+                <span>Mighty Blow</span>
+                <MudNumericField T="int" Min="1" Max="2"
+                                 Value="CurrentPlayer.MightyBlowValue"
+                                 ValueChanged="@MightyBlowChanged" />
+            </div>
+        }
+        @if (CurrentPlayer.CanUseSkill(Skills.DirtyPlayer, Skills.None))
+        {
+            <div class="skill-value-row">
+                <span>Dirty Player</span>
+                <MudNumericField T="int" Min="1" Max="2"
+                                 Value="CurrentPlayer.DirtyPlayerValue"
+                                 ValueChanged="@DirtyPlayerChanged" />
+            </div>
+        }
+        @if (CurrentPlayer.CanUseSkill(Skills.BreakTackle, Skills.None))
+        {
+            <div class="skill-value-row">
+                <span>Break Tackle</span>
+                <MudNumericField T="int" Min="1" Max="2"
+                                 Value="CurrentPlayer.BreakTackleValue"
+                                 ValueChanged="@BreakTackleChanged" />
+            </div>
+        }
+    </div>
 
 </MudPaper>

@@ -173,17 +173,22 @@ h2 {
     margin-top: 8px;
 }
 
+.player-editor .player-skills-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .player-editor .skill-value-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-    padding: 0 4px;
+    gap: 4px;
     font-size: 0.875rem;
 }
 
 .player-editor .skill-value-row span {
-    min-width: 90px;
+    white-space: nowrap;
 }
 
 .player-editor .skill-value-row .mud-input-number-control {
