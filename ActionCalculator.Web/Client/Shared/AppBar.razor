@@ -6,8 +6,6 @@
     <MudIconButton Href="/faq" Icon="@Icons.Material.Filled.QuestionAnswer" Color="Color.Inherit" Title="FAQ"/>
     <MudIconButton Href="/about" Icon="@Icons.Material.Filled.Info" Color="Color.Inherit" Title="About"/>
 
-    <MudSpacer/>
-
     <MudSelect T="string" Value="_season" ValueChanged="SeasonChanged"
                Dense="true" Variant="Variant.Outlined" Margin="Margin.Dense"
                Class="season-select"
@@ -15,6 +13,8 @@
         <MudSelectItem Value="@("Season 2")">Season 2</MudSelectItem>
         <MudSelectItem Value="@("Season 3")">Season 3</MudSelectItem>
     </MudSelect>
+
+    <MudSpacer/>
 
     @if (_isLightMode)
     {
