@@ -17,7 +17,7 @@
             }
 
             @(Action.GetDescription())
-            <MudIcon Icon="@Icons.Filled.Cancel" Size="Size.Small"/>
+            <MudIcon Icon="@Icons.Material.Filled.Cancel" Size="Size.Small"/>
         </h6>
         
         @if (Action.ActionType == ActionType.Block)
@@ -30,11 +30,11 @@
             if (Player.CanUseSkill(Skills.Brawler, Skills.None))
             {
                 <MudTooltip Text="Brawler will be used over a reroll. If both-down is a successful result, remove the brawler skill">
-                    <MudCheckBox T="bool" 
-                                 Label="Use Brawler" 
+                    <MudCheckBox T="bool"
+                                 Label="Use Brawler"
                                  Size="Size.Small"
-                                 Checked="UseBrawler()"
-                                 CheckedChanged="@(ToggleBrawler)"/>
+                                 Value="UseBrawler()"
+                                 ValueChanged="@(ToggleBrawler)"/>
                 </MudTooltip>
             }
         }
@@ -44,49 +44,49 @@
             if (Player.CanUseSkill(Skills.BreakTackle, Skills.None))
             {
                 <MudTooltip Text="Break tackle will be used over a reroll">
-                    <MudCheckBox T="bool" 
-                                 Label="Use Break Tackle" 
+                    <MudCheckBox T="bool"
+                                 Label="Use Break Tackle"
                                  Size="Size.Small"
-                                 Checked="BreakTackle()"
-                                 CheckedChanged="@(ToggleBreakTackle)"/>
+                                 Value="BreakTackle()"
+                                 ValueChanged="@(ToggleBreakTackle)"/>
                 </MudTooltip>
             }
 
             <MudTooltip Text="Diving tackle will be triggered on this dodge if it would cause a reroll or turnover">
-                <MudCheckBox T="bool" 
-                             Label="Affected By Diving Tackle" 
+                <MudCheckBox T="bool"
+                             Label="Affected By Diving Tackle"
                              Size="Size.Small"
-                             Checked="DivingTackle()"
-                             CheckedChanged="@(ToggleDivingTackle)"/>
+                             Value="DivingTackle()"
+                             ValueChanged="@(ToggleDivingTackle)"/>
             </MudTooltip>
         }
         
         @if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
         {
-            <MudCheckBox T="bool" 
-                         Label="Reroll Inaccurate" 
-                         Size="Size.Small" 
-                         Checked="RerollInaccurate()"
-                         CheckedChanged="@(ToggleRerollInaccurate)"/>
+            <MudCheckBox T="bool"
+                         Label="Reroll Inaccurate"
+                         Size="Size.Small"
+                         Value="RerollInaccurate()"
+                         ValueChanged="@(ToggleRerollInaccurate)"/>
         }
         
         @if (Action.ActionType is ActionType.Dauntless)
         {
-            <MudCheckBox T="bool" 
-                         Label="Reroll Failure" 
-                         Size="Size.Small" 
-                         Checked="RerollFailure()"
-                         CheckedChanged="@(ToggleRerollFailure)"/>
+            <MudCheckBox T="bool"
+                         Label="Reroll Failure"
+                         Size="Size.Small"
+                         Value="RerollFailure()"
+                         ValueChanged="@(ToggleRerollFailure)"/>
         }
         
         @if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None))
         {
             <MudTooltip Text="Pro will be used over a team reroll">
-                <MudCheckBox T="bool" 
-                             Label="Use Pro" 
+                <MudCheckBox T="bool"
+                             Label="Use Pro"
                              Size="Size.Small"
-                             Checked="UsePro()"
-                             CheckedChanged="@(TogglePro)" />
+                             Value="UsePro()"
+                             ValueChanged="@(TogglePro)"/>
             </MudTooltip>
         }
     </MudPaper>

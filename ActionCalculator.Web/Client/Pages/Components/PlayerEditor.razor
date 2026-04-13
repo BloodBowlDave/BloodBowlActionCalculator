@@ -15,10 +15,10 @@
             var skillText = skill.ToString().PascalCaseToSpaced();
             var canUseSkill = CurrentPlayer.CanUseSkill(skill, Skills.None);
 
-            <MudCheckBox T="bool" 
-                         Label="@skillText" 
-                         Checked="canUseSkill" 
-                         CheckedChanged="() => ToggleSkill(skill, !canUseSkill)"
+            <MudCheckBox T="bool"
+                         Label="@skillText"
+                         Value="canUseSkill"
+                         ValueChanged="() => ToggleSkill(skill, !canUseSkill)"
                          Size="Size.Small"/>
                          
             @if (skill == Skills.Loner)
