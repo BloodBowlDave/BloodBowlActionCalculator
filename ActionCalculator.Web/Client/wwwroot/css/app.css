@@ -68,16 +68,11 @@ h2 {
 }
 
 .season-select {
-    width: fit-content !important;
+    flex: 0 0 105px !important;
+    width: 105px !important;
     min-width: 0 !important;
     margin-right: 8px;
-}
-
-.season-select .mud-input-control,
-.season-select .mud-input-root,
-.season-select .mud-select-input {
-    min-width: 0 !important;
-    width: auto !important;
+    align-self: center;
 }
 
 .mud-input-number-control {
