@@ -17,12 +17,216 @@
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">
+        <style>
+            #bb-loader {
+                position: fixed;
+                inset: 0;
+                background: radial-gradient(ellipse at center, #1c3a1c 0%, #0d1f0d 60%, #050f05 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: Georgia, 'Times New Roman', serif;
+                text-align: center;
+                padding: 24px;
+            }
+
+            #bb-loader::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 59px,
+                    rgba(255, 255, 255, 0.03) 59px,
+                    rgba(255, 255, 255, 0.03) 60px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 59px,
+                    rgba(255, 255, 255, 0.03) 59px,
+                    rgba(255, 255, 255, 0.03) 60px
+                );
+                pointer-events: none;
+            }
+
+            .bb-title {
+                font-size: clamp(2rem, 6vw, 3.2rem);
+                font-weight: bold;
+                color: #e8c060;
+                text-shadow: 0 0 30px rgba(232, 192, 96, 0.5), 3px 3px 8px rgba(0, 0, 0, 0.9);
+                letter-spacing: 5px;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .bb-subtitle {
+                font-size: clamp(0.75rem, 2vw, 0.95rem);
+                color: #7a9a5a;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                margin-bottom: 52px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .bb-gif-frame {
+                border: 2px solid #c8a44a;
+                border-radius: 8px;
+                overflow: hidden;
+                margin-bottom: 28px;
+                box-shadow: 0 0 32px rgba(200, 164, 74, 0.25);
+                max-width: min(320px, 80vw);
+                position: relative;
+                z-index: 1;
+                line-height: 0;
+            }
+
+            .bb-gif-frame img {
+                width: 100%;
+                display: block;
+            }
+
+            .bb-die {
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(145deg, #3a1a06, #1a0a02);
+                border: 2px solid #c8a44a;
+                border-radius: 11px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                margin-bottom: 28px;
+                box-shadow: 0 0 28px rgba(200, 164, 74, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+                animation: dieRock 0.7s ease-in-out infinite alternate;
+                position: relative;
+                z-index: 1;
+            }
+
+            @keyframes dieRock {
+                from { transform: rotate(-10deg) scale(1); }
+                to   { transform: rotate(10deg) scale(1.08); }
+            }
+
+            .bb-message {
+                font-size: clamp(1rem, 3vw, 1.2rem);
+                font-style: italic;
+                color: #c8a44a;
+                margin-bottom: 36px;
+                min-height: 1.8em;
+                max-width: 420px;
+                line-height: 1.5;
+                animation: msgFadeIn 0.5s ease forwards;
+                position: relative;
+                z-index: 1;
+            }
+
+            @keyframes msgFadeIn {
+                from { opacity: 0; transform: translateY(8px); }
+                to   { opacity: 1; transform: translateY(0); }
+            }
+
+            .bb-progress {
+                width: min(280px, 72vw);
+                height: 3px;
+                background: rgba(200, 164, 74, 0.12);
+                border-radius: 2px;
+                overflow: hidden;
+                position: relative;
+                z-index: 1;
+            }
+
+            .bb-progress-fill {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 45%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, #c8a44a, #f0d070, #c8a44a, transparent);
+                border-radius: 2px;
+                animation: progressSlide 1.8s ease-in-out infinite;
+            }
+
+            @keyframes progressSlide {
+                from { transform: translateX(-100%); }
+                to   { transform: translateX(320%); }
+            }
+        </style>
+
+        <div id="bb-loader">
+            <div class="bb-title">Blood Bowl</div>
+            <div class="bb-subtitle">Action Calculator</div>
+            <div class="bb-gif-frame">
+                <img id="bb-gif" src="" alt="Blood Bowl" />
+            </div>
+            <div class="bb-die" id="bb-die">&#9861;</div>
+            <div class="bb-message" id="bb-message">Praying to Nuffle...</div>
+            <div class="bb-progress">
+                <div class="bb-progress-fill"></div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                var messages = [
+                    "Praying to Nuffle...",
+                    "Bribing the referee...",
+                    "Arguing the call...",
+                    "Oiling the chainsaw...",
+                    "Counting skull faces...",
+                    "Convincing the troll not to eat the ball...",
+                    "Checking if the apothecary is sober...",
+                    "Rerolling for the fourth time...",
+                    "Explaining the rules to the ogre...",
+                    "Finding the ball under the pile of bodies...",
+                    "Negotiating with the angry crowd...",
+                    "Wondering why you always roll ones...",
+                    "Sending off the goblin... again...",
+                    "Consulting the injury table...",
+                    "Polishing trophies... with someone else's blood...",
+                    "Measuring if that really is a 1-inch throw-in...",
+                    "Checking Nuffle's mood today...",
+                    "Convincing your star player it's worth the risk...",
+                    "Rolling three skulls on a two-dice block...",
+                    "Asking the crowd to throw the ball back...",
+                    "Calculating the odds of a Hail Mary Pass...",
+                    "Waiting for the troll to stop being stupid...",
+                    "Hiding the fouls from the referee...",
+                    "Searching for a spare goblin..."
+                ];
+
+                var gifs = [
+                    'https://media.giphy.com/media/tz97Ac7zRIId3knJOb/giphy.gif',
+                    'https://media.giphy.com/media/9doQcscrfheQMS95QJ/giphy.gif',
+                    'https://media.giphy.com/media/uMwMi5F5T1uqdjQMqp/giphy.gif',
+                    'https://media.giphy.com/media/AEElzf0Vl5kBFKMvKK/giphy.gif'
+                ];
+
+                var diceFaces = ['\u2680','\u2681','\u2682','\u2683','\u2684','\u2685'];
+                var dieEl = document.getElementById('bb-die');
+                var msgEl = document.getElementById('bb-message');
+                var gifEl = document.getElementById('bb-gif');
+
+                gifEl.src = gifs[Math.floor(Math.random() * gifs.length)];
+                msgEl.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+                setInterval(function () {
+                    dieEl.textContent = diceFaces[Math.floor(Math.random() * diceFaces.length)];
+                }, 650);
+            })();
+        </script>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+        <a class="dismiss">&#x1F5D9;</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
