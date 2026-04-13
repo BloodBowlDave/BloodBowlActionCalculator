@@ -47,6 +47,13 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
         [Parameter]
         public ActionType? PenultimateActionType { get; set; }
 
+        [Parameter]
+        public ActionType? NextActionType { get; set; }
+
+        private bool IsPuntPass => Action.ActionType == ActionType.Pass
+            && NextActionType != ActionType.Catch
+            && NextActionType != ActionType.Interference;
+
         private Player Player => PlayerAction.Player;
         private Action Action => PlayerAction.Action;
 

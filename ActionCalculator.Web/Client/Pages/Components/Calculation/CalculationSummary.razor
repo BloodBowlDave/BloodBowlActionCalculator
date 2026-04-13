@@ -30,11 +30,12 @@
 
             var index = i;
 
-            <ActionSummary 
+            <ActionSummary
                 PlayerAction="@playerAction"
                 Index="@i"
                 LastActionType="@PreviousActionType(index)"
                 PenultimateActionType="@PenultimateActionType(index)"
+                NextActionType="@NextActionType(index)"
                 RemoveAction="RemoveAction"
                 OnToggleBreakTackle="OnToggleBreakTackle"
                 OnToggleDivingTackle="OnToggleDivingTackle"
@@ -85,5 +86,7 @@
 
     private ActionType? PreviousActionType(int i) => i > 0 ? Calculation.PlayerActions[i - 1].Action.ActionType : null;
 
-    private ActionType? PenultimateActionType(int i) => i > 1 ? Calculation.PlayerActions[i -2].Action.ActionType : null;
+    private ActionType? PenultimateActionType(int i) => i > 1 ? Calculation.PlayerActions[i - 2].Action.ActionType : null;
+
+    private ActionType? NextActionType(int i) => i < Calculation.PlayerActions.Count - 1 ? Calculation.PlayerActions[i + 1].Action.ActionType : null;
 }
