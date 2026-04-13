@@ -77,6 +77,17 @@ h2 {
     pointer-events: none;
 }
 
+@media (max-width: 700px) {
+    .appbar-title {
+        display: none;
+    }
+
+    .season-select {
+        flex: 0 0 95px !important;
+        width: 95px !important;
+    }
+}
+
 .season-select {
     flex: 0 0 120px !important;
     width: 120px !important;
