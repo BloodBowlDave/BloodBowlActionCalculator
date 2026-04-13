@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - bloodbowldave
+name: Build and deploy Blazor WASM to Azure Static Web App
 
 on:
   push:
@@ -10,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: windows-latest
+  build_and_deploy:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -21,36 +18,15 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Publish Blazor WASM client
+        run: dotnet publish ActionCalculator.Web/Client/ActionCalculator.Web.Client.csproj -c Release -o ./published
 
-      - name: dotnet publish
-        run: dotnet publish ActionCalculator.Web/Server/ActionCalculator.Web.Server.csproj -c Release -o ./myapp
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+      - name: Deploy to Azure Static Web App
+        uses: Azure/static-web-apps-deploy@v1
         with:
-          name: .net-app
-          path: ./myapp
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'bloodbowldave'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0F87F5FEE81C4D90890D1306B4F30E33 }}
-          package: .
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: published/wwwroot
+          skip_app_build: true
+          skip_api_build: true
