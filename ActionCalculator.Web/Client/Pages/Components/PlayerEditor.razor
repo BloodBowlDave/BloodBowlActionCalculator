@@ -26,39 +26,39 @@
 
     @if (CurrentPlayer.CanUseSkill(Skills.Loner, Skills.None))
     {
-        <MudNumericField T="int" Min="2" Max="6"
-                         Label="Loner Value"
-                         Value="CurrentPlayer.LonerValue"
-                         ValueChanged="@LonerChanged"
-                         Variant="Variant.Outlined"
-                         Dense="true" />
+        <div class="skill-value-row">
+            <span>Loner</span>
+            <MudNumericField T="int" Min="2" Max="6"
+                             Value="CurrentPlayer.LonerValue"
+                             ValueChanged="@LonerChanged" />
+        </div>
     }
     @if (CurrentPlayer.CanUseSkill(Skills.MightyBlow, Skills.None))
     {
-        <MudNumericField T="int" Min="1" Max="2"
-                         Label="Mighty Blow Value"
-                         Value="CurrentPlayer.MightyBlowValue"
-                         ValueChanged="@MightyBlowChanged"
-                         Variant="Variant.Outlined"
-                         Dense="true" />
+        <div class="skill-value-row">
+            <span>Mighty Blow</span>
+            <MudNumericField T="int" Min="1" Max="2"
+                             Value="CurrentPlayer.MightyBlowValue"
+                             ValueChanged="@MightyBlowChanged" />
+        </div>
     }
     @if (CurrentPlayer.CanUseSkill(Skills.DirtyPlayer, Skills.None))
     {
-        <MudNumericField T="int" Min="1" Max="2"
-                         Label="Dirty Player Value"
-                         Value="CurrentPlayer.DirtyPlayerValue"
-                         ValueChanged="@DirtyPlayerChanged"
-                         Variant="Variant.Outlined"
-                         Dense="true" />
+        <div class="skill-value-row">
+            <span>Dirty Player</span>
+            <MudNumericField T="int" Min="1" Max="2"
+                             Value="CurrentPlayer.DirtyPlayerValue"
+                             ValueChanged="@DirtyPlayerChanged" />
+        </div>
     }
     @if (CurrentPlayer.CanUseSkill(Skills.BreakTackle, Skills.None))
     {
-        <MudNumericField T="int" Min="1" Max="2"
-                         Label="Break Tackle Value"
-                         Value="CurrentPlayer.BreakTackleValue"
-                         ValueChanged="@BreakTackleChanged"
-                         Variant="Variant.Outlined"
-                         Dense="true" />
+        <div class="skill-value-row">
+            <span>Break Tackle</span>
+            <MudNumericField T="int" Min="1" Max="2"
+                             Value="CurrentPlayer.BreakTackleValue"
+                             ValueChanged="@BreakTackleChanged" />
+        </div>
     }
 
 </MudPaper>

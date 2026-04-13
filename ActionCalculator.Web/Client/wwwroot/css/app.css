@@ -160,11 +160,26 @@ h2 {
     margin-top: 8px;
 }
 
-.player-editor .mud-input-number-control {
-    width: 40px;
-    position: relative;
-    top: 5px;
-    right: 2px;
+.player-editor .skill-value-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 0 4px;
+    font-size: 0.875rem;
+}
+
+.player-editor .skill-value-row span {
+    min-width: 90px;
+}
+
+.player-editor .skill-value-row .mud-input-number-control {
+    width: 65px !important;
+    display: inline-flex !important;
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    margin-top: 0 !important;
 }
 
 .calculation-summary .mud-paper {
