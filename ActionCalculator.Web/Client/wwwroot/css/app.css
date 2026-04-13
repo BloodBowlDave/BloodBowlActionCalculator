@@ -69,17 +69,17 @@ h2 {
 
 .mud-input-number-control {
     margin-top: 0 !important;
-    width: 58px;
+    width: 80px;
     display: inline-flex !important;
     margin-left: 3px !important;
 }
 
 .non-rerollable .mud-input-number-control {
-    width: 70px;
+    width: 110px;
 }
 
 .injury-action .mud-input-number-control {
-    width: 90px;
+    width: 100px;
 }
 
 .actions-container .mud-button-outlined, .calculation-results .mud-button-outlined {
