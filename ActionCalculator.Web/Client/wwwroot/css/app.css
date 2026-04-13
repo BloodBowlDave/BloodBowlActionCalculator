@@ -67,6 +67,19 @@ h2 {
     margin: 10px 0 10px 0;
 }
 
+.season-select {
+    width: fit-content !important;
+    min-width: 0 !important;
+    margin-right: 8px;
+}
+
+.season-select .mud-input-control,
+.season-select .mud-input-root,
+.season-select .mud-select-input {
+    min-width: 0 !important;
+    width: auto !important;
+}
+
 .mud-input-number-control {
     margin-top: 0 !important;
     width: 80px;
