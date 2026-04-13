@@ -17,6 +17,7 @@
                Variant="Variant.Outlined"
                Dense="true"
                AnchorOrigin="Origin.BottomCenter"
+               Style="width: 240px"
                MultiSelectionTextFunc="@(selected => selected.Count == 0 ? "None" : string.Join(", ", selected))">
         @foreach (var skill in GetSkills())
         {

@@ -113,6 +113,11 @@ h2 {
     margin-right: 0 !important;
 }
 
+.player-editor {
+    display: inline-block;
+    vertical-align: top;
+}
+
 .player-editor button {
     box-shadow: none;
     height: 25px;
