@@ -67,6 +67,16 @@ h2 {
     margin: 10px 0 10px 0;
 }
 
+.appbar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
 .season-select {
     flex: 0 0 120px !important;
     width: 120px !important;
