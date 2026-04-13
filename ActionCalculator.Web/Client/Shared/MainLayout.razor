@@ -7,10 +7,12 @@
 <link href="https://use.fontawesome.com/releases/v6.1.2/css/all.css" rel="stylesheet">
 
 <MudLayout>
-    <AppBar OnThemeToggled="ToggleTheme"/>
+    <AppBar OnThemeToggled="ToggleTheme" OnSeasonChanged="@(s => _season = s)"/>
 
     <MudMainContent Style="padding-bottom:70px;">
-        @Body
+        <CascadingValue Value="_season" Name="Season">
+            @Body
+        </CascadingValue>
     </MudMainContent>
     
     <MudAppBar Dense="true" Bottom="true" Fixed="true">
@@ -47,14 +49,18 @@
 
 @code {
     private bool _isDarkMode;
-    
+    private string _season = "Season 3";
+
     [Inject]
     public Blazored.LocalStorage.ILocalStorageService LocalStore { get; set; } = null!;
 
     private void ToggleTheme(bool isLightMode) => _isDarkMode = !isLightMode;
-    
+
     protected override async Task OnInitializedAsync()
     {
         _isDarkMode = !await LocalStore.GetItemAsync<bool>("IsLightMode");
+
+        var savedSeason = await LocalStore.GetItemAsync<string>("Season");
+        _season = string.IsNullOrEmpty(savedSeason) ? "Season 3" : savedSeason;
     }
 }

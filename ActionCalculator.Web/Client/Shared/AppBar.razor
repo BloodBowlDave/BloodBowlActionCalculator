@@ -8,6 +8,14 @@
 
     <MudSpacer/>
 
+    <MudSelect T="string" Value="_season" ValueChanged="SeasonChanged"
+               Dense="true" Variant="Variant.Outlined" Margin="Margin.Dense"
+               Style="width: 110px; margin-right: 8px;"
+               AnchorOrigin="Origin.BottomCenter">
+        <MudSelectItem Value="@("Season 2")">Season 2</MudSelectItem>
+        <MudSelectItem Value="@("Season 3")">Season 3</MudSelectItem>
+    </MudSelect>
+
     @if (_isLightMode)
     {
         <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme"/>
