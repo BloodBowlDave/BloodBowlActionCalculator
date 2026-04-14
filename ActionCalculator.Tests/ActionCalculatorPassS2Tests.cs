@@ -46,7 +46,7 @@ namespace ActionCalculator.Tests
                 Assert.Equal((decimal)expected[i], result.Results[i], 5);
             }
 
-            Assert.Equal(playerActionsString + "~S2", calculation.ToString());
+            Assert.Equal(playerActionsString + "~Season 2", calculation.ToString());
         }
     }
 }

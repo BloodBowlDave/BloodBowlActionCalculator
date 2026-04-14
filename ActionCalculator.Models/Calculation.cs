@@ -14,6 +14,6 @@
         public string Season { get; set; } = "Season 3";
 
         public override string ToString() =>
-            PlayerActions.ToString() + (Season == "Season 2" ? "~S2" : "");
+            PlayerActions.ToString() + (Season == "Season 2" ? "~Season 2" : "");
     }
 }
