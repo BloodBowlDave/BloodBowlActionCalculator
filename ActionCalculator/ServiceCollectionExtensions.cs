@@ -53,7 +53,6 @@ namespace ActionCalculator
             services.AddSingleton<LandingStrategy>();
             services.AddSingleton<NonRerollableStrategy>();
             services.AddSingleton<PassStrategy>();
-            services.AddSingleton<PassStrategyS2>();
             services.AddSingleton<PickUpStrategy>();
             services.AddSingleton<FractionalDiceBlockStrategy>();
             services.AddSingleton<RerollableStrategy>();

@@ -48,9 +48,7 @@ namespace ActionCalculator
                 ActionType.Interference => _serviceProvider.GetService<InterferenceStrategy>(),
                 ActionType.Landing => _serviceProvider.GetService<LandingStrategy>(),
                 ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableStrategy>(),
-                ActionType.Pass => season == "Season 2"
-                    ? _serviceProvider.GetService<PassStrategyS2>()
-                    : _serviceProvider.GetService<PassStrategy>(),
+                ActionType.Pass => _serviceProvider.GetService<PassStrategy>(),
                 ActionType.PickUp => _serviceProvider.GetService<PickUpStrategy>(),
                 ActionType.Rush => _serviceProvider.GetService<RushStrategy>(),
                 ActionType.Shadowing => _serviceProvider.GetService<ShadowingStrategy>(),
