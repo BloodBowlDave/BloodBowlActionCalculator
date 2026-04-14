@@ -3,7 +3,7 @@
     <MudItem>
         <MudPaper Class="calculation-results">
             <h4 @onclick="ClearCalculation">
-                @(Calculation.PlayerActions.ToString())
+                @Calculation.ToString()
                 @if (HasPuntPass)
                 {
                     <MudTooltip Text="A pass without a catch is assumed to be a punt and is therefore successful even if inaccurate">

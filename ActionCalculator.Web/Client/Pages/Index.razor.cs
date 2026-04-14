@@ -24,14 +24,22 @@ namespace ActionCalculator.Web.Client.Pages
         [Inject]
         public IValidator<Calculation> CalculationValidator { get; set; } = null!;
 
+        [CascadingParameter(Name = "Season")]
+        public string Season { get; set; } = "Season 3";
+
         private Calculation CurrentCalculation() => _calculations.First();
 
         private Player CurrentPlayer { get; set; }
-        
+
         public Index()
         {
             _calculations.Add(new Calculation(new PlayerActions(), 1));
             CurrentPlayer = new Player();
+        }
+
+        protected override void OnParametersSet()
+        {
+            _calculations[0].Season = Season;
         }
 
         private void AddAction(Models.Actions.Action action)
@@ -77,7 +85,7 @@ namespace ActionCalculator.Web.Client.Pages
             }
             else
             {
-                _calculations.Add(new Calculation(new PlayerActions(), 1));
+                _calculations.Add(new Calculation(new PlayerActions(), 1, Season));
                 CurrentPlayer = new Player();
             }
         }
@@ -93,7 +101,7 @@ namespace ActionCalculator.Web.Client.Pages
         {
             var playerActions = PlayerActionsBuilder.Build(_calculations[index].PlayerActions.ToString());
 
-            _calculations.Add(new Calculation(playerActions, _calculations[index].Rerolls));
+            _calculations.Add(new Calculation(playerActions, _calculations[index].Rerolls, _calculations[index].Season));
         }
 
         private void EditCalculation(int index)
@@ -223,7 +231,7 @@ namespace ActionCalculator.Web.Client.Pages
 
         private IEnumerable<Tuple<int, decimal>> GetResults(Calculation calculation)
         {
-            var key = new Tuple<int, string>(calculation.Rerolls, calculation.PlayerActions.ToString());
+            var key = new Tuple<int, string>(calculation.Rerolls, calculation.ToString());
             CalculationResult result;
 
             if (_resultsLookup.ContainsKey(key))
