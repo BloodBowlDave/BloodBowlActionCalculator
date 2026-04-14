@@ -21,7 +21,7 @@ namespace ActionCalculator
             services.AddSingleton<IActionParserFactory, ActionParserFactory>();
             services.AddSingleton<IActionTypeValidator, ActionTypeValidator>();
             services.AddSingleton<ICalculator, Calculator>();
-            services.AddSingleton<IBrawlerHelper, BrawlerHelper>();
+            services.AddSingleton<IBlockSkillsHelper, BlockSkillsHelper>();
             services.AddSingleton<ID6, D6>();
             services.AddSingleton<IEqualityComparer<decimal>, ProbabilityComparer>();
             services.AddSingleton<IPlayerActionsBuilder, PlayerActionsBuilder>();

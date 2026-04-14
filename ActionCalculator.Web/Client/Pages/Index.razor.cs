@@ -190,6 +190,13 @@ namespace ActionCalculator.Web.Client.Pages
             ((Block)action).UseBrawler = value;
         }
 
+        private void ToggleHatred(Tuple<int, bool> indexAndValue)
+        {
+            var (index, value) = indexAndValue;
+            var action = CurrentCalculation().PlayerActions[index].Action;
+            ((Block)action).UseHatred = value;
+        }
+
         private void TogglePro(Tuple<int, bool> indexAndValue)
         {
             var (index, value) = indexAndValue;

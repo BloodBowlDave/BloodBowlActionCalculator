@@ -97,6 +97,9 @@ namespace ActionCalculator.Tests
         [InlineData("BT2:D3¬,D4", 0, 0.63889)]
         [InlineData("BT2:D3¬,D4", 1, 0.55556, 0.86111)]
         [InlineData("D,I3,L4:D3,D3", 0, 0.90741)]
+        //hatred
+        [InlineData("H:1D3%", 0, 0.58333)]
+        [InlineData("H:1D3%", 1, 0.58333, 0.75000)]
         //catch
         [InlineData("C:C3", 0, 0.88889)]
         //claw

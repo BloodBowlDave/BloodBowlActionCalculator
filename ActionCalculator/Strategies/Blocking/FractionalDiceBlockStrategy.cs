@@ -1,15 +1,17 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Abstractions.Strategies.Blocking;
+
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Blocking
 {
     public class FractionalDiceBlockStrategy : IActionStrategy
     {
         private readonly ICalculator _calculator;
-        private readonly IBrawlerHelper _brawlerHelper;
+        private readonly IBlockSkillsHelper _blockSkillsHelper;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
         private Dictionary<Tuple<bool, int, Skills>, decimal> _outcomes = new();
@@ -24,10 +26,10 @@ namespace ActionCalculator.Strategies.Blocking
         private decimal _proSuccess;
         private decimal _lonerSuccess;
 
-        public FractionalDiceBlockStrategy(ICalculator calculator, IBrawlerHelper brawlerHelper, IProHelper proHelper, ID6 d6)
+        public FractionalDiceBlockStrategy(ICalculator calculator, IBlockSkillsHelper blockSkillsHelper, IProHelper proHelper, ID6 d6)
         {
             _calculator = calculator;
-            _brawlerHelper = brawlerHelper;
+            _blockSkillsHelper = blockSkillsHelper;
             _proHelper = proHelper;
             _d6 = d6;
         }
@@ -64,9 +66,10 @@ namespace ActionCalculator.Strategies.Blocking
             var success = (decimal) Math.Pow((double) successOnOneDie, numberOfDice);
 
             _rollsCount = rolls.Count;
-            _useBrawler = _brawlerHelper.UseBrawler(player, block, r, usedSkills, successOnOneDie, success);
-            _usePro = _proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success);
-            _useBrawlerAndPro = _brawlerHelper.UseBrawlerAndPro(player, block, r, usedSkills, successOnOneDie, success);
+            var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
+            _useBrawler = skillsToUse.Contains(Skills.Brawler);
+            _usePro = skillsToUse.Contains(Skills.Pro);
+            _useBrawlerAndPro = _useBrawler && _proHelper.UsePro(player, block, r, usedSkills, successOnOneDie * successOnOneDie, success);
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
             _outcomes = new Dictionary<Tuple<bool, int, Skills>, decimal>();
             _rerollCount = 0;

@@ -11,12 +11,15 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
     {
         private int Successes { get; set; }
 
+        [CascadingParameter(Name = "Season")]
+        public string Season { get; set; } = "Season 3";
+
         [Parameter]
         public PlayerAction PlayerAction { get; set; } = null!;
 
         [Parameter]
         public int Index { get; set; }
-        
+
         [Parameter]
         public EventCallback<int> RemoveAction { get; set; }
 
@@ -28,6 +31,9 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
         [Parameter]
         public EventCallback<Tuple<int, bool>> OnToggleBrawler { get; set; }
+
+        [Parameter]
+        public EventCallback<Tuple<int, bool>> OnToggleHatred { get; set; }
 
         [Parameter]
         public EventCallback<Tuple<int, bool>> OnTogglePro { get; set; }
@@ -63,6 +69,8 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
         private bool UseBrawler() => ((Block)Action).UseBrawler;
 
+        private bool UseHatred() => ((Block)Action).UseHatred;
+
         private bool UsePro() => Action.UsePro;
 
         private bool RerollInaccurate() => Action.ActionType switch
@@ -85,6 +93,11 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
         private void ToggleBrawler()
         {
             OnToggleBrawler.InvokeAsync(new Tuple<int, bool>(Index, !UseBrawler()));
+        }
+
+        private void ToggleHatred()
+        {
+            OnToggleHatred.InvokeAsync(new Tuple<int, bool>(Index, !UseHatred()));
         }
 
         private void TogglePro()

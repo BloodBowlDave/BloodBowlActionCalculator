@@ -63,6 +63,8 @@ namespace ActionCalculator.Models
         [Description("BI")]
         BlastIt = 134217728,
         [Description("WD")]
-        WhirlingDervish = 268435456
+        WhirlingDervish = 268435456,
+        [Description("H")]
+        Hatred = 536870912
     }
 }

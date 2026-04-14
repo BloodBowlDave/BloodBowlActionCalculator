@@ -37,6 +37,17 @@
                                  ValueChanged="@(ToggleBrawler)"/>
                 </MudTooltip>
             }
+
+            if (Season == "Season 3" && Player.CanUseSkill(Skills.Hatred, Skills.None))
+            {
+                <MudTooltip Text="Hatred will reroll a result of 1 on one die">
+                    <MudCheckBox T="bool"
+                                 Label="Use Hatred"
+                                 Size="Size.Small"
+                                 Value="UseHatred()"
+                                 ValueChanged="@(ToggleHatred)"/>
+                </MudTooltip>
+            }
         }
 
         @if (Action.ActionType == ActionType.Dodge)

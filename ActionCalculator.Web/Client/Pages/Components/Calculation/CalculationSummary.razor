@@ -39,6 +39,7 @@
                 OnToggleBreakTackle="OnToggleBreakTackle"
                 OnToggleDivingTackle="OnToggleDivingTackle"
                 OnToggleBrawler="OnToggleBrawler"
+                OnToggleHatred="OnToggleHatred"
                 OnTogglePro="OnTogglePro"
                 OnToggleRerollInaccurate="OnToggleRerollInaccurate"
                 OnToggleRerollFailure="OnToggleRerollFailure"
@@ -63,10 +64,13 @@
     public EventCallback<Tuple<int, bool>> OnToggleDivingTackle { get; set; } 
 
     [Parameter]
-    public EventCallback<Tuple<int, bool>> OnToggleBrawler { get; set; } 
+    public EventCallback<Tuple<int, bool>> OnToggleBrawler { get; set; }
 
     [Parameter]
-    public EventCallback<Tuple<int, bool>> OnTogglePro { get; set; } 
+    public EventCallback<Tuple<int, bool>> OnToggleHatred { get; set; }
+
+    [Parameter]
+    public EventCallback<Tuple<int, bool>> OnTogglePro { get; set; }
 
     [Parameter]
     public EventCallback<Tuple<int, bool>> OnToggleRerollInaccurate { get; set; } 

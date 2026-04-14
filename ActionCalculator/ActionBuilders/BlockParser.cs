@@ -10,9 +10,10 @@ namespace ActionCalculator.ActionBuilders
 		{
 			var usePro = input.Contains("*");
 			var useBrawler = input.Contains("^");
+			var useHatred = input.Contains("%");
 			var rerollNonCriticalFailure = !input.Contains("'");
 
-			input = input.Replace("*", "").Replace("^", "").Replace("'", "");
+			input = input.Replace("*", "").Replace("^", "").Replace("%", "").Replace("'", "");
 
 			var split = input.Split('D');
 			var numberOfDice = int.Parse(split[0]);
@@ -20,7 +21,7 @@ namespace ActionCalculator.ActionBuilders
 			var numberOfSuccessfulResults = int.Parse(resultsSplit[0]);
 			var numberOfNonCriticalFailures = resultsSplit.Length > 1 ? int.Parse(resultsSplit[1]) : 0;
 			
-            return new Block(numberOfDice, numberOfSuccessfulResults, numberOfNonCriticalFailures, useBrawler, usePro, rerollNonCriticalFailure);
+            return new Block(numberOfDice, numberOfSuccessfulResults, numberOfNonCriticalFailures, useBrawler, usePro, rerollNonCriticalFailure, useHatred);
 		}
     }
 }

@@ -2,8 +2,8 @@
 {
     public class Block : Action
     {
-        public Block(int numberOfDice, int numberOfSuccessfulResults, int numberOfNonCriticalFailures, 
-            bool useBrawler, bool usePro, bool rerollNonCriticalFailure) 
+        public Block(int numberOfDice, int numberOfSuccessfulResults, int numberOfNonCriticalFailures,
+            bool useBrawler, bool usePro, bool rerollNonCriticalFailure, bool useHatred = false)
             : base(ActionType.Block, 0, usePro)
         {
             NumberOfDice = numberOfDice;
@@ -11,15 +11,17 @@
             NumberOfNonCriticalFailures = numberOfNonCriticalFailures;
             UseBrawler = useBrawler;
             RerollNonCriticalFailure = rerollNonCriticalFailure;
+            UseHatred = useHatred;
         }
 
         public bool UseBrawler { get; set; }
+        public bool UseHatred { get; set; }
         public int NumberOfDice { get; }
         public int NumberOfSuccessfulResults { get; set; }
         public int NumberOfNonCriticalFailures { get; }
         public bool RerollNonCriticalFailure { get; }
 
-        public override string ToString() => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}";
+        public override string ToString() => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UseHatred ? "%" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}";
 
         public override string GetDescription() =>
             NumberOfDice switch

@@ -3,14 +3,14 @@ using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Abstractions.Strategies.Blocking;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Blocking
 {
     public class BlockStrategy : IActionStrategy
     {
         private readonly ICalculator _calculator;
-        private readonly IBrawlerHelper _brawlerHelper;
-        private readonly IProHelper _proHelper;
+        private readonly IBlockSkillsHelper _blockSkillsHelper;
         private readonly ID6 _d6;
         private Dictionary<Tuple<bool, int, Skills>, decimal> _outcomes = new();
         private List<int> _successfulValues = new();
@@ -19,16 +19,16 @@ namespace ActionCalculator.Strategies.Blocking
         private int _rerollCount;
         private bool _useBrawler;
         private bool _canUseBrawler;
+        private bool _useHatred;
         private bool _usePro;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
         private decimal _lonerSuccess;
 
-        public BlockStrategy(ICalculator calculator, IBrawlerHelper brawlerHelper, IProHelper proHelper, ID6 d6)
+        public BlockStrategy(ICalculator calculator, IBlockSkillsHelper blockSkillsHelper, ID6 d6)
         {
             _calculator = calculator;
-            _brawlerHelper = brawlerHelper;
-            _proHelper = proHelper;
+            _blockSkillsHelper = blockSkillsHelper;
             _d6 = d6;
         }
 
@@ -62,9 +62,11 @@ namespace ActionCalculator.Strategies.Blocking
             var success = 1 - (decimal)Math.Pow((double)(1 - successOnOneDie), numberOfDice);
 
             _rollsCount = rolls.Count;
-            _useBrawler = _brawlerHelper.UseBrawler(player, block, r, usedSkills, successOnOneDie, success);
+            var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
+            _useBrawler = skillsToUse.Contains(Skills.Brawler);
             _canUseBrawler = player.CanUseSkill(Skills.Brawler, usedSkills);
-            _usePro = _proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success);
+            _useHatred = skillsToUse.Contains(Skills.Hatred);
+            _usePro = skillsToUse.Contains(Skills.Pro);
             _outcomes = new Dictionary<Tuple<bool, int, Skills>, decimal>();
             _rerollCount = 0;
 
@@ -111,6 +113,13 @@ namespace ActionCalculator.Strategies.Blocking
             if (_useBrawler && indexOfBothDown != -1)
             {
                 Brawler(roll, r, indexOfBothDown);
+                return;
+            }
+
+            var indexOfSkull = roll.IndexOf(1);
+            if (_useHatred && indexOfSkull != -1)
+            {
+                Hatred(roll, r, indexOfSkull);
                 return;
             }
 
@@ -191,6 +200,55 @@ namespace ActionCalculator.Strategies.Blocking
             for (var i = 1; i <= 6; i++)
             {
                 var proReroll = new List<int>(brawlerReroll) { [indexOfLowestValue] = i };
+                AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proReroll);
+            }
+        }
+
+        private void Hatred(IReadOnlyCollection<int> roll, int r, int indexOfSkull)
+        {
+            for (var i = 1; i <= 6; i++)
+            {
+                if (_successfulValues.Contains(i))
+                {
+                    AddSuccess(1m / _rollsCount / 6, r, Skills.None);
+                    continue;
+                }
+
+                var hatredReroll = new List<int>(roll) { [indexOfSkull] = i };
+
+                if (!_usePro) { continue; }
+
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, hatredReroll);
+                ProAfterHatred(hatredReroll, r, indexOfSkull);
+            }
+        }
+
+        private void ProAfterHatred(IReadOnlyList<int> hatredReroll, int r, int indexOfSkull)
+        {
+            var indexOfLowestValue = -1;
+            var lowestValue = 99;
+
+            for (var i = 0; i < hatredReroll.Count; i++)
+            {
+                var rollValue = hatredReroll[i];
+
+                if (i == indexOfSkull || rollValue >= lowestValue)
+                {
+                    continue;
+                }
+
+                indexOfLowestValue = i;
+                lowestValue = rollValue;
+            }
+
+            if (indexOfLowestValue == -1)
+            {
+                return;
+            }
+
+            for (var i = 1; i <= 6; i++)
+            {
+                var proReroll = new List<int>(hatredReroll) { [indexOfLowestValue] = i };
                 AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proReroll);
             }
         }

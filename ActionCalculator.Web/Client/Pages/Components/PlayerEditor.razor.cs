@@ -22,7 +22,9 @@ namespace ActionCalculator.Web.Client.Pages.Components
         public EventCallback OnNewPlayer { get; set; }
         
         private IEnumerable<Skills> GetSkills() =>
-            typeof(Skills).ToEnumerable<Skills>().Where(x => x is > 0 and < Skills.DivingTackle);
+            typeof(Skills).ToEnumerable<Skills>()
+                .Where(x => (x is > 0 and < Skills.DivingTackle) || (Season == "Season 3" && x == Skills.Hatred))
+                .OrderBy(x => x.ToString());
 
         private IReadOnlyCollection<Skills> SelectedSkills =>
             GetSkills().Where(s => CurrentPlayer.CanUseSkill(s, Skills.None)).ToList();
