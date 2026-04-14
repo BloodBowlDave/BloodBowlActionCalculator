@@ -74,5 +74,14 @@ namespace ActionCalculator.Web.Client.Pages.Components
             CurrentPlayer.BreakTackleValue = i;
             PlayerChanged();
         }
+
+        protected override void OnParametersSet()
+        {
+            if (Season == "Season 2" && CurrentPlayer.BreakTackleValue > 2)
+            {
+                CurrentPlayer.BreakTackleValue = 2;
+                PlayerChanged();
+            }
+        }
     }
 }
