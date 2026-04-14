@@ -65,6 +65,8 @@ namespace ActionCalculator.Models
         [Description("WD")]
         WhirlingDervish = 268435456,
         [Description("H")]
-        Hatred = 536870912
+        Hatred = 536870912,
+        [Description("LF")]
+        LoneFouler = 1073741824
     }
 }

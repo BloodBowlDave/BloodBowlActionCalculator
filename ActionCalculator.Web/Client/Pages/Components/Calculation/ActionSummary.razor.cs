@@ -48,6 +48,12 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
         public EventCallback<Tuple<int, int>> OnSuccessesChanged { get; set; }
 
         [Parameter]
+        public EventCallback<Tuple<int, int>> OnPushesChanged { get; set; }
+
+        [Parameter]
+        public EventCallback<Tuple<int, int>> OnFrenzyDiceChanged { get; set; }
+
+        [Parameter]
         public ActionType? LastActionType { get; set; }
 
         [Parameter]
@@ -118,6 +124,119 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
         private void SuccessesChanged(int successes)
         {
             OnSuccessesChanged.InvokeAsync(new Tuple<int, int>(Index, successes));
+        }
+
+        private void PushesChanged(int pushes)
+        {
+            OnPushesChanged.InvokeAsync(new Tuple<int, int>(Index, pushes));
+        }
+
+        private void FrenzyDiceChanged(int dice)
+        {
+            OnFrenzyDiceChanged.InvokeAsync(new Tuple<int, int>(Index, dice));
+        }
+
+        private int BlockSuccessesMax() =>
+            PlayerAction.RequiresNonCriticalFailure
+                ? 5
+                : 5 - ((Block)Action).NumberOfNonCriticalFailures;
+
+        private IEnumerable<string> GetActionOptions()
+        {
+            var options = new List<string>();
+
+            if (Action.ActionType == ActionType.Block)
+            {
+                if (Player.CanUseSkill(Skills.Brawler, Skills.None)) options.Add("Use Brawler");
+                if (Season == "Season 3" && Player.CanUseSkill(Skills.Hatred, Skills.None)) options.Add("Use Hatred");
+            }
+
+            if (Action.ActionType == ActionType.Dodge)
+            {
+                if (Player.CanUseSkill(Skills.BreakTackle, Skills.None)) options.Add("Use Break Tackle");
+                options.Add("Diving Tackle");
+            }
+
+            if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
+            {
+                options.Add("Reroll Inaccurate");
+            }
+
+            if (Action.ActionType == ActionType.Dauntless)
+            {
+                options.Add("Reroll Failure");
+            }
+
+            if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None))
+            {
+                options.Add("Use Pro");
+            }
+
+            return options;
+        }
+
+        private IReadOnlyCollection<string> GetSelectedOptions()
+        {
+            var selected = new List<string>();
+
+            if (Action.ActionType == ActionType.Block)
+            {
+                if (Player.CanUseSkill(Skills.Brawler, Skills.None) && UseBrawler()) selected.Add("Use Brawler");
+                if (Season == "Season 3" && Player.CanUseSkill(Skills.Hatred, Skills.None) && UseHatred()) selected.Add("Use Hatred");
+            }
+
+            if (Action.ActionType == ActionType.Dodge)
+            {
+                if (Player.CanUseSkill(Skills.BreakTackle, Skills.None) && BreakTackle()) selected.Add("Use Break Tackle");
+                if (DivingTackle()) selected.Add("Diving Tackle");
+            }
+
+            if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
+            {
+                if (RerollInaccurate()) selected.Add("Reroll Inaccurate");
+            }
+
+            if (Action.ActionType == ActionType.Dauntless)
+            {
+                if (RerollFailure()) selected.Add("Reroll Failure");
+            }
+
+            if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None) && UsePro())
+            {
+                selected.Add("Use Pro");
+            }
+
+            return selected;
+        }
+
+        private void OptionsChanged(IReadOnlyCollection<string> newSelected)
+        {
+            var current = GetSelectedOptions().ToHashSet();
+            var newSet = newSelected.ToHashSet();
+
+            foreach (var added in newSet.Except(current))
+            {
+                ApplyOption(added, true);
+            }
+
+            foreach (var removed in current.Except(newSet))
+            {
+                ApplyOption(removed, false);
+            }
+        }
+
+        private void ApplyOption(string option, bool value)
+        {
+            switch (option)
+            {
+                case "Use Brawler": OnToggleBrawler.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Use Hatred": OnToggleHatred.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Use Break Tackle": OnToggleBreakTackle.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Diving Tackle": OnToggleDivingTackle.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Reroll Inaccurate": OnToggleRerollInaccurate.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Reroll Failure": OnToggleRerollFailure.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Use Pro": OnTogglePro.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+            }
         }
     }
 }

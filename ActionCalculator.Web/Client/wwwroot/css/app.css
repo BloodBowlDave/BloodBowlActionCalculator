@@ -2,7 +2,9 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
 }
+
 
 h1:focus {
     outline: none;
@@ -19,7 +21,7 @@ a, .btn-link {
 }
 
 .content {
-    padding-top: 1.1rem;
+    padding-top: 0.4rem;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -96,19 +98,34 @@ h2 {
     align-self: center;
 }
 
+.mud-main-content {
+    padding-top: 0 !important;
+}
+
 .mud-input-number-control {
     margin-top: 0 !important;
-    width: 80px;
+    width: 65px;
     display: inline-flex !important;
     margin-left: 3px !important;
 }
 
+.block-dice-select {
+    width: 90px;
+    display: inline-block;
+    margin-left: 3px;
+    vertical-align: top;
+}
+
+.narrow-input.mud-input-number-control {
+    width: 45px;
+}
+
 .non-rerollable .mud-input-number-control {
-    width: 110px;
+    width: 85px;
 }
 
 .injury-action .mud-input-number-control {
-    width: 100px;
+    width: 75px;
 }
 
 .actions-container .mud-button-outlined, .calculation-results .mud-button-outlined {
@@ -169,28 +186,30 @@ h2 {
 .action-summary h6 {
     padding-right: 30px;
     position: relative;
+    white-space: normal;
 }
 
 .action-summary h6:hover {
     cursor: pointer;
 }
 
-.action-summary h6 .mud-icon-root {
+.action-summary h6 > .mud-icon-root {
     position: absolute;
     top: 0;
     right: -1px;
     height: 18px;
 }
 
+.action-summary h6 .mud-tooltip-root {
+    vertical-align: middle;
+}
+
 .action-summary .mud-button-root, .player-editor .mud-button-root {
     padding: 0 !important;
 }
 
-.action-summary .mud-checkbox, .player-editor .mud-checkbox {
-    margin-right: 5px;
-}
-
 .player-editor .mud-checkbox {
+    margin-right: 5px;
     margin-top: 8px;
 }
 
@@ -221,8 +240,14 @@ h2 {
     margin-top: 0 !important;
 }
 
+.action-summary {
+    overflow: visible !important;
+}
+
 .calculation-summary .mud-paper {
-    height: 75px;
+    min-height: 75px;
+    overflow: visible !important;
+    white-space: nowrap;
 }
 
 .calculation-summary .player-skills {
@@ -233,13 +258,19 @@ h2 {
     height: 23px;
 }
 
-.action-summary .mud-checkbox {
-    margin-top: 18px;
-}
-
 .action-summary .mud-input-number-control {
+    width: 65px;
     margin-right: 3px;
     margin-top: -2px !important;
+    white-space: normal;
+    vertical-align: middle;
+}
+
+.action-summary .dice-select {
+    width: 110px;
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
 }
 
 .calculation-results h4 {
@@ -275,4 +306,12 @@ h2 {
 
 .player-summary button {
     margin-left: 5px;
+}
+
+.section-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
 }

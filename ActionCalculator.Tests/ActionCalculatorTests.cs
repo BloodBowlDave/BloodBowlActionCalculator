@@ -142,6 +142,9 @@ namespace ActionCalculator.Tests
         [InlineData("F8,E,2", 0, 0.32793)]
         [InlineData("F8,E,A6,2", 0, 0.33115)]
         [InlineData("SG:F8,2", 0, 0.28935)]
+        //lone fouler
+        [InlineData("LF:F8", 0, 0.65972)]
+        [InlineData("DP1:LF:F8", 0, 0.82639)]
         //dauntless
         [InlineData("L2',2D2|1D2", 1, 0.51852, 0.76132)]
         [InlineData("L2,2D2|1D2", 0, 0.51852)]

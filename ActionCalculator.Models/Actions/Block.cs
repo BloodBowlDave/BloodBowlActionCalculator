@@ -16,9 +16,9 @@
 
         public bool UseBrawler { get; set; }
         public bool UseHatred { get; set; }
-        public int NumberOfDice { get; }
+        public int NumberOfDice { get; set; }
         public int NumberOfSuccessfulResults { get; set; }
-        public int NumberOfNonCriticalFailures { get; }
+        public int NumberOfNonCriticalFailures { get; set; }
         public bool RerollNonCriticalFailure { get; }
 
         public override string ToString() => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UseHatred ? "%" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}";

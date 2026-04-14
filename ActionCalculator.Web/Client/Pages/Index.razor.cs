@@ -12,6 +12,10 @@ namespace ActionCalculator.Web.Client.Pages
 
         private readonly Dictionary<Tuple<int, string>, CalculationResult> _resultsLookup = new();
 
+        private bool _showPlayerEditor = true;
+        private bool _showActionsContainer = true;
+        private bool _showCalculation = true;
+
         [Inject] 
         public IPlayerActionsBuilder PlayerActionsBuilder { get; set; } = null!;
 
@@ -124,10 +128,76 @@ namespace ActionCalculator.Web.Client.Pages
             return playerIndex != -1 ? playerIndex + 1 : playerCount + 1;
         }
 
+        private bool IsFrenzyFollowUp(int index)
+        {
+            var pa = CurrentCalculation().PlayerActions[index];
+            return pa.RequiresNonCriticalFailure &&
+                   pa.Action.ActionType == ActionType.Block &&
+                   index > 0 &&
+                   CurrentCalculation().PlayerActions[index - 1].Action.ActionType == ActionType.Block &&
+                   ((Block)CurrentCalculation().PlayerActions[index - 1].Action).NumberOfNonCriticalFailures > 0;
+        }
+
+        private bool IsFrenzyMainBlock(int index)
+        {
+            var pa = CurrentCalculation().PlayerActions[index];
+            return pa.Action.ActionType == ActionType.Block &&
+                   ((Block)pa.Action).NumberOfNonCriticalFailures > 0 &&
+                   index + 1 < CurrentCalculation().PlayerActions.Count &&
+                   IsFrenzyFollowUp(index + 1);
+        }
+
+        private void PushesChanged(Tuple<int, int> indexAndValue)
+        {
+            var (index, value) = indexAndValue;
+            var block = (Block)CurrentCalculation().PlayerActions[index].Action;
+            var wasUsingFrenzy = block.NumberOfNonCriticalFailures > 0;
+
+            block.NumberOfNonCriticalFailures = value;
+
+            if (value > 0 && !wasUsingFrenzy)
+            {
+                var mainPlayerAction = CurrentCalculation().PlayerActions[index];
+                var followUpBlock = new Block(block.NumberOfDice, block.NumberOfSuccessfulResults, 0, false, false, true);
+                var followUpPlayerAction = new PlayerAction(mainPlayerAction.Player, followUpBlock, mainPlayerAction.Depth + 1)
+                {
+                    RequiresNonCriticalFailure = true,
+                    EndOfBranch = true
+                };
+                CurrentCalculation().PlayerActions.Insert(index + 1, followUpPlayerAction);
+            }
+            else if (value == 0 && wasUsingFrenzy)
+            {
+                var nextIndex = index + 1;
+                if (nextIndex < CurrentCalculation().PlayerActions.Count && IsFrenzyFollowUp(nextIndex))
+                {
+                    CurrentCalculation().PlayerActions.RemoveAt(nextIndex);
+                }
+            }
+        }
+
+        private void FrenzyDiceChanged(Tuple<int, int> indexAndValue)
+        {
+            var (index, value) = indexAndValue;
+            ((Block)CurrentCalculation().PlayerActions[index].Action).NumberOfDice = value;
+        }
+
         private void RemoveAction(int index)
         {
+            if (IsFrenzyMainBlock(index))
+            {
+                var followUpIndex = index + 1;
+                var followUp = CurrentCalculation().PlayerActions[followUpIndex];
+                ((Block)followUp.Action).NumberOfNonCriticalFailures = 0;
+                CurrentCalculation().PlayerActions[followUpIndex] = new PlayerAction(followUp.Player, followUp.Action, 0);
+            }
+            else if (IsFrenzyFollowUp(index))
+            {
+                ((Block)CurrentCalculation().PlayerActions[index - 1].Action).NumberOfNonCriticalFailures = 0;
+            }
+
             CurrentCalculation().PlayerActions.RemoveAt(index);
-            
+
             RemoveInvalidPlayerActions();
             
             if (!CurrentCalculation().PlayerActions.Any() && _calculations.Count > 1)

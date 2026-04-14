@@ -2,7 +2,7 @@
     <MudPaper>
         <h5>Armour <u>B</u>reak</h5>
         
-        <MudNumericField T="int" Min="2" Max="11" @bind-Value="_roll" Label=" " Disabled="Disabled"/>
+        <MudNumericField T="int" Min="2" Max="11" @bind-Value="_roll" Label=" " Class="narrow-input" Disabled="Disabled"/>
         <MudButton Variant="Variant.Outlined" OnClick="@(AddAction)" Disabled="Disabled">Add</MudButton>
     </MudPaper>
 </MudItem>

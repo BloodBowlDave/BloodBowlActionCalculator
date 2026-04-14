@@ -1,15 +1,19 @@
-﻿
+
 <MudItem Class="action-summary">
-    <MudPaper Style="min-height: 51px;">
-        
+    <MudPaper Style="min-height: 51px; overflow: visible;">
+
         <h6 @onclick="() => RemoveActionByIndex(Index)">
-            @if (Action.ActionType == ActionType.Block)
+            @if (PlayerAction.RequiresNonCriticalFailure && Action.ActionType == ActionType.Block)
+            {
+                @("Frenzy - ")
+            }
+            else if (Action.ActionType == ActionType.Block)
             {
                 if (LastActionType == ActionType.Dauntless)
                 {
                     @("Dauntless Success - ")
                 }
-                
+
                 if (PenultimateActionType == ActionType.Dauntless)
                 {
                     @("Dauntless Failure - ")
@@ -17,88 +21,62 @@
             }
 
             @(Action.GetDescription())
+            @if (PlayerAction.RequiresNonCriticalFailure && Action.ActionType == ActionType.Block)
+            {
+                <MudTooltip Text="Triggered on a push result">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small"/>
+                </MudTooltip>
+            }
             <MudIcon Icon="@Icons.Material.Filled.Cancel" Size="Size.Small"/>
         </h6>
-        
+
         @if (Action.ActionType == ActionType.Block)
         {
-            <MudNumericField T="int" Min="1" Max="5" 
+            <div class="dice-select">
+                <MudSelect T="int" Label="Dice" Dense="true" Variant="Variant.Text" AnchorOrigin="Origin.BottomLeft"
+                           Value="((Models.Actions.Block)Action).NumberOfDice"
+                           ValueChanged="FrenzyDiceChanged">
+                    <MudSelectItem T="int" Value="-3">1/3 Dice</MudSelectItem>
+                    <MudSelectItem T="int" Value="-2">1/2 Dice</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">1 Die</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">2 Dice</MudSelectItem>
+                    <MudSelectItem T="int" Value="3">3 Dice</MudSelectItem>
+                </MudSelect>
+            </div>
+
+            <MudNumericField T="int" Min="1" Max="@BlockSuccessesMax()"
                              Value="((Models.Actions.Block)PlayerAction.Action).NumberOfSuccessfulResults"
                              ValueChanged="SuccessesChanged"
                              Label="Successes"/>
 
-            if (Player.CanUseSkill(Skills.Brawler, Skills.None))
+            if (!PlayerAction.RequiresNonCriticalFailure)
             {
-                <MudTooltip Text="Brawler will be used over a reroll. If both-down is a successful result, remove the brawler skill">
-                    <MudCheckBox T="bool"
-                                 Label="Use Brawler"
-                                 Size="Size.Small"
-                                 Value="UseBrawler()"
-                                 ValueChanged="@(ToggleBrawler)"/>
-                </MudTooltip>
-            }
-
-            if (Season == "Season 3" && Player.CanUseSkill(Skills.Hatred, Skills.None))
-            {
-                <MudTooltip Text="Hatred will reroll a result of 1 on one die">
-                    <MudCheckBox T="bool"
-                                 Label="Use Hatred"
-                                 Size="Size.Small"
-                                 Value="UseHatred()"
-                                 ValueChanged="@(ToggleHatred)"/>
-                </MudTooltip>
+                <MudNumericField T="int" Min="0" Max="@(5 - ((Models.Actions.Block)Action).NumberOfSuccessfulResults)"
+                                 Value="((Models.Actions.Block)Action).NumberOfNonCriticalFailures"
+                                 ValueChanged="PushesChanged"
+                                 Label="Pushes"/>
             }
         }
 
-        @if (Action.ActionType == ActionType.Dodge)
-        {
-            if (Player.CanUseSkill(Skills.BreakTackle, Skills.None))
-            {
-                <MudTooltip Text="Break tackle will be used over a reroll">
-                    <MudCheckBox T="bool"
-                                 Label="Use Break Tackle"
-                                 Size="Size.Small"
-                                 Value="BreakTackle()"
-                                 ValueChanged="@(ToggleBreakTackle)"/>
-                </MudTooltip>
-            }
-
-            <MudTooltip Text="Diving tackle will be triggered on this dodge if it would cause a reroll or turnover">
-                <MudCheckBox T="bool"
-                             Label="Affected By Diving Tackle"
-                             Size="Size.Small"
-                             Value="DivingTackle()"
-                             ValueChanged="@(ToggleDivingTackle)"/>
-            </MudTooltip>
+        @{
+            var options = GetActionOptions().ToList();
         }
-        
-        @if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
+        @if (options.Any())
         {
-            <MudCheckBox T="bool"
-                         Label="Reroll Inaccurate"
-                         Size="Size.Small"
-                         Value="RerollInaccurate()"
-                         ValueChanged="@(ToggleRerollInaccurate)"/>
-        }
-
-        @if (Action.ActionType is ActionType.Dauntless)
-        {
-            <MudCheckBox T="bool"
-                         Label="Reroll Failure"
-                         Size="Size.Small"
-                         Value="RerollFailure()"
-                         ValueChanged="@(ToggleRerollFailure)"/>
-        }
-        
-        @if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None))
-        {
-            <MudTooltip Text="Pro will be used over a team reroll">
-                <MudCheckBox T="bool"
-                             Label="Use Pro"
-                             Size="Size.Small"
-                             Value="UsePro()"
-                             ValueChanged="@(TogglePro)"/>
-            </MudTooltip>
+            <MudSelect T="string"
+                       MultiSelection="true"
+                       SelectedValues="@GetSelectedOptions()"
+                       SelectedValuesChanged="@((IReadOnlyCollection<string> values) => OptionsChanged(values))"
+                       MultiSelectionTextFunc="@(items => items.Count == 0 ? string.Empty : string.Join(", ", items))"
+                       Dense="true"
+                       Label="Overrides"
+                       Variant="Variant.Text"
+                       AnchorOrigin="Origin.BottomLeft">
+                @foreach (var option in options)
+                {
+                    <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                }
+            </MudSelect>
         }
     </MudPaper>
 </MudItem>

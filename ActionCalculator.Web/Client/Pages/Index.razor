@@ -1,51 +1,90 @@
-﻿@page "/"
+@page "/"
 
 <PageTitle>Dave's Action Calculator</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large">
-    <PlayerEditor 
-        CurrentPlayer="CurrentPlayer" 
-        OnPlayerChanged="PlayerChanged" 
-        OnNewPlayer="NewPlayer"
-        PlayerNumber="PlayerNumber()"/>
-    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
 
-    <ActionsContainer 
-        OnAddAction="AddAction" 
-        Calculation="_calculations[0]"/>
-    
-    <CalculationSummary 
-        Calculation="_calculations[0]" 
-        CurrentPlayerId="CurrentPlayer.Id"
-        RemoveAction="RemoveAction"
-        OnToggleBreakTackle="ToggleBreakTackle"
-        OnToggleDivingTackle="ToggleDivingTackle"
-        OnToggleBrawler="ToggleBrawler"
-        OnToggleHatred="ToggleHatred"
-        OnTogglePro="TogglePro"
-        OnToggleRerollInaccurate="ToggleRerollInaccurate"
-        OnToggleRerollFailure="ToggleRerollFailure"
-        OnSuccessesChanged="SuccessesChanged"
-        OnEditPlayer="EditPlayer"/>
+    <div class="section-toggle">
+        <span>Player</span>
+        <MudIconButton Icon="@(_showPlayerEditor ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
+                       Size="Size.Small" OnClick="@(() => _showPlayerEditor = !_showPlayerEditor)"/>
+    </div>
 
-    <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
-    
-    @if (_calculations.Any(x => CalculationValidator.Validate(x).IsValid))
+    @if (_showPlayerEditor)
     {
-        <h4>Results</h4>
+        <PlayerEditor
+            CurrentPlayer="CurrentPlayer"
+            OnPlayerChanged="PlayerChanged"
+            OnNewPlayer="NewPlayer"
+            PlayerNumber="PlayerNumber()"/>
     }
 
-    <MudGrid Spacing="1">
-        @for (var i = 0; i < _calculations.Count; i++)
+    <MudDivider Style="Margin:6px 0 6px 0" DividerType="DividerType.Middle"/>
+
+    <div class="section-toggle">
+        <span>Actions</span>
+        <MudIconButton Icon="@(_showActionsContainer ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
+                       Size="Size.Small" OnClick="@(() => _showActionsContainer = !_showActionsContainer)"/>
+    </div>
+
+    @if (_showActionsContainer)
+    {
+        <ActionsContainer
+            OnAddAction="AddAction"
+            Calculation="_calculations[0]"/>
+    }
+
+    @if (_calculations[0].PlayerActions.Any())
+    {
+    <MudDivider Style="Margin:6px 0 6px 0" DividerType="DividerType.Middle"/>
+
+    <div class="section-toggle">
+        <span>Calculation</span>
+        <MudIconButton Icon="@(_showCalculation ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
+                       Size="Size.Small" OnClick="@(() => _showCalculation = !_showCalculation)"/>
+    </div>
+    }
+
+    @if (_showCalculation && _calculations[0].PlayerActions.Any())
+    {
+        <CalculationSummary
+            Calculation="_calculations[0]"
+            CurrentPlayerId="CurrentPlayer.Id"
+            RemoveAction="RemoveAction"
+            OnToggleBreakTackle="ToggleBreakTackle"
+            OnToggleDivingTackle="ToggleDivingTackle"
+            OnToggleBrawler="ToggleBrawler"
+            OnToggleHatred="ToggleHatred"
+            OnTogglePro="TogglePro"
+            OnToggleRerollInaccurate="ToggleRerollInaccurate"
+            OnToggleRerollFailure="ToggleRerollFailure"
+            OnSuccessesChanged="SuccessesChanged"
+            OnPushesChanged="PushesChanged"
+            OnFrenzyDiceChanged="FrenzyDiceChanged"
+            OnEditPlayer="EditPlayer"/>
+    }
+
+    @if (_calculations.Any(x => CalculationValidator.Validate(x).IsValid))
+    {
+        <MudDivider Style="Margin:6px 0 6px 0" DividerType="DividerType.Middle"/>
+
+        @if (_calculations.Count > 1)
         {
-            <CalculationResults
-                Calculation="_calculations[i]"
-                CalculationIndex="i" 
-                Results="GetResults(_calculations[i]).ToList()"
-                OnSaveCalculation="SaveCalculation"
-                OnRerollsChanged="RerollsChanged"
-                OnClearCalculation="ClearCalculation"
-                OnEditCalculation="EditCalculation"/>
+            <h4>Results</h4>
         }
-    </MudGrid>
+
+        <MudGrid Spacing="1">
+            @for (var i = 0; i < _calculations.Count; i++)
+            {
+                <CalculationResults
+                    Calculation="_calculations[i]"
+                    CalculationIndex="i"
+                    Results="GetResults(_calculations[i]).ToList()"
+                    OnSaveCalculation="SaveCalculation"
+                    OnRerollsChanged="RerollsChanged"
+                    OnClearCalculation="ClearCalculation"
+                    OnEditCalculation="EditCalculation"/>
+            }
+        </MudGrid>
+    }
 </MudContainer>

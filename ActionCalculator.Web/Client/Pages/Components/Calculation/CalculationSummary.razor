@@ -43,9 +43,11 @@
                 OnTogglePro="OnTogglePro"
                 OnToggleRerollInaccurate="OnToggleRerollInaccurate"
                 OnToggleRerollFailure="OnToggleRerollFailure"
-                OnSuccessesChanged="OnSuccessesChanged"/>
+                OnSuccessesChanged="OnSuccessesChanged"
+                OnPushesChanged="OnPushesChanged"
+                OnFrenzyDiceChanged="OnFrenzyDiceChanged"/>
         }
-        
+
     </MudGrid>
 }
 
@@ -79,7 +81,13 @@
     public EventCallback<Tuple<int, bool>> OnToggleRerollFailure { get; set; } 
 
     [Parameter]
-    public EventCallback<Tuple<int, int>> OnSuccessesChanged { get; set; } 
+    public EventCallback<Tuple<int, int>> OnSuccessesChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<Tuple<int, int>> OnPushesChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<Tuple<int, int>> OnFrenzyDiceChanged { get; set; }
 
     [Parameter]
     public EventCallback<int> RemoveAction { get; set; }

@@ -23,7 +23,7 @@ namespace ActionCalculator.Web.Client.Pages.Components
         
         private IEnumerable<Skills> GetSkills() =>
             typeof(Skills).ToEnumerable<Skills>()
-                .Where(x => (x is > 0 and < Skills.DivingTackle) || (Season == "Season 3" && x == Skills.Hatred))
+                .Where(x => (x is > 0 and < Skills.DivingTackle) || (Season == "Season 3" && (x == Skills.Hatred || x == Skills.LoneFouler)))
                 .OrderBy(x => x.ToString());
 
         private IReadOnlyCollection<Skills> SelectedSkills =>
