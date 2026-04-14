@@ -16,7 +16,15 @@
                 <MudSelectItem T="int" Value="3">3 Dice</MudSelectItem>
             </MudSelect>
         </div>
-        <MudNumericField T="int" Min="1" Max="5" @bind-Value="_numberOfSuccesses" Label="Successes" Disabled="Disabled"/>
+        <div class="successes-field">
+            <span class="successes-label">
+                Successes
+                <MudTooltip Text="Successes refers to the number of sides on a single die that would be considered a success" Placement="Placement.Top">
+                    <MudIcon Icon="@Icons.Material.Outlined.Info" Style="font-size: 11px; vertical-align: middle; opacity: 0.6; cursor: help;"/>
+                </MudTooltip>
+            </span>
+            <MudNumericField T="int" Min="1" Max="5" @bind-Value="_numberOfSuccesses" Disabled="Disabled"/>
+        </div>
         <MudButton Variant="Variant.Outlined" OnClick="AddAction" Disabled="Disabled">Add</MudButton>
     </MudPaper>
 </MudItem>

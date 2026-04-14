@@ -116,6 +116,20 @@ h2 {
     vertical-align: top;
 }
 
+.successes-field {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 3px;
+}
+
+.successes-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--mud-palette-text-secondary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
 .narrow-input.mud-input-number-control {
     width: 45px;
 }
@@ -195,7 +209,8 @@ h2 {
 
 .action-summary h6 > .mud-icon-root {
     position: absolute;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     right: -1px;
     height: 18px;
 }
