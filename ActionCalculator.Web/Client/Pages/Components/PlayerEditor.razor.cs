@@ -6,7 +6,10 @@ namespace ActionCalculator.Web.Client.Pages.Components
 {
     public partial class PlayerEditor
     {
-        [Parameter] 
+        [CascadingParameter(Name = "Season")]
+        public string Season { get; set; } = "Season 3";
+
+        [Parameter]
         public Player CurrentPlayer { get; set; } = null!;
 
         [Parameter]

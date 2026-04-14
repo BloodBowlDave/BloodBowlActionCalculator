@@ -82,6 +82,10 @@ namespace ActionCalculator.Tests
         [InlineData("B:3D1", 0, 0.46836)]
         [InlineData("B:3D1", 1, 0.42130, 0.66510)]
         //break tackle
+        [InlineData("BT3:D5", 0, 0.83333)]
+        [InlineData("BT3:D7", 0, 0.50000)]
+        [InlineData("BT3:D5,D4", 0, 0.52778)]
+        [InlineData("BT3:D5,D4", 1, 0.52778, 0.78704)]
         [InlineData("BT1:D3\",D4\"", 2, 0.16667, 0.38889, 0.44444)]
         [InlineData("BT1:D4\"", 1, 0.33333, 0.55556)]
         [InlineData("BT1:D5", 0, 0.50000)]
@@ -90,8 +94,8 @@ namespace ActionCalculator.Tests
         [InlineData("BT1:D5\",D4\"", 0, 0.05556)]
         [InlineData("BT1:D7", 0, 0.16667)]
         [InlineData("BT2:D5,D4", 1, 0.44444, 0.72222)]
-        [InlineData("BT2:D3¬,D4", 0, 0.63889)]
-        [InlineData("BT2:D3¬,D4", 1, 0.55556, 0.86111)]
+        [InlineData("BT2:D3Â¬,D4", 0, 0.63889)]
+        [InlineData("BT2:D3Â¬,D4", 1, 0.55556, 0.86111)]
         [InlineData("D,I3,L4:D3,D3", 0, 0.90741)]
         //catch
         [InlineData("C:C3", 0, 0.88889)]

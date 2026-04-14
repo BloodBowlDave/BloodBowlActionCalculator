@@ -57,7 +57,7 @@
         {
             <div class="skill-value-row">
                 <span>Break Tackle</span>
-                <MudNumericField T="int" Min="1" Max="2"
+                <MudNumericField T="int" Min="1" Max="@(Season == "Season 2" ? 2 : 3)"
                                  Value="CurrentPlayer.BreakTackleValue"
                                  ValueChanged="@BreakTackleChanged" />
             </div>
