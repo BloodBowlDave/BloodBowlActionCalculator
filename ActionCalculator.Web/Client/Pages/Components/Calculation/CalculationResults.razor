@@ -4,6 +4,14 @@
         <MudPaper Class="calculation-results">
             <h4 @onclick="ClearCalculation">
                 @(Calculation.PlayerActions.ToString())
+                @if (HasPuntPass)
+                {
+                    <MudTooltip Text="A pass without a catch is assumed to be a punt and is therefore successful even if inaccurate">
+                        <span @onclick:stopPropagation="true" style="vertical-align: middle;">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Style="cursor: help; opacity: 0.7;"/>
+                        </span>
+                    </MudTooltip>
+                }
                 <MudIcon Icon="@Icons.Material.Filled.Cancel"/>
             </h4>
         
@@ -79,4 +87,11 @@
     {
         OnEditCalculation.InvokeAsync(CalculationIndex);
     }
+
+    private bool HasPuntPass => Calculation.PlayerActions
+        .Select((pa, i) => new { pa, i })
+        .Any(x => x.pa.Action.ActionType == ActionType.Pass
+            && (x.i == Calculation.PlayerActions.Count - 1
+                || (Calculation.PlayerActions[x.i + 1].Action.ActionType != ActionType.Catch
+                    && Calculation.PlayerActions[x.i + 1].Action.ActionType != ActionType.Interference)));
 }
