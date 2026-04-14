@@ -206,7 +206,7 @@ namespace ActionCalculator
 
         private void Execute(PlayerAction playerAction, decimal p, int r, int i, Skills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
         {
-            var actionStrategy = _strategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure);
+            var actionStrategy = _strategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure, _calculation.Season);
             actionStrategy.Execute(p, r, i, playerAction, usedSkills, nonCriticalFailure);
         }
 
