@@ -446,6 +446,6 @@ namespace ActionCalculator.Models
             _byStarPlayer.TryGetValue(starPlayer, out var teams) ? teams : Array.Empty<Team>();
 
         public static StarPlayerRule GetRule(StarPlayer starPlayer) =>
-            StarPlayerRules.ByStarPlayer[starPlayer.GetDescriptionFromValue()];
+            StarPlayerRules.ByStarPlayer[starPlayer];
     }
 }

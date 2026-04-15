@@ -1,4 +1,4 @@
 namespace ActionCalculator.Models
 {
-    public record StarPlayerRule(string StarPlayer, string RuleName, string Description, StarPlayerSkill Skill, IReadOnlyList<string> Skills);
+    public record StarPlayerRule(StarPlayer StarPlayer, string RuleName, string Description, StarPlayerSkill Skill, IReadOnlyList<string> Skills);
 }
