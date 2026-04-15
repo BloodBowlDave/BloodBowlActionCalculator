@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace ActionCalculator.Utilities
 {
@@ -45,6 +46,9 @@ namespace ActionCalculator.Utilities
                 .Description ?? string.Empty;
 
         public static bool Contains<T>(this T flags, T value) where T : Enum => flags.HasFlag(value);
+
+        public static string ToDisplayName(this Enum value) =>
+            Regex.Replace(value.ToString(), "(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
 
         public static bool HasAttribute<TAttribute>(this Enum value) where TAttribute : Attribute =>
             value.GetType()
