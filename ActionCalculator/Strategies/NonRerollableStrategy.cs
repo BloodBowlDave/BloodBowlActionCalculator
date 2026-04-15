@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var action = (NonRerollable) playerAction.Action;
@@ -25,14 +25,14 @@ namespace ActionCalculator.Strategies
             var denominator = action.Denominator;
 
             var success = denominator == 12 ? _d6.Success(2, roll) : (decimal)roll / denominator;
-            
+
             var failure = 1 - success;
 
             _calculator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
 
-            if (player.CanUseSkill(Skills.WhirlingDervish, usedSkills) && !usedSkills.Contains(Skills.WhirlingDervish) && denominator == 6)
+            if (player.CanUseSkill(CalculatorSkills.WhirlingDervish, usedSkills) && !usedSkills.Contains(CalculatorSkills.WhirlingDervish) && denominator == 6)
             {
-                _calculator.Resolve(p * failure * success, r, i, usedSkills | Skills.WhirlingDervish);
+                _calculator.Resolve(p * failure * success, r, i, usedSkills | CalculatorSkills.WhirlingDervish);
             }
         }
     }

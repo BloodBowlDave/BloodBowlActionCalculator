@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies.Movement
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var dodge = (Dodge) playerAction.Action;
@@ -28,10 +28,10 @@ namespace ActionCalculator.Strategies.Movement
             var failure = 1 - success;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
-            var useDivingTackle = dodge.UseDivingTackle && !usedSkills.Contains(Skills.DivingTackle);
+            var useDivingTackle = dodge.UseDivingTackle && !usedSkills.Contains(CalculatorSkills.DivingTackle);
             var useBreakTackleBeforeReroll = UseBreakTackleBeforeReroll(canUseSkill, dodge, r, usedSkills);
             var successIncludingBreakTackle = SuccessAfterModifiers(dodge, useDivingTackle, useBreakTackleBeforeReroll ? player.BreakTackleValue : 0);
-            
+
             var failureWithDivingTackle = 0m;
             if (useDivingTackle)
             {
@@ -46,7 +46,7 @@ namespace ActionCalculator.Strategies.Movement
 
             if (useBreakTackleBeforeReroll)
             {
-                _calculator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | Skills.BreakTackle);
+                _calculator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | CalculatorSkills.BreakTackle);
             }
             else if (CanUseBreakTackle(canUseSkill, usedSkills))
             {
@@ -54,31 +54,31 @@ namespace ActionCalculator.Strategies.Movement
                 successUsingBreakTackle = successIncludingBreakTackle - success;
             }
 
-            if (canUseSkill(Skills.Dodge, usedSkills))
+            if (canUseSkill(CalculatorSkills.Dodge, usedSkills))
             {
-                DodgeReroll(p, r, i, usedSkills | Skills.Dodge, failure, success, successUsingBreakTackle, failureWithDivingTackle);
+                DodgeReroll(p, r, i, usedSkills | CalculatorSkills.Dodge, failure, success, successUsingBreakTackle, failureWithDivingTackle);
                 return;
             }
 
             if (_proHelper.UsePro(player, dodge, r, usedSkills, success, success))
             {
-                DodgeReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, failure, success, successUsingBreakTackle, failureWithDivingTackle);
+                DodgeReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, failure, success, successUsingBreakTackle, failureWithDivingTackle);
                 return;
             }
             
             DodgeReroll(p * lonerSuccess, r - 1, i, usedSkills, failure, success, successUsingBreakTackle, failureWithDivingTackle);
         }
 
-        private static bool UseBreakTackleBeforeReroll(Func<Skills, Skills, bool> canUseSkill, Dodge dodge, int r, Skills usedSkills) =>
+        private static bool UseBreakTackleBeforeReroll(Func<CalculatorSkills, CalculatorSkills, bool> canUseSkill, Dodge dodge, int r, CalculatorSkills usedSkills) =>
             CanUseBreakTackle(canUseSkill, usedSkills) && (dodge.UseBreakTackle || !PlayerCanRerollDodge(canUseSkill, usedSkills, r));
 
-        private static bool PlayerCanRerollDodge(Func<Skills, Skills, bool> canUseSkill, Skills usedSkills, int r) =>
-            canUseSkill(Skills.Dodge, usedSkills)
-                || canUseSkill(Skills.Pro, usedSkills)
+        private static bool PlayerCanRerollDodge(Func<CalculatorSkills, CalculatorSkills, bool> canUseSkill, CalculatorSkills usedSkills, int r) =>
+            canUseSkill(CalculatorSkills.Dodge, usedSkills)
+                || canUseSkill(CalculatorSkills.Pro, usedSkills)
                 || r > 0;
-        
-        private static bool CanUseBreakTackle(Func<Skills, Skills, bool> canUseSkill, Skills usedSkills) =>
-            !usedSkills.Contains(Skills.BreakTackle) && (canUseSkill(Skills.BreakTackle, usedSkills) || canUseSkill(Skills.Incorporeal, usedSkills));
+
+        private static bool CanUseBreakTackle(Func<CalculatorSkills, CalculatorSkills, bool> canUseSkill, CalculatorSkills usedSkills) =>
+            !usedSkills.Contains(CalculatorSkills.BreakTackle) && (canUseSkill(CalculatorSkills.BreakTackle, usedSkills) || canUseSkill(CalculatorSkills.Incorporeal, usedSkills));
 
         private decimal SuccessAfterModifiers(Action dodge, bool useDivingTackle, int breakTackleValue)
         {
@@ -86,17 +86,17 @@ namespace ActionCalculator.Strategies.Movement
             return _d6.Success(1, roll);
         }
 
-        private void DodgeReroll(decimal p, int r, int i, Skills usedSkills,
+        private void DodgeReroll(decimal p, int r, int i, CalculatorSkills usedSkills,
             decimal failure, decimal success, decimal useBreakTackle, decimal useDivingTackle)
         {
             DodgeReroll(p, r, i, usedSkills, failure, success, useDivingTackle);
-            DodgeReroll(p, r, i, usedSkills | Skills.BreakTackle, failure, useBreakTackle, useDivingTackle);
+            DodgeReroll(p, r, i, usedSkills | CalculatorSkills.BreakTackle, failure, useBreakTackle, useDivingTackle);
         }
 
-        private void DodgeReroll(decimal p, int r, int i, Skills usedSkills, decimal failure, decimal success, decimal useDivingTackle)
+        private void DodgeReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal failure, decimal success, decimal useDivingTackle)
         {
             _calculator.Resolve(p * failure * success, r, i, usedSkills);
-            _calculator.Resolve(p * useDivingTackle * success, r, i, usedSkills | Skills.DivingTackle);
+            _calculator.Resolve(p * useDivingTackle * success, r, i, usedSkills | CalculatorSkills.DivingTackle);
         }
     }
 }

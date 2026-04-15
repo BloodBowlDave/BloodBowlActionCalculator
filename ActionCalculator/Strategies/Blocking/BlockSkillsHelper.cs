@@ -15,18 +15,18 @@ namespace ActionCalculator.Strategies.Blocking
             _proHelper = proHelper;
         }
 
-        public Skills SkillsToUse(Player player, Block block, int r, Skills usedSkills, decimal successOnOneDie, decimal success)
+        public CalculatorSkills SkillsToUse(Player player, Block block, int r, CalculatorSkills usedSkills, decimal successOnOneDie, decimal success)
         {
-            var result = Skills.None;
-            if (UseBrawler(player, block, r, usedSkills, successOnOneDie, success)) result |= Skills.Brawler;
-            if (UseHatred(player, block, r, usedSkills, successOnOneDie, success)) result |= Skills.Hatred;
-            if (_proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success)) result |= Skills.Pro;
+            var result = CalculatorSkills.None;
+            if (UseBrawler(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Brawler;
+            if (UseHatred(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Hatred;
+            if (_proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Pro;
             return result;
         }
 
-        private bool UseBrawler(Player player, Block block, int r, Skills usedSkills, decimal successOnOneDie, decimal success)
+        private bool UseBrawler(Player player, Block block, int r, CalculatorSkills usedSkills, decimal successOnOneDie, decimal success)
         {
-            if (!player.CanUseSkill(Skills.Brawler, usedSkills))
+            if (!player.CanUseSkill(CalculatorSkills.Brawler, usedSkills))
             {
                 return false;
             }
@@ -36,9 +36,9 @@ namespace ActionCalculator.Strategies.Blocking
                    || successOnOneDie >= success * player.LonerSuccess();
         }
 
-        private bool UseHatred(Player player, Block block, int r, Skills usedSkills, decimal successOnOneDie, decimal success)
+        private bool UseHatred(Player player, Block block, int r, CalculatorSkills usedSkills, decimal successOnOneDie, decimal success)
         {
-            if (!player.CanUseSkill(Skills.Hatred, usedSkills))
+            if (!player.CanUseSkill(CalculatorSkills.Hatred, usedSkills))
             {
                 return false;
             }

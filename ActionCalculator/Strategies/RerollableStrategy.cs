@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var action = playerAction.Action;
@@ -32,7 +32,7 @@ namespace ActionCalculator.Strategies
 
             if (_proHelper.UsePro(player, action, r, usedSkills, success, success))
             {
-                _calculator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
+                _calculator.Resolve(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro);
                 return;
             }
         

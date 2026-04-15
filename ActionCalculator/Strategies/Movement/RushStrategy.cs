@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.Movement
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var rush = playerAction.Action;
@@ -30,15 +30,15 @@ namespace ActionCalculator.Strategies.Movement
 
             p *= failure * success;
 
-            if (canUseSkill(Skills.SureFeet, usedSkills))
+            if (canUseSkill(CalculatorSkills.SureFeet, usedSkills))
             {
-                _calculator.Resolve(p, r, i, usedSkills | Skills.SureFeet);
+                _calculator.Resolve(p, r, i, usedSkills | CalculatorSkills.SureFeet);
                 return;
             }
 
             if (_proHelper.UsePro(player, rush, r, usedSkills, success, success))
             {
-                _calculator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
+                _calculator.Resolve(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro);
                 return;
             }
         

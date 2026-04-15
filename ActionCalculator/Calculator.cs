@@ -33,13 +33,13 @@ namespace ActionCalculator
             _calculation = calculation;
             _results = new decimal[calculation.Rerolls * 2 + 1];
 
-            Resolve(1m, calculation.Rerolls, -1, Skills.None);
+            Resolve(1m, calculation.Rerolls, -1, CalculatorSkills.None);
             AggregateResults(_results);
 
             return new CalculationResult(_results.Where(x => x > 0).ToArray());
         }
 
-        public void Resolve(decimal p, int r, int i, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Resolve(decimal p, int r, int i, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             if (p == 0 || r < 0)
             {
@@ -174,8 +174,8 @@ namespace ActionCalculator
             return -1;
         }
 
-        private static Skills GetUsedSkills(Guid? previousPlayerId, Guid playerId, Skills usedSkills) =>
-            previousPlayerId != playerId ? usedSkills & (Skills.DivingTackle | Skills.BlastIt | Skills.CloudBurster) : usedSkills;
+        private static CalculatorSkills GetUsedSkills(Guid? previousPlayerId, Guid playerId, CalculatorSkills usedSkills) =>
+            previousPlayerId != playerId ? usedSkills & (CalculatorSkills.DivingTackle | CalculatorSkills.BlastIt | CalculatorSkills.CloudBurster) : usedSkills;
 
         private int GetNextPlayerActionIndexOnMainBranch(PlayerAction? previousPlayerAction, int i)
         {
@@ -204,13 +204,13 @@ namespace ActionCalculator
                 _ => false
             };
 
-        private void Execute(PlayerAction playerAction, decimal p, int r, int i, Skills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
+        private void Execute(PlayerAction playerAction, decimal p, int r, int i, CalculatorSkills usedSkills, ActionType? previousActionType, bool nonCriticalFailure)
         {
             var actionStrategy = _strategyFactory.GetActionStrategy(playerAction.Action, this, previousActionType, nonCriticalFailure, _calculation.Season);
             actionStrategy.Execute(p, r, i, playerAction, usedSkills, nonCriticalFailure);
         }
 
-        private void WriteResult(decimal p, int r, Skills usedSkills, ActionType? previousActionType)
+        private void WriteResult(decimal p, int r, CalculatorSkills usedSkills, ActionType? previousActionType)
         {
             Console.WriteLine($"Rerolls:{_calculation.Rerolls} P:{p:0.00000} R:{r} Action:{previousActionType} UsedSkills:{usedSkills}");
 

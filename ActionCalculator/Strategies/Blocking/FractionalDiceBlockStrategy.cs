@@ -14,7 +14,7 @@ namespace ActionCalculator.Strategies.Blocking
         private readonly IBlockSkillsHelper _blockSkillsHelper;
         private readonly IProHelper _proHelper;
         private readonly ID6 _d6;
-        private Dictionary<Tuple<bool, int, Skills>, decimal> _outcomes = new();
+        private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> _outcomes = new();
         private List<int> _successfulValues = new();
         private List<int> _nonCriticalFailureValues = new();
         private int _rollsCount;
@@ -34,7 +34,7 @@ namespace ActionCalculator.Strategies.Blocking
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             foreach (var outcome in GetOutcomes(r, playerAction, usedSkills))
             {
@@ -44,7 +44,7 @@ namespace ActionCalculator.Strategies.Blocking
             }
         }
 
-        private Dictionary<Tuple<bool, int, Skills>, decimal> GetOutcomes(int r, PlayerAction playerAction, Skills usedSkills)
+        private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> GetOutcomes(int r, PlayerAction playerAction, CalculatorSkills usedSkills)
         {
             var player = playerAction.Player;
             _proSuccess = player.ProSuccess;
@@ -67,11 +67,11 @@ namespace ActionCalculator.Strategies.Blocking
 
             _rollsCount = rolls.Count;
             var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
-            _useBrawler = skillsToUse.Contains(Skills.Brawler);
-            _usePro = skillsToUse.Contains(Skills.Pro);
+            _useBrawler = skillsToUse.Contains(CalculatorSkills.Brawler);
+            _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
             _useBrawlerAndPro = _useBrawler && _proHelper.UsePro(player, block, r, usedSkills, successOnOneDie * successOnOneDie, success);
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
-            _outcomes = new Dictionary<Tuple<bool, int, Skills>, decimal>();
+            _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
 
             foreach (var roll in rolls)
@@ -83,7 +83,7 @@ namespace ActionCalculator.Strategies.Blocking
                 switch (failureCount)
                 {
                     case 0:
-                        AddSuccess(1m / _rollsCount, r, Skills.None);
+                        AddSuccess(1m / _rollsCount, r, CalculatorSkills.None);
                         continue;
                     case 1:
                         OneFailure(roll, r, nonCriticalFailureCount, indexOfBothDown);
@@ -99,7 +99,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             foreach (var reroll in rolls)
             {
-                AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, Skills.None, reroll);
+                AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, CalculatorSkills.None, reroll);
             }
 
             return _outcomes;
@@ -109,7 +109,7 @@ namespace ActionCalculator.Strategies.Blocking
         {
             if (nonCriticalFailureCount == 1 && !_rerollNonCriticalFailure)
             {
-                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
+                AddNonCriticalFailure(1m / _rollsCount, r, CalculatorSkills.None);
                 return;
             }
 
@@ -127,11 +127,11 @@ namespace ActionCalculator.Strategies.Blocking
 
             if (r == 0)
             {
-                AddOutcome(1m / _rollsCount, r, Skills.None, roll);
+                AddOutcome(1m / _rollsCount, r, CalculatorSkills.None, roll);
                 return;
             }
 
-            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, CalculatorSkills.None, roll);
 
             _rerollCount++;
         }
@@ -142,32 +142,32 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 if (_successfulValues.Contains(i))
                 {
-                    AddSuccess(1m / _rollsCount / 6, r, Skills.None);
+                    AddSuccess(1m / _rollsCount / 6, r, CalculatorSkills.None);
                     continue;
                 }
 
                 if (_nonCriticalFailureValues.Contains(i))
                 {
-                    AddNonCriticalFailure(1m / _rollsCount / 6, r, Skills.None);
+                    AddNonCriticalFailure(1m / _rollsCount / 6, r, CalculatorSkills.None);
                 }
             }
         }
 
         private void Pro(IReadOnlyCollection<int> roll, int r)
         {
-            AddOutcome((1 - _proSuccess) / _rollsCount, r, Skills.Pro, roll);
+            AddOutcome((1 - _proSuccess) / _rollsCount, r, CalculatorSkills.Pro, roll);
 
             for (var i = 2; i <= 6; i++)
             {
                 if (_successfulValues.Contains(i))
                 {
-                    AddSuccess(_proSuccess / _rollsCount / 6, r, Skills.Pro);
+                    AddSuccess(_proSuccess / _rollsCount / 6, r, CalculatorSkills.Pro);
                     continue;
                 }
 
                 if (_nonCriticalFailureValues.Contains(i))
                 {
-                    AddNonCriticalFailure(_proSuccess / _rollsCount / 6, r, Skills.Pro);
+                    AddNonCriticalFailure(_proSuccess / _rollsCount / 6, r, CalculatorSkills.Pro);
                 }
             }
         }
@@ -176,7 +176,7 @@ namespace ActionCalculator.Strategies.Blocking
         {
             if (nonCriticalFailureCount == 2 && !_rerollNonCriticalFailure)
             {
-                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
+                AddNonCriticalFailure(1m / _rollsCount, r, CalculatorSkills.None);
                 return;
             }
 
@@ -188,10 +188,10 @@ namespace ActionCalculator.Strategies.Blocking
 
             if (r == 0)
             {
-                AddOutcome(1m / _rollsCount, r, Skills.None, roll);
+                AddOutcome(1m / _rollsCount, r, CalculatorSkills.None, roll);
             }
 
-            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, CalculatorSkills.None, roll);
 
             _rerollCount++;
         }
@@ -212,7 +212,7 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (rolledNonCriticalFailure)
                 {
-                    AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerRoll);
+                    AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, brawlerRoll);
                     continue;
                 }
 
@@ -237,12 +237,12 @@ namespace ActionCalculator.Strategies.Blocking
 
             foreach (var brawlerRoll in brawlerRolls)
             {
-                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerRoll);
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, brawlerRoll);
 
                 for (var i = 2; i <= 6; i++)
                 {
                     var proAndBrawlerRoll = new List<int>(brawlerRoll) { [indexOfLowestValue] = i };
-                    AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proAndBrawlerRoll);
+                    AddOutcome(_proSuccess / _rollsCount / 36, r, CalculatorSkills.Pro, proAndBrawlerRoll);
                 }
             }
         }
@@ -251,16 +251,16 @@ namespace ActionCalculator.Strategies.Blocking
         {
             if (nonCriticalFailureCount == 3 && !_rerollNonCriticalFailure)
             {
-                AddNonCriticalFailure(1m / _rollsCount, r, Skills.None);
+                AddNonCriticalFailure(1m / _rollsCount, r, CalculatorSkills.None);
                 return;
             }
 
-            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, CalculatorSkills.None, roll);
 
             _rerollCount++;
         }
         
-        private void AddOutcome(decimal p, int r, Skills usedSkills, IReadOnlyCollection<int> roll)
+        private void AddOutcome(decimal p, int r, CalculatorSkills usedSkills, IReadOnlyCollection<int> roll)
         {
             if (p == 0)
             {
@@ -279,11 +279,11 @@ namespace ActionCalculator.Strategies.Blocking
             }
         }
 
-        private void AddSuccess(decimal p, int r, Skills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, Skills>(false, r, usedSkills));
+        private void AddSuccess(decimal p, int r, CalculatorSkills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(false, r, usedSkills));
 
-        private void AddNonCriticalFailure(decimal p, int r, Skills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, Skills>(true, r, usedSkills));
+        private void AddNonCriticalFailure(decimal p, int r, CalculatorSkills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(true, r, usedSkills));
 
-        private void AddOrUpdateOutcomes(decimal p, Tuple<bool, int, Skills> key)
+        private void AddOrUpdateOutcomes(decimal p, Tuple<bool, int, CalculatorSkills> key)
         {
             if (_outcomes.ContainsKey(key))
             {

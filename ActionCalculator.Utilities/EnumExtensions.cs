@@ -45,5 +45,10 @@ namespace ActionCalculator.Utilities
                 .Description ?? string.Empty;
 
         public static bool Contains<T>(this T flags, T value) where T : Enum => flags.HasFlag(value);
+
+        public static bool HasAttribute<TAttribute>(this Enum value) where TAttribute : Attribute =>
+            value.GetType()
+                .GetMember(value.ToString())[0]
+                .GetCustomAttribute<TAttribute>() != null;
     }
 }

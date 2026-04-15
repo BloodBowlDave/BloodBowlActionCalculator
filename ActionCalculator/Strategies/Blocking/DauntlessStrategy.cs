@@ -18,7 +18,7 @@ namespace ActionCalculator.Strategies.Blocking
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
@@ -28,20 +28,20 @@ namespace ActionCalculator.Strategies.Blocking
             var failure = 1 - success;
 
             _calculator.Resolve(p * success, r, i, usedSkills);
-            
+
             p *= failure;
 
             if (dauntless.RerollFailure)
             {
-                if (canUseSkill(Skills.BlindRage, usedSkills))
+                if (canUseSkill(CalculatorSkills.BlindRage, usedSkills))
                 {
-                    ExecuteReroll(p, r, i, usedSkills | Skills.BlindRage, success, failure);
+                    ExecuteReroll(p, r, i, usedSkills | CalculatorSkills.BlindRage, success, failure);
                     return;
                 }
 
                 if (_proHelper.UsePro(player, dauntless, r, usedSkills, success, success))
                 {
-                    ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
+                    ExecuteReroll(p, r, i, usedSkills | CalculatorSkills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                     return;
                 }
 
@@ -55,14 +55,14 @@ namespace ActionCalculator.Strategies.Blocking
 
             if (_proHelper.UsePro(player, dauntless, r, usedSkills, success, success))
             {
-                ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
+                ExecuteReroll(p, r, i, usedSkills | CalculatorSkills.Pro, proSuccess * success, proSuccess * failure + (1 - proSuccess));
                 return;
             }
 
             _calculator.Resolve(p, r, i, usedSkills, true);
         }
 
-        private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal success, decimal failure)
+        private void ExecuteReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal success, decimal failure)
         {
             _calculator.Resolve(p * success, r, i, usedSkills);
             _calculator.Resolve(p * failure, r, i, usedSkills, true);

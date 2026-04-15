@@ -147,13 +147,13 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
             if (Action.ActionType == ActionType.Block)
             {
-                if (Player.CanUseSkill(Skills.Brawler, Skills.None)) options.Add("Use Brawler");
-                if (Season == "Season 3" && Player.CanUseSkill(Skills.Hatred, Skills.None)) options.Add("Use Hatred");
+                if (Player.CanUseSkill(CalculatorSkills.Brawler, CalculatorSkills.None)) options.Add("Use Brawler");
+                if (Season == "Season 3" && Player.CanUseSkill(CalculatorSkills.Hatred, CalculatorSkills.None)) options.Add("Use Hatred");
             }
 
             if (Action.ActionType == ActionType.Dodge)
             {
-                if (Player.CanUseSkill(Skills.BreakTackle, Skills.None)) options.Add("Use Break Tackle");
+                if (Player.CanUseSkill(CalculatorSkills.BreakTackle, CalculatorSkills.None)) options.Add("Use Break Tackle");
                 options.Add("Affected by Diving Tackle");
             }
 
@@ -167,7 +167,7 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
                 options.Add("Reroll Failure");
             }
 
-            if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None))
+            if (Action.IsRerollable() && Player.CanUseSkill(CalculatorSkills.Pro, CalculatorSkills.None))
             {
                 options.Add("Use Pro");
             }
@@ -181,13 +181,13 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
             if (Action.ActionType == ActionType.Block)
             {
-                if (Player.CanUseSkill(Skills.Brawler, Skills.None) && UseBrawler()) selected.Add("Use Brawler");
-                if (Season == "Season 3" && Player.CanUseSkill(Skills.Hatred, Skills.None) && UseHatred()) selected.Add("Use Hatred");
+                if (Player.CanUseSkill(CalculatorSkills.Brawler, CalculatorSkills.None) && UseBrawler()) selected.Add("Use Brawler");
+                if (Season == "Season 3" && Player.CanUseSkill(CalculatorSkills.Hatred, CalculatorSkills.None) && UseHatred()) selected.Add("Use Hatred");
             }
 
             if (Action.ActionType == ActionType.Dodge)
             {
-                if (Player.CanUseSkill(Skills.BreakTackle, Skills.None) && BreakTackle()) selected.Add("Use Break Tackle");
+                if (Player.CanUseSkill(CalculatorSkills.BreakTackle, CalculatorSkills.None) && BreakTackle()) selected.Add("Use Break Tackle");
                 if (DivingTackle()) selected.Add("Affected by Diving Tackle");
             }
 
@@ -201,7 +201,7 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
                 if (RerollFailure()) selected.Add("Reroll Failure");
             }
 
-            if (Action.IsRerollable() && Player.CanUseSkill(Skills.Pro, Skills.None) && UsePro())
+            if (Action.IsRerollable() && Player.CanUseSkill(CalculatorSkills.Pro, CalculatorSkills.None) && UsePro())
             {
                 selected.Add("Use Pro");
             }

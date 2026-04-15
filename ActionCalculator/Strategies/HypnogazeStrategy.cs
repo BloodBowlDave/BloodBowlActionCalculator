@@ -18,7 +18,7 @@ namespace ActionCalculator.Strategies
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
@@ -30,14 +30,14 @@ namespace ActionCalculator.Strategies
 
             p *= failure;
 
-            if (canUseSkill(Skills.MesmerisingDance, usedSkills))
+            if (canUseSkill(CalculatorSkills.MesmerisingDance, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills, success, failure);
             }
 
             if (_proHelper.UsePro(player, hypnogaze, r, usedSkills, success, success))
             {
-                ExecuteReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, success, failure);
+                ExecuteReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, success, failure);
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace ActionCalculator.Strategies
             _calculator.Resolve(p, r, i, usedSkills, true);
         }
 
-        private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal success, decimal failure)
+        private void ExecuteReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal success, decimal failure)
         {
             _calculator.Resolve(p * success, r, i, usedSkills);
             _calculator.Resolve(p * failure, r, i, usedSkills, true);

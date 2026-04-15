@@ -10,7 +10,7 @@ namespace ActionCalculator.Strategies
     {
         private readonly ICalculator _calculator;
         private readonly ID6 _d6;
-        private const Skills SkillsAffectingInjury = Skills.Ram | Skills.BrutalBlock | Skills.MightyBlow | Skills.Slayer;
+        private const CalculatorSkills SkillsAffectingInjury = CalculatorSkills.Ram | CalculatorSkills.BrutalBlock | CalculatorSkills.MightyBlow | CalculatorSkills.Slayer;
 
         public InjuryStrategy(ICalculator calculator, ID6 d6)
         {
@@ -18,36 +18,36 @@ namespace ActionCalculator.Strategies
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var action = (Injury) playerAction.Action;
             var modifier = GetModifier(player, usedSkills);
             var success = _d6.Success(2, action.Roll - modifier);
-            
+
             _calculator.Resolve(p * success, r, i, usedSkills);
 
-            if (player.CanUseSkill(Skills.SavageMauling, usedSkills))
+            if (player.CanUseSkill(CalculatorSkills.SavageMauling, usedSkills))
             {
                 _calculator.Resolve(p * (1 - success) * success, r, i, usedSkills);
             }
         }
 
-        private static int GetModifier(Player player, Skills usedSkills)
+        private static int GetModifier(Player player, CalculatorSkills usedSkills)
         {
             var modifier = 0;
 
-            foreach (var skill in SkillsAffectingInjury.ToEnumerable(Skills.None)
+            foreach (var skill in SkillsAffectingInjury.ToEnumerable(CalculatorSkills.None)
                          .Where(x => player.CanUseSkill(x, usedSkills) && !usedSkills.Contains(x)))
             {
                 switch (skill)
                 {
-                    case Skills.MightyBlow:
+                    case CalculatorSkills.MightyBlow:
                         modifier += player.MightyBlowValue;
                         break;
-                    case Skills.Ram:
-                    case Skills.Slayer:
-                    case Skills.BrutalBlock:
+                    case CalculatorSkills.Ram:
+                    case CalculatorSkills.Slayer:
+                    case CalculatorSkills.BrutalBlock:
                         modifier++;
                         break;
                     default:

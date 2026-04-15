@@ -20,7 +20,7 @@ namespace ActionCalculator.Strategies.BallHandling
         private const decimal BlastItScatterThenBounce = 0.0721588134765625m;
         private const decimal BlastItDivingCatchScatterToTargetOrAdjacent = 0.75610351562500m;
 
-        private Dictionary<Tuple<int, Skills>, decimal> _outcomes = new();
+        private Dictionary<Tuple<int, CalculatorSkills>, decimal> _outcomes = new();
 
         public CatchInaccuratePassStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
         {
@@ -29,14 +29,14 @@ namespace ActionCalculator.Strategies.BallHandling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
-            _outcomes = new Dictionary<Tuple<int, Skills>, decimal>();
-            
+            _outcomes = new Dictionary<Tuple<int, CalculatorSkills>, decimal>();
+
             var player = playerAction.Player;
             var action = playerAction.Action;
-            var blastIt = usedSkills.Contains(Skills.BlastIt);
-            var canUseDivingCatch = player.CanUseSkill(Skills.DivingCatch, usedSkills);
+            var blastIt = usedSkills.Contains(CalculatorSkills.BlastIt);
+            var canUseDivingCatch = player.CanUseSkill(CalculatorSkills.DivingCatch, usedSkills);
 
             var scatteredPassRoll = action.Roll + (blastIt ? 0 : 1) + (canUseDivingCatch ? 1 : 0);
             var success = _d6.Success(1, scatteredPassRoll);
@@ -56,10 +56,10 @@ namespace ActionCalculator.Strategies.BallHandling
             }
         }
 
-        private void CatchScatteredPass(int r, PlayerAction playerAction, Skills usedSkills, decimal success, decimal failure)
+        private void CatchScatteredPass(int r, PlayerAction playerAction, CalculatorSkills usedSkills, decimal success, decimal failure)
         {
-            var canUseDivingCatch = playerAction.Player.CanUseSkill(Skills.DivingCatch, usedSkills);
-            var blastIt = usedSkills.Contains(Skills.BlastIt);
+            var canUseDivingCatch = playerAction.Player.CanUseSkill(CalculatorSkills.DivingCatch, usedSkills);
+            var blastIt = usedSkills.Contains(CalculatorSkills.BlastIt);
 
             var scatter = canUseDivingCatch
                 ? blastIt ? BlastItDivingCatchScatterToTargetOrAdjacent : ScatterToTargetOrAdjacent
@@ -68,44 +68,44 @@ namespace ActionCalculator.Strategies.BallHandling
             Catch(r, playerAction, usedSkills, scatter * success, scatter * failure * success);
         }
 
-        private void CatchBouncingBall(int r, PlayerAction playerAction, Skills usedSkills, decimal success, decimal failure)
+        private void CatchBouncingBall(int r, PlayerAction playerAction, CalculatorSkills usedSkills, decimal success, decimal failure)
         {
-            if (playerAction.Player.CanUseSkill(Skills.DivingCatch, usedSkills))
+            if (playerAction.Player.CanUseSkill(CalculatorSkills.DivingCatch, usedSkills))
             {
                 DivingCatch(r, playerAction, usedSkills, success, failure);
                 return;
             }
 
-            var scatter = usedSkills.Contains(Skills.BlastIt)
+            var scatter = usedSkills.Contains(CalculatorSkills.BlastIt)
                 ? BlastItScatterThenBounce
                 : ScatterThenBounce;
             
             Catch(r, playerAction, usedSkills, scatter * success, scatter * failure * success);
         }
 
-        private void DivingCatch(int r, PlayerAction playerAction, Skills usedSkills, decimal success, decimal failure)
+        private void DivingCatch(int r, PlayerAction playerAction, CalculatorSkills usedSkills, decimal success, decimal failure)
         {
             var failDivingCatch = failure * failure;
 
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var scatter = usedSkills.Contains(Skills.BlastIt)
+            var scatter = usedSkills.Contains(CalculatorSkills.BlastIt)
                 ? BlastItScatterThenBounce
                 : ScatterThenBounce;
 
-            if (canUseSkill(Skills.Catch, usedSkills))
+            if (canUseSkill(CalculatorSkills.Catch, usedSkills))
             {
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills), failDivingCatch * scatter * (failure * success + success));
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills), failDivingCatch * scatter * (failure * success + success));
                 return;
             }
 
             if (_proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
             {
                 var scatterSuccess = failDivingCatch * proSuccess * scatter * success;
-                
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills | Skills.Pro), scatterSuccess);
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r - 1, usedSkills | Skills.Pro), scatterSuccess * failure * lonerSuccess);
-                
+
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills | CalculatorSkills.Pro), scatterSuccess);
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r - 1, usedSkills | CalculatorSkills.Pro), scatterSuccess * failure * lonerSuccess);
+
                 return;
             }
 
@@ -113,39 +113,39 @@ namespace ActionCalculator.Strategies.BallHandling
             {
                 var scatterSuccess = failDivingCatch * lonerSuccess * scatter * success;
 
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r - 1, usedSkills), scatterSuccess);
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r - 2, usedSkills), scatterSuccess * failure * lonerSuccess);
-                
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r - 1, usedSkills), scatterSuccess);
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r - 2, usedSkills), scatterSuccess * failure * lonerSuccess);
+
                 return;
             }
 
-            AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills), failure * scatter * success);
+            AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills), failure * scatter * success);
         }
 
-        private void Catch(int r, PlayerAction playerAction, Skills usedSkills, decimal successNoReroll, decimal successWithReroll)
+        private void Catch(int r, PlayerAction playerAction, CalculatorSkills usedSkills, decimal successNoReroll, decimal successWithReroll)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
             var success = _d6.Success(1, playerAction.Action.Roll);
-            
-            AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills), successNoReroll);
-            
-            if (canUseSkill(Skills.Catch, usedSkills))
+
+            AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills), successNoReroll);
+
+            if (canUseSkill(CalculatorSkills.Catch, usedSkills))
             {
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills), successWithReroll);
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills), successWithReroll);
                 return;
             }
 
             if (_proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
             {
-                AddOrUpdateOutcomes(new Tuple<int, Skills>(r, usedSkills | Skills.Pro), successWithReroll * proSuccess);
+                AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills | CalculatorSkills.Pro), successWithReroll * proSuccess);
                 return;
             }
 
-            AddOrUpdateOutcomes(new Tuple<int, Skills>(r - 1, usedSkills), successWithReroll * lonerSuccess);
+            AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r - 1, usedSkills), successWithReroll * lonerSuccess);
         }
 
-        private void AddOrUpdateOutcomes(Tuple<int, Skills> outcome, decimal p)
+        private void AddOrUpdateOutcomes(Tuple<int, CalculatorSkills> outcome, decimal p)
         {
             if (_outcomes.ContainsKey(outcome))
             {

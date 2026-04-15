@@ -6,11 +6,11 @@ namespace ActionCalculator.Strategies
 {
     public class ProHelper : IProHelper
     {
-        public bool UsePro(Player player, Action action, int r, Skills usedSkills, decimal successWithPro, decimal successWithReroll)
+        public bool UsePro(Player player, Action action, int r, CalculatorSkills usedSkills, decimal successWithPro, decimal successWithReroll)
         {
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
-            if (!canUseSkill(Skills.Pro, usedSkills) && !canUseSkill(Skills.ConsummateProfessional, usedSkills))
+            if (!canUseSkill(CalculatorSkills.Pro, usedSkills) && !canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills))
             {
                 return false;
             }

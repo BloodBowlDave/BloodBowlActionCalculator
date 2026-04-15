@@ -15,7 +15,7 @@ namespace ActionCalculator.Strategies.Fouling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var canUseSkill = player.CanUseSkill;
@@ -23,19 +23,19 @@ namespace ActionCalculator.Strategies.Fouling
             var baseSuccess = _d6.Success(2, roll);
             var failure = 1 - baseSuccess;
 
-            var canUseSneakyGit = canUseSkill(Skills.SneakyGit, usedSkills);
+            var canUseSneakyGit = canUseSkill(CalculatorSkills.SneakyGit, usedSkills);
             var rollDouble = canUseSneakyGit ? 0 : _d6.RollDouble(roll, 12);
-            var canUseLoneFouler = canUseSkill(Skills.LoneFouler, usedSkills);
+            var canUseLoneFouler = canUseSkill(CalculatorSkills.LoneFouler, usedSkills);
 
             _calculator.Resolve(p * (baseSuccess - rollDouble), r, i, usedSkills);
             _calculator.Resolve(p * rollDouble, r, i, usedSkills, true);
 
-            if (!canUseSkill(Skills.DirtyPlayer, usedSkills))
+            if (!canUseSkill(CalculatorSkills.DirtyPlayer, usedSkills))
             {
                 if (canUseLoneFouler)
                 {
-                    _calculator.Resolve(p * failure * (baseSuccess - rollDouble), r, i, usedSkills | Skills.LoneFouler);
-                    _calculator.Resolve(p * failure * rollDouble, r, i, usedSkills | Skills.LoneFouler, true);
+                    _calculator.Resolve(p * failure * (baseSuccess - rollDouble), r, i, usedSkills | CalculatorSkills.LoneFouler);
+                    _calculator.Resolve(p * failure * rollDouble, r, i, usedSkills | CalculatorSkills.LoneFouler, true);
                 }
                 return;
             }
@@ -43,16 +43,16 @@ namespace ActionCalculator.Strategies.Fouling
             var dpAdditionalSuccess = _d6.Success(2, roll - player.DirtyPlayerValue) - baseSuccess;
             var rollDoubleAndUseDirtyPlayer = canUseSneakyGit ? 0 : _d6.RollDouble(roll - player.DirtyPlayerValue, roll - 1);
 
-            _calculator.Resolve(p * (dpAdditionalSuccess - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | Skills.DirtyPlayer);
-            _calculator.Resolve(p * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | Skills.DirtyPlayer, true);
+            _calculator.Resolve(p * (dpAdditionalSuccess - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | CalculatorSkills.DirtyPlayer);
+            _calculator.Resolve(p * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | CalculatorSkills.DirtyPlayer, true);
 
             if (!canUseLoneFouler) return;
 
             var dpFailure = failure - dpAdditionalSuccess;
-            _calculator.Resolve(p * dpFailure * (baseSuccess - rollDouble), r, i, usedSkills | Skills.LoneFouler);
-            _calculator.Resolve(p * dpFailure * rollDouble, r, i, usedSkills | Skills.LoneFouler, true);
-            _calculator.Resolve(p * dpFailure * (dpAdditionalSuccess - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | Skills.LoneFouler | Skills.DirtyPlayer);
-            _calculator.Resolve(p * dpFailure * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | Skills.LoneFouler | Skills.DirtyPlayer, true);
+            _calculator.Resolve(p * dpFailure * (baseSuccess - rollDouble), r, i, usedSkills | CalculatorSkills.LoneFouler);
+            _calculator.Resolve(p * dpFailure * rollDouble, r, i, usedSkills | CalculatorSkills.LoneFouler, true);
+            _calculator.Resolve(p * dpFailure * (dpAdditionalSuccess - rollDoubleAndUseDirtyPlayer), r, i, usedSkills | CalculatorSkills.LoneFouler | CalculatorSkills.DirtyPlayer);
+            _calculator.Resolve(p * dpFailure * rollDoubleAndUseDirtyPlayer, r, i, usedSkills | CalculatorSkills.LoneFouler | CalculatorSkills.DirtyPlayer, true);
         }
     }
 }

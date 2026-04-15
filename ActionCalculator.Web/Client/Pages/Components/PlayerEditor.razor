@@ -10,11 +10,11 @@
     </h4>
 
     <div class="player-skills-row">
-        <MudSelect T="Skills"
+        <MudSelect T="CalculatorSkills"
                    MultiSelection="true"
                    SelectedValues="SelectedSkills"
                    SelectedValuesChanged="SkillsChanged"
-                   Label="Skills"
+                   Label="CalculatorSkills"
                    Variant="Variant.Outlined"
                    Dense="true"
                    AnchorOrigin="Origin.BottomCenter"
@@ -22,11 +22,11 @@
                    MultiSelectionTextFunc="@(selected => selected.Count == 0 ? "None" : string.Join(", ", selected))">
             @foreach (var skill in GetSkills())
             {
-                <MudSelectItem T="Skills" Value="skill">@skill.ToString().PascalCaseToSpaced()</MudSelectItem>
+                <MudSelectItem T="CalculatorSkills" Value="skill">@skill.ToString().PascalCaseToSpaced()</MudSelectItem>
             }
         </MudSelect>
 
-        @if (CurrentPlayer.CanUseSkill(Skills.Loner, Skills.None))
+        @if (CurrentPlayer.CanUseSkill(CalculatorSkills.Loner, CalculatorSkills.None))
         {
             <div class="skill-value-row">
                 <span>Loner</span>
@@ -35,7 +35,7 @@
                                  ValueChanged="@LonerChanged" />
             </div>
         }
-        @if (CurrentPlayer.CanUseSkill(Skills.MightyBlow, Skills.None))
+        @if (CurrentPlayer.CanUseSkill(CalculatorSkills.MightyBlow, CalculatorSkills.None))
         {
             <div class="skill-value-row">
                 <span>Mighty Blow</span>
@@ -44,7 +44,7 @@
                                  ValueChanged="@MightyBlowChanged" />
             </div>
         }
-        @if (CurrentPlayer.CanUseSkill(Skills.DirtyPlayer, Skills.None))
+        @if (CurrentPlayer.CanUseSkill(CalculatorSkills.DirtyPlayer, CalculatorSkills.None))
         {
             <div class="skill-value-row">
                 <span>Dirty Player</span>
@@ -53,7 +53,7 @@
                                  ValueChanged="@DirtyPlayerChanged" />
             </div>
         }
-        @if (CurrentPlayer.CanUseSkill(Skills.BreakTackle, Skills.None))
+        @if (CurrentPlayer.CanUseSkill(CalculatorSkills.BreakTackle, CalculatorSkills.None))
         {
             <div class="skill-value-row">
                 <span>Break Tackle</span>

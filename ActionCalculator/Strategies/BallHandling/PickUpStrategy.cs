@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.BallHandling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
@@ -30,7 +30,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             p *= failure * success;
 
-            if (canUseSkill(Skills.SureHands, usedSkills))
+            if (canUseSkill(CalculatorSkills.SureHands, usedSkills))
             {
                 _calculator.Resolve(p, r, i, usedSkills);
                 return;
@@ -38,7 +38,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             if (_proHelper.UsePro(player, pickUp, r, usedSkills, success, success))
             {
-                _calculator.Resolve(p * proSuccess, r, i, usedSkills | Skills.Pro);
+                _calculator.Resolve(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro);
                 return;
             }
         

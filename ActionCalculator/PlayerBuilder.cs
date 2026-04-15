@@ -11,20 +11,20 @@ namespace ActionCalculator
             var skillsWithValues = GetSkillsWithValues(skillsInput);
 
             return new Player(Guid.NewGuid(),
-                skillsWithValues.Aggregate(Skills.None, (current, skill) => current | skill.Item1),
-                GetSkillValue(skillsWithValues, Skills.Loner),
-                GetSkillValue(skillsWithValues, Skills.BreakTackle),
-                GetSkillValue(skillsWithValues, Skills.MightyBlow),
-                GetSkillValue(skillsWithValues, Skills.DirtyPlayer),
-                GetSkillValue(skillsWithValues, Skills.Incorporeal));
+                skillsWithValues.Aggregate(CalculatorSkills.None, (current, skill) => current | skill.Item1),
+                GetSkillValue(skillsWithValues, CalculatorSkills.Loner),
+                GetSkillValue(skillsWithValues, CalculatorSkills.BreakTackle),
+                GetSkillValue(skillsWithValues, CalculatorSkills.MightyBlow),
+                GetSkillValue(skillsWithValues, CalculatorSkills.DirtyPlayer),
+                GetSkillValue(skillsWithValues, CalculatorSkills.Incorporeal));
         }
 
-        private static List<Tuple<Skills, int>> GetSkillsWithValues(string skillsInput) =>
+        private static List<Tuple<CalculatorSkills, int>> GetSkillsWithValues(string skillsInput) =>
             skillsInput.Split(',')
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(GetSkillAndRoll)
                 .Select(x =>
-                    new Tuple<Skills, int>(x.Item1.GetValueFromDescription<Skills>(), x.Item2))
+                    new Tuple<CalculatorSkills, int>(x.Item1.GetValueFromDescription<CalculatorSkills>(), x.Item2))
                 .ToList();
 
         private static Tuple<string, int> GetSkillAndRoll(string input)
@@ -40,7 +40,7 @@ namespace ActionCalculator
                         : new Tuple<string, int>(input, 0);
         }
 
-        private static int GetSkillValue(IEnumerable<Tuple<Skills, int>> skills, Skills skill) =>
+        private static int GetSkillValue(IEnumerable<Tuple<CalculatorSkills, int>> skills, CalculatorSkills skill) =>
             skills.SingleOrDefault(x => x.Item1 == skill && x.Item2 > 1)?.Item2 ?? 1;
     }
 }

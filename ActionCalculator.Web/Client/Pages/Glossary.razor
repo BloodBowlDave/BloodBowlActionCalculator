@@ -8,7 +8,7 @@
     <p>This page contains a glossary of symbols used to describe an arbitrary Blood Bowl calculation in the notation used by the action calculator. Calculations can be tested on the <MudLink Href="/advanced">advanced calculator</MudLink>.</p>
     
     <MudExpansionPanels MultiExpansion="true" Dense="true">
-        <MudExpansionPanel Text="Skills">
+        <MudExpansionPanel Text="CalculatorSkills">
             
             <p>Below are listed all of the skills which can affect a Blood Bowl calculation. Not all of the skills in the game are listed since they can be included implicitly by modifying the calculation appropriately. For example, block is not listed because you would simply increase the number of successful results on a block by 1.</p>
             <p>In a situation where a player has a skill but it does not affect the outcome of the calculation, do not include it. For example, sure feet if the player is not doing any rush actions, or brawler if both down is a successful outcome of a block action.</p>
@@ -21,7 +21,7 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Skill">@context.Item1.ToString().PascalCaseToSpaced()</MudTd>
-                    <MudTd DataLabel="Symbol">@(context.Item1 == Skills.DivingTackle ? "\"" : context.Item1.GetDescriptionFromValue())</MudTd>
+                    <MudTd DataLabel="Symbol">@(context.Item1 == CalculatorSkills.DivingTackle ? "\"" : context.Item1.GetDescriptionFromValue())</MudTd>
                     <MudTd DataLabel="Description">@context.Item2</MudTd>
                 </RowTemplate>   
             </MudTable>
@@ -89,43 +89,43 @@
 
 @code
 {
-    private static IEnumerable<Tuple<Skills, string>> GetSkills() => 
-        typeof(Skills).ToEnumerable<Skills>()
-            .Where(x => x != Skills.None)
-            .Select(x => new Tuple<Skills, string>(x, GetSkillSummary(x)))
+    private static IEnumerable<Tuple<CalculatorSkills, string>> GetSkills() => 
+        typeof(CalculatorSkills).ToEnumerable<CalculatorSkills>()
+            .Where(x => x != CalculatorSkills.None)
+            .Select(x => new Tuple<CalculatorSkills, string>(x, GetSkillSummary(x)))
             .OrderBy(x => x.ToString());
 
-    private static string GetSkillSummary(Skills skill) => skill switch {
-        Skills.None => "",
-        Skills.Dodge => "Provides a free reroll on a failed dodge.",
-        Skills.BreakTackle => "Reduces the required dodge roll by the player's break tackle value (1 or 2). Will be automatically applied if it would cause the dodge to succeed.",
-        Skills.SureHands => "Provides a free reroll on a failed pick up.",
-        Skills.SureFeet => "Provides a free reroll on a failed rush.",
-        Skills.Pass => "Provides a free reroll on a failed pass.",
-        Skills.CloudBurster => "Forces a successful passing interference to be rerolled on a long pass or long bomb.",
-        Skills.Catch => "Provides a free reroll on a failed catch.",
-        Skills.DivingCatch => "The player can attempt to catch a ball if it would land adjacent to them. It also applies +1 to catch an accurate pass. Please include the +1 in the original roll, e.g. an unmarked player with agility 3+ and diving catch should have a catch action described as C2.",
-        Skills.Brawler => "Allows a single both down result to be rerolled as part of a block. Brawler will be automatically used in situations where it has a higher chance of success than using a team reroll such as a red dice block that already has on successful result. If both down is a successful result, do not include this skill in the calculation.",
-        Skills.Claw => "An unmodified roll of 8+ will automatically break armour when a player is knocked down as part of a block.",
-        Skills.MightyBlow => "Either the armour or injury roll will be modified by the player's mighty blow value (1 or 2) after a knock down as part of a block.",
-        Skills.Pro => "One dice that is not part of an armour, injury or casualty roll may be rerolled if a roll of 3+ is successful. Pro will be automatically used in situations where it has a higher chance of success than using a team reroll, such as if a player has loner or as part of a half die block where there is already one successful roll.",
-        Skills.Loner => "A roll that must be passed by a player in order to use a team reroll.",
-        Skills.DirtyPlayer => "Either the armour or injury roll will be modifier by the player's dirty player value (1 or 2) as part of a foul action.",
-        Skills.SneakyGit => "The player is not sent off for rolling a double on the armour roll as part of a foul. They may also move after committing a foul.",
-        Skills.DivingTackle => "When a player attempts to leave a square marked by a player with diving tackle, they may be placed prone in order to subtract 2 from the result of the roll. If multiple players are attempting to leave a square marked by diving tackle, it is assumed that there is only one player with diving tackle. Since diving tackle is an opposition skill, it does not have a two letter code, but instead the \" symbol is used to modify a dodge roll.",
-        Skills.ConsummateProfessional => "Once per game, one dice that is not part of an armour, injury or casualty roll may be rerolled. Consummate professional will be automatically used in situations where it has a higher chance of success than using a team reroll, such as if a player has loner or as part of a half die block where there is already one successful roll.",
-        Skills.OldPro => "Once per game, the pro skill may be used on a dice rolled as part of an armour roll.",
-        Skills.TheBallista => "Once per game, provides a free reroll on a failed pass or throw teammate action.",
-        Skills.MesmerisingDance => "Once per game, provides a free reroll on a failed hypnotic gaze.",
-        Skills.Ram => "Once per game, when a player is knocked down as part of a block, you may apply +1 to either the armour or injury roll. This can be combined with other skills that modify armour or injury rolls such as mighty blow.",
-        Skills.BrutalBlock => "Once per game, when a player is knocked down as part of a block, you may add +1 to the injury roll. This can be combined with other skills that modify injury rolls such as mighty blow.",
-        Skills.SavageMauling => "Once per game, you may reroll an injury roll.",
-        Skills.CrushingBlow => "Once per game, you may apply an additional +1 modifier to an armour roll. This can be combined with other skills that modify armour rolls such as mighty blow.",
-        Skills.Slayer => "Once per game, when a player with strength 5 or more is knocked down as part of a block, you may apply a +1 modifier to either the armour or injury roll. This can be combined with other skills that modify armour or injury rolls such as mighty blow.",
-        Skills.Incorporeal => "Once per game, you may choose to modify a dodge roll by the player's strength.",
-        Skills.BlindRage => "Provides a free reroll on a failed dauntless.",
-        Skills.BlastIt => "Once per game, when making a Hail Mary Pass, you may reroll any scatter result before the ball lands, and any attempt to catch the ball gains +1.",
-        Skills.WhirlingDervish => "Once per activation, you may reroll the d6 when determining which direction a ball and chain player moves. This skill will only apply if the action type is non-rerollable and the denominator is 6.",
+    private static string GetSkillSummary(CalculatorSkills skill) => skill switch {
+        CalculatorSkills.None => "",
+        CalculatorSkills.Dodge => "Provides a free reroll on a failed dodge.",
+        CalculatorSkills.BreakTackle => "Reduces the required dodge roll by the player's break tackle value (1 or 2). Will be automatically applied if it would cause the dodge to succeed.",
+        CalculatorSkills.SureHands => "Provides a free reroll on a failed pick up.",
+        CalculatorSkills.SureFeet => "Provides a free reroll on a failed rush.",
+        CalculatorSkills.Pass => "Provides a free reroll on a failed pass.",
+        CalculatorSkills.CloudBurster => "Forces a successful passing interference to be rerolled on a long pass or long bomb.",
+        CalculatorSkills.Catch => "Provides a free reroll on a failed catch.",
+        CalculatorSkills.DivingCatch => "The player can attempt to catch a ball if it would land adjacent to them. It also applies +1 to catch an accurate pass. Please include the +1 in the original roll, e.g. an unmarked player with agility 3+ and diving catch should have a catch action described as C2.",
+        CalculatorSkills.Brawler => "Allows a single both down result to be rerolled as part of a block. Brawler will be automatically used in situations where it has a higher chance of success than using a team reroll such as a red dice block that already has on successful result. If both down is a successful result, do not include this skill in the calculation.",
+        CalculatorSkills.Claw => "An unmodified roll of 8+ will automatically break armour when a player is knocked down as part of a block.",
+        CalculatorSkills.MightyBlow => "Either the armour or injury roll will be modified by the player's mighty blow value (1 or 2) after a knock down as part of a block.",
+        CalculatorSkills.Pro => "One dice that is not part of an armour, injury or casualty roll may be rerolled if a roll of 3+ is successful. Pro will be automatically used in situations where it has a higher chance of success than using a team reroll, such as if a player has loner or as part of a half die block where there is already one successful roll.",
+        CalculatorSkills.Loner => "A roll that must be passed by a player in order to use a team reroll.",
+        CalculatorSkills.DirtyPlayer => "Either the armour or injury roll will be modifier by the player's dirty player value (1 or 2) as part of a foul action.",
+        CalculatorSkills.SneakyGit => "The player is not sent off for rolling a double on the armour roll as part of a foul. They may also move after committing a foul.",
+        CalculatorSkills.DivingTackle => "When a player attempts to leave a square marked by a player with diving tackle, they may be placed prone in order to subtract 2 from the result of the roll. If multiple players are attempting to leave a square marked by diving tackle, it is assumed that there is only one player with diving tackle. Since diving tackle is an opposition skill, it does not have a two letter code, but instead the \" symbol is used to modify a dodge roll.",
+        CalculatorSkills.ConsummateProfessional => "Once per game, one dice that is not part of an armour, injury or casualty roll may be rerolled. Consummate professional will be automatically used in situations where it has a higher chance of success than using a team reroll, such as if a player has loner or as part of a half die block where there is already one successful roll.",
+        CalculatorSkills.OldPro => "Once per game, the pro skill may be used on a dice rolled as part of an armour roll.",
+        CalculatorSkills.TheBallista => "Once per game, provides a free reroll on a failed pass or throw teammate action.",
+        CalculatorSkills.MesmerisingDance => "Once per game, provides a free reroll on a failed hypnotic gaze.",
+        CalculatorSkills.Ram => "Once per game, when a player is knocked down as part of a block, you may apply +1 to either the armour or injury roll. This can be combined with other skills that modify armour or injury rolls such as mighty blow.",
+        CalculatorSkills.BrutalBlock => "Once per game, when a player is knocked down as part of a block, you may add +1 to the injury roll. This can be combined with other skills that modify injury rolls such as mighty blow.",
+        CalculatorSkills.SavageMauling => "Once per game, you may reroll an injury roll.",
+        CalculatorSkills.CrushingBlow => "Once per game, you may apply an additional +1 modifier to an armour roll. This can be combined with other skills that modify armour rolls such as mighty blow.",
+        CalculatorSkills.Slayer => "Once per game, when a player with strength 5 or more is knocked down as part of a block, you may apply a +1 modifier to either the armour or injury roll. This can be combined with other skills that modify armour or injury rolls such as mighty blow.",
+        CalculatorSkills.Incorporeal => "Once per game, you may choose to modify a dodge roll by the player's strength.",
+        CalculatorSkills.BlindRage => "Provides a free reroll on a failed dauntless.",
+        CalculatorSkills.BlastIt => "Once per game, when making a Hail Mary Pass, you may reroll any scatter result before the ball lands, and any attempt to catch the ball gains +1.",
+        CalculatorSkills.WhirlingDervish => "Once per activation, you may reroll the d6 when determining which direction a ball and chain player moves. This skill will only apply if the action type is non-rerollable and the denominator is 6.",
         _ => throw new ArgumentOutOfRangeException(nameof(skill), skill, null)};
 
     private static IEnumerable<Tuple<ActionType, bool, string>> GetActionTypes() => 

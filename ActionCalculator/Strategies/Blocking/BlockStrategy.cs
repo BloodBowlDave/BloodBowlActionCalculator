@@ -12,7 +12,7 @@ namespace ActionCalculator.Strategies.Blocking
         private readonly ICalculator _calculator;
         private readonly IBlockSkillsHelper _blockSkillsHelper;
         private readonly ID6 _d6;
-        private Dictionary<Tuple<bool, int, Skills>, decimal> _outcomes = new();
+        private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> _outcomes = new();
         private List<int> _successfulValues = new();
         private List<int> _nonCriticalFailureValues = new();
         private int _rollsCount;
@@ -32,17 +32,17 @@ namespace ActionCalculator.Strategies.Blocking
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             foreach (var outcome in GetOutcomes(r, playerAction, usedSkills))
             {
                 var ((outcomeNonCriticalFailure, rerollsRemaining, outcomeSkillsUsed), pOutcome) = outcome;
-                
+
                 _calculator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
             }
         }
-        
-        private Dictionary<Tuple<bool, int, Skills>, decimal> GetOutcomes(int r, PlayerAction playerAction, Skills usedSkills)
+
+        private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> GetOutcomes(int r, PlayerAction playerAction, CalculatorSkills usedSkills)
         {
             var player = playerAction.Player;
             _proSuccess = player.ProSuccess;
@@ -63,11 +63,11 @@ namespace ActionCalculator.Strategies.Blocking
 
             _rollsCount = rolls.Count;
             var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
-            _useBrawler = skillsToUse.Contains(Skills.Brawler);
-            _canUseBrawler = player.CanUseSkill(Skills.Brawler, usedSkills);
-            _useHatred = skillsToUse.Contains(Skills.Hatred);
-            _usePro = skillsToUse.Contains(Skills.Pro);
-            _outcomes = new Dictionary<Tuple<bool, int, Skills>, decimal>();
+            _useBrawler = skillsToUse.Contains(CalculatorSkills.Brawler);
+            _canUseBrawler = player.CanUseSkill(CalculatorSkills.Brawler, usedSkills);
+            _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
+            _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
+            _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
 
             foreach (var roll in rolls)
@@ -77,7 +77,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             foreach (var reroll in rolls)
             {
-                AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, Skills.None, reroll);
+                AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, CalculatorSkills.None, reroll);
             }
 
             return _outcomes;
@@ -87,7 +87,7 @@ namespace ActionCalculator.Strategies.Blocking
         {
             if (roll.Any(_successfulValues.Contains))
             {
-                AddSuccess(1m / _rollsCount, r, Skills.None);
+                AddSuccess(1m / _rollsCount, r, CalculatorSkills.None);
                 return;
             }
 
@@ -106,7 +106,7 @@ namespace ActionCalculator.Strategies.Blocking
                     }
                 }
 
-                AddOutcome(1m / _rollsCount, r, Skills.None, roll);
+                AddOutcome(1m / _rollsCount, r, CalculatorSkills.None, roll);
                 return;
             }
             
@@ -131,24 +131,24 @@ namespace ActionCalculator.Strategies.Blocking
 
             if (r == 0)
             {
-                AddOutcome(1m / _rollsCount, r, Skills.None, roll);
+                AddOutcome(1m / _rollsCount, r, CalculatorSkills.None, roll);
                 return;
             }
 
-            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, Skills.None, roll);
+            AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, CalculatorSkills.None, roll);
 
             _rerollCount++;
         }
 
         private void Pro(List<int> roll, int r)
         {
-            AddOutcome((1 - _proSuccess) / _rollsCount, r, Skills.Pro, roll);
+            AddOutcome((1 - _proSuccess) / _rollsCount, r, CalculatorSkills.Pro, roll);
 
             var indexOfLowestValue = roll.IndexOf(roll.Min());
             for (var i = 1; i <= 6; i++)
             {
                 var proReroll = new List<int>(roll) { [indexOfLowestValue] = i };
-                AddOutcome(_proSuccess / _rollsCount / 6, r, Skills.Pro, proReroll);
+                AddOutcome(_proSuccess / _rollsCount / 6, r, CalculatorSkills.Pro, proReroll);
             }
         }
 
@@ -158,7 +158,7 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 if (_successfulValues.Contains(i))
                 {
-                    AddSuccess(1m / _rollsCount / 6, r, Skills.None);
+                    AddSuccess(1m / _rollsCount / 6, r, CalculatorSkills.None);
                     continue;
                 }
 
@@ -169,7 +169,7 @@ namespace ActionCalculator.Strategies.Blocking
                     continue;
                 }
 
-                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, brawlerReroll);
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, brawlerReroll);
                 ProAfterBrawler(brawlerReroll, r, indexOfBothDown);
             }
         }
@@ -200,7 +200,7 @@ namespace ActionCalculator.Strategies.Blocking
             for (var i = 1; i <= 6; i++)
             {
                 var proReroll = new List<int>(brawlerReroll) { [indexOfLowestValue] = i };
-                AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proReroll);
+                AddOutcome(_proSuccess / _rollsCount / 36, r, CalculatorSkills.Pro, proReroll);
             }
         }
 
@@ -210,7 +210,7 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 if (_successfulValues.Contains(i))
                 {
-                    AddSuccess(1m / _rollsCount / 6, r, Skills.None);
+                    AddSuccess(1m / _rollsCount / 6, r, CalculatorSkills.None);
                     continue;
                 }
 
@@ -218,7 +218,7 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (!_usePro) { continue; }
 
-                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, Skills.Pro, hatredReroll);
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, hatredReroll);
                 ProAfterHatred(hatredReroll, r, indexOfSkull);
             }
         }
@@ -249,11 +249,11 @@ namespace ActionCalculator.Strategies.Blocking
             for (var i = 1; i <= 6; i++)
             {
                 var proReroll = new List<int>(hatredReroll) { [indexOfLowestValue] = i };
-                AddOutcome(_proSuccess / _rollsCount / 36, r, Skills.Pro, proReroll);
+                AddOutcome(_proSuccess / _rollsCount / 36, r, CalculatorSkills.Pro, proReroll);
             }
         }
 
-        private void AddOutcome(decimal p, int r, Skills usedSkills, IReadOnlyCollection<int> roll)
+        private void AddOutcome(decimal p, int r, CalculatorSkills usedSkills, IReadOnlyCollection<int> roll)
         {
             if (p == 0)
             {
@@ -274,11 +274,11 @@ namespace ActionCalculator.Strategies.Blocking
             AddNonCriticalFailure(p, r, usedSkills);
         }
         
-        private void AddSuccess(decimal p, int r, Skills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, Skills>(false, r, usedSkills));
+        private void AddSuccess(decimal p, int r, CalculatorSkills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(false, r, usedSkills));
 
-        private void AddNonCriticalFailure(decimal p, int r, Skills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, Skills>(true, r, usedSkills));
+        private void AddNonCriticalFailure(decimal p, int r, CalculatorSkills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(true, r, usedSkills));
 
-        private void AddOrUpdateOutcomes(decimal p, Tuple<bool, int, Skills> key)
+        private void AddOrUpdateOutcomes(decimal p, Tuple<bool, int, CalculatorSkills> key)
         {
             if (_outcomes.ContainsKey(key))
             {

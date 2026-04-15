@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.BallHandling
             _proHelper = proHelper;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
@@ -41,7 +41,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var inaccuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * inaccuratePass;
             var inaccuratePassWithoutReroll = rerollInaccuratePass ? 0m : inaccuratePass;
 
-            if (canUseSkill(Skills.Pass, usedSkills))
+            if (canUseSkill(CalculatorSkills.Pass, usedSkills))
             {
                 ExecuteReroll(p, r, i, usedSkills, accuratePassAfterFailure, inaccuratePassWithoutReroll + inaccuratePassAfterFailure);
                 return;
@@ -51,14 +51,14 @@ namespace ActionCalculator.Strategies.BallHandling
             {
                 _calculator.Resolve(inaccuratePassWithoutReroll, r, i, usedSkills, true);
 
-                usedSkills |= Skills.Pro;
-                ExecuteReroll(p * proSuccess, r, i, usedSkills | Skills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
+                usedSkills |= CalculatorSkills.Pro;
+                ExecuteReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
                 return;
             }
 
             if (r > 0 && rerollInaccuratePass)
             {
-                ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills | Skills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
+                ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills | CalculatorSkills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);
                 _calculator.Resolve(p * inaccuratePass * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                 return;
             }
@@ -66,7 +66,7 @@ namespace ActionCalculator.Strategies.BallHandling
             _calculator.Resolve(p * inaccuratePass, r, i, usedSkills, true);
         }
 
-        private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal accuratePass, decimal inaccuratePass)
+        private void ExecuteReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal accuratePass, decimal inaccuratePass)
         {
             _calculator.Resolve(p * accuratePass, r, i, usedSkills);
             _calculator.Resolve(p * inaccuratePass, r, i, usedSkills, true);

@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.Movement
             _proHelper = proHelper;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, _) = player;
@@ -32,20 +32,20 @@ namespace ActionCalculator.Strategies.Movement
 
             if (_proHelper.UsePro(player, tentacles, r, usedSkills, success, success))
             {
-                ExecuteReroll(p, r, i, usedSkills | Skills.Pro, proSuccess, success, failure);
+                ExecuteReroll(p, r, i, usedSkills | CalculatorSkills.Pro, proSuccess, success, failure);
                 return;
             }
 
             if (r > 0 && tentacles.RerollFailure)
             {
-                ExecuteReroll(p, r - 1, i, usedSkills | Skills.Pro, lonerSuccess, success, failure);
+                ExecuteReroll(p, r - 1, i, usedSkills | CalculatorSkills.Pro, lonerSuccess, success, failure);
                 return;
             }
 
             _calculator.Resolve(p, r, i, usedSkills, true);
         }
 
-        private void ExecuteReroll(decimal p, int r, int i, Skills usedSkills, decimal rerollSuccess, decimal success, decimal failure)
+        private void ExecuteReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal rerollSuccess, decimal success, decimal failure)
         {
             _calculator.Resolve(p * rerollSuccess * success, r, i, usedSkills);
             _calculator.Resolve(p * (1 - rerollSuccess + rerollSuccess * failure), r, i, usedSkills, true);

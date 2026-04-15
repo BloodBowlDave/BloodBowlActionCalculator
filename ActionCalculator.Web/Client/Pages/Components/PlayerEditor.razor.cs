@@ -21,17 +21,17 @@ namespace ActionCalculator.Web.Client.Pages.Components
         [Parameter]
         public EventCallback OnNewPlayer { get; set; }
         
-        private IEnumerable<Skills> GetSkills() =>
-            typeof(Skills).ToEnumerable<Skills>()
-                .Where(x => (x is > 0 and < Skills.DivingTackle) || (Season == "Season 3" && (x == Skills.Hatred || x == Skills.LoneFouler)))
+        private IEnumerable<CalculatorSkills> GetSkills() =>
+            typeof(CalculatorSkills).ToEnumerable<CalculatorSkills>()
+                .Where(x => x > 0 && (!x.HasAttribute<HideFromPlayerEditorAttribute>() || (Season == "Season 3" && (x == CalculatorSkills.Hatred || x == CalculatorSkills.LoneFouler))))
                 .OrderBy(x => x.ToString());
 
-        private IReadOnlyCollection<Skills> SelectedSkills =>
-            GetSkills().Where(s => CurrentPlayer.CanUseSkill(s, Skills.None)).ToList();
+        private IReadOnlyCollection<CalculatorSkills> SelectedSkills =>
+            GetSkills().Where(s => CurrentPlayer.CanUseSkill(s, CalculatorSkills.None)).ToList();
 
-        private void SkillsChanged(IEnumerable<Skills> selected)
+        private void SkillsChanged(IEnumerable<CalculatorSkills> selected)
         {
-            CurrentPlayer.Skills = Skills.None;
+            CurrentPlayer.Skills = CalculatorSkills.None;
             foreach (var skill in selected)
                 CurrentPlayer.Skills |= skill;
             PlayerChanged();
@@ -49,7 +49,7 @@ namespace ActionCalculator.Web.Client.Pages.Components
         
         private void ClearSelected()
         {
-            CurrentPlayer.Skills = Skills.None;
+            CurrentPlayer.Skills = CalculatorSkills.None;
             PlayerChanged();
         }
 

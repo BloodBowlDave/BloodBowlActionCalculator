@@ -15,7 +15,7 @@ namespace ActionCalculator.Strategies.BallHandling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool inaccuratePass = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool inaccuratePass = false)
         {
             var player = playerAction.Player;
             var interception = playerAction.Action;
@@ -23,7 +23,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var success = _d6.Success(1, inaccuratePass ? interception.Roll - 1 : interception.Roll);
             var failure = 1 - success;
 
-            if (player.CanUseSkill(Skills.CloudBurster, usedSkills))
+            if (player.CanUseSkill(CalculatorSkills.CloudBurster, usedSkills))
             {
                 _calculator.Resolve(p * (1 - (1 - failure) * (1 - failure)), r, i, usedSkills, inaccuratePass);
                 return;

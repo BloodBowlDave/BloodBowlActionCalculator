@@ -17,7 +17,7 @@ namespace ActionCalculator.Strategies.BallHandling
             _d6 = d6;
         }
 
-        public void Execute(decimal p, int r, int i, PlayerAction playerAction, Skills usedSkills, bool nonCriticalFailure = false)
+        public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var hailMaryPass = playerAction.Action;
@@ -26,16 +26,16 @@ namespace ActionCalculator.Strategies.BallHandling
             var success = _d6.Success(1, hailMaryPass.Roll);
             var failure = 1 - success;
 
-            if (canUseSkill(Skills.BlastIt, usedSkills))
+            if (canUseSkill(CalculatorSkills.BlastIt, usedSkills))
             {
-                usedSkills |= Skills.BlastIt;
+                usedSkills |= CalculatorSkills.BlastIt;
             }
 
             _calculator.Resolve(p * success, r, i, usedSkills, true);
 
             if (_proHelper.UsePro(player, hailMaryPass, r, usedSkills, success, success))
             {
-                _calculator.Resolve(p * failure * proSuccess * success, r, i, usedSkills | Skills.Pro, true);
+                _calculator.Resolve(p * failure * proSuccess * success, r, i, usedSkills | CalculatorSkills.Pro, true);
                 return;
             }
             
