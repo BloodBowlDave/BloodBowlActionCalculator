@@ -63,20 +63,22 @@
         }
         @if (options.Any())
         {
-            <MudSelect T="string"
-                       MultiSelection="true"
-                       SelectedValues="@GetSelectedOptions()"
-                       SelectedValuesChanged="@((IReadOnlyCollection<string> values) => OptionsChanged(values))"
-                       MultiSelectionTextFunc="@(items => items.Count == 0 ? string.Empty : string.Join(", ", items))"
-                       Dense="true"
-                       Label="Overrides"
-                       Variant="Variant.Text"
-                       AnchorOrigin="Origin.BottomLeft">
-                @foreach (var option in options)
-                {
-                    <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
-                }
-            </MudSelect>
+            <div class="overrides-select">
+                <MudSelect T="string"
+                           MultiSelection="true"
+                           SelectedValues="@GetSelectedOptions()"
+                           SelectedValuesChanged="@((IReadOnlyCollection<string> values) => OptionsChanged(values))"
+                           MultiSelectionTextFunc="@(items => items.Count == 0 ? string.Empty : string.Join(", ", items))"
+                           Dense="true"
+                           Label="Overrides"
+                           Variant="Variant.Text"
+                           AnchorOrigin="Origin.BottomLeft">
+                    @foreach (var option in options)
+                    {
+                        <MudSelectItem T="string" Value="@option">@option</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
         }
     </MudPaper>
 </MudItem>

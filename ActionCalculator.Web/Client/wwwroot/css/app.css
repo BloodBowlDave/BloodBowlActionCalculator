@@ -288,6 +288,13 @@ h2 {
     white-space: normal;
 }
 
+.action-summary .overrides-select {
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    min-width: 100px;
+}
+
 .calculation-results h4 {
     padding-right: 30px;
     position: relative;

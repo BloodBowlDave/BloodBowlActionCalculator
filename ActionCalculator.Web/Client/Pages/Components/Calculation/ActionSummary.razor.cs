@@ -154,7 +154,7 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
             if (Action.ActionType == ActionType.Dodge)
             {
                 if (Player.CanUseSkill(Skills.BreakTackle, Skills.None)) options.Add("Use Break Tackle");
-                options.Add("Diving Tackle");
+                options.Add("Affected by Diving Tackle");
             }
 
             if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
@@ -188,7 +188,7 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
             if (Action.ActionType == ActionType.Dodge)
             {
                 if (Player.CanUseSkill(Skills.BreakTackle, Skills.None) && BreakTackle()) selected.Add("Use Break Tackle");
-                if (DivingTackle()) selected.Add("Diving Tackle");
+                if (DivingTackle()) selected.Add("Affected by Diving Tackle");
             }
 
             if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
@@ -232,7 +232,7 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
                 case "Use Brawler": OnToggleBrawler.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
                 case "Use Hatred": OnToggleHatred.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
                 case "Use Break Tackle": OnToggleBreakTackle.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
-                case "Diving Tackle": OnToggleDivingTackle.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
+                case "Affected by Diving Tackle": OnToggleDivingTackle.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
                 case "Reroll Inaccurate": OnToggleRerollInaccurate.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
                 case "Reroll Failure": OnToggleRerollFailure.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
                 case "Use Pro": OnTogglePro.InvokeAsync(new Tuple<int, bool>(Index, value)); break;
