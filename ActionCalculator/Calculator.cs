@@ -9,14 +9,16 @@ namespace ActionCalculator
     {
         private readonly IStrategyFactory _strategyFactory;
         private readonly IValidator<Calculation> _calculationValidator;
+        private readonly ICalculationContext _context;
 
         private Calculation _calculation;
         private decimal[] _results;
 
-        public Calculator(IStrategyFactory strategyFactory, IValidator<Calculation> calculationValidator)
+        public Calculator(IStrategyFactory strategyFactory, IValidator<Calculation> calculationValidator, ICalculationContext context)
         {
             _strategyFactory = strategyFactory;
             _calculationValidator = calculationValidator;
+            _context = context;
             _calculation = null!;
             _results = null!;
         }
@@ -30,6 +32,7 @@ namespace ActionCalculator
                 return new CalculationResult(validationResult.Errors);
             }
 
+            _context.Season = calculation.Season;
             _calculation = calculation;
             _results = new decimal[calculation.Rerolls * 2 + 1];
 

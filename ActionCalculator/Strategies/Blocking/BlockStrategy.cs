@@ -15,12 +15,15 @@ namespace ActionCalculator.Strategies.Blocking
         private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> _outcomes = new();
         private List<int> _successfulValues = new();
         private List<int> _nonCriticalFailureValues = new();
+        private List<List<int>> _rolls = new();
         private int _rollsCount;
         private int _rerollCount;
         private bool _useBrawler;
         private bool _canUseBrawler;
         private bool _useHatred;
         private bool _usePro;
+        private bool _useSavageBlow;
+        private bool _useUnstoppableMomentum;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
         private decimal _lonerSuccess;
@@ -58,24 +61,26 @@ namespace ActionCalculator.Strategies.Blocking
                 : (decimal) (_successfulValues.Count + _nonCriticalFailureValues.Count) / 6;
 
             var numberOfDice = block.NumberOfDice;
-            var rolls = _d6.Rolls(numberOfDice);
+            _rolls = _d6.Rolls(numberOfDice);
             var success = 1 - (decimal)Math.Pow((double)(1 - successOnOneDie), numberOfDice);
 
-            _rollsCount = rolls.Count;
+            _rollsCount = _rolls.Count;
             var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
             _useBrawler = skillsToUse.Contains(CalculatorSkills.Brawler);
             _canUseBrawler = player.CanUseSkill(CalculatorSkills.Brawler, usedSkills);
             _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
             _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
+            _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
+            _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum);
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
 
-            foreach (var roll in rolls)
+            foreach (var roll in _rolls)
             {
                 ProcessRoll(roll, r);
             }
 
-            foreach (var reroll in rolls)
+            foreach (var reroll in _rolls)
             {
                 AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, CalculatorSkills.None, reroll);
             }
@@ -110,6 +115,12 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
             
+            if (_useSavageBlow)
+            {
+                SavageBlow(r);
+                return;
+            }
+
             if (_useBrawler && indexOfBothDown != -1)
             {
                 Brawler(roll, r, indexOfBothDown);
@@ -120,6 +131,12 @@ namespace ActionCalculator.Strategies.Blocking
             if (_useHatred && indexOfSkull != -1)
             {
                 Hatred(roll, r, indexOfSkull);
+                return;
+            }
+
+            if (_useUnstoppableMomentum)
+            {
+                UnstoppableMomentum(roll, r);
                 return;
             }
 
@@ -140,6 +157,16 @@ namespace ActionCalculator.Strategies.Blocking
             _rerollCount++;
         }
 
+        private void UnstoppableMomentum(List<int> roll, int r)
+        {
+            var indexOfLowestValue = roll.IndexOf(roll.Min());
+            for (var i = 1; i <= 6; i++)
+            {
+                var umReroll = new List<int>(roll) { [indexOfLowestValue] = i };
+                AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.None, umReroll);
+            }
+        }
+
         private void Pro(List<int> roll, int r)
         {
             AddOutcome((1 - _proSuccess) / _rollsCount, r, CalculatorSkills.Pro, roll);
@@ -149,6 +176,14 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 var proReroll = new List<int>(roll) { [indexOfLowestValue] = i };
                 AddOutcome(_proSuccess / _rollsCount / 6, r, CalculatorSkills.Pro, proReroll);
+            }
+        }
+
+        private void SavageBlow(int r)
+        {
+            foreach (var reroll in _rolls)
+            {
+                AddOutcome(1m / _rollsCount / _rollsCount, r, CalculatorSkills.SavageBlow, reroll);
             }
         }
 

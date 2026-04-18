@@ -6,9 +6,18 @@ namespace ActionCalculator
 {
     public class PlayerBuilder : IPlayerBuilder
     {
-        public Player Build(string skillsInput)
+        public Player Build(string playerInput)
         {
-            var skillsWithValues = GetSkillsWithValues(skillsInput);
+            StarPlayer? starPlayer = null;
+            var input = playerInput;
+
+            if (StarPlayerRules.ByShortName.TryGetValue(playerInput, out var rule))
+            {
+                starPlayer = rule.StarPlayer;
+                input = rule.SkillsInput;
+            }
+
+            var skillsWithValues = GetSkillsWithValues(input);
 
             return new Player(Guid.NewGuid(),
                 skillsWithValues.Aggregate(CalculatorSkills.None, (current, skill) => current | skill.Item1),
@@ -16,11 +25,11 @@ namespace ActionCalculator
                 GetSkillValue(skillsWithValues, CalculatorSkills.BreakTackle),
                 GetSkillValue(skillsWithValues, CalculatorSkills.MightyBlow),
                 GetSkillValue(skillsWithValues, CalculatorSkills.DirtyPlayer),
-                GetSkillValue(skillsWithValues, CalculatorSkills.Incorporeal));
+                starPlayer);
         }
 
-        private static List<Tuple<CalculatorSkills, int>> GetSkillsWithValues(string skillsInput) =>
-            skillsInput.Split(',')
+        private static List<Tuple<CalculatorSkills, int>> GetSkillsWithValues(string playerInput) =>
+            playerInput.Split(',')
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(GetSkillAndRoll)
                 .Select(x =>

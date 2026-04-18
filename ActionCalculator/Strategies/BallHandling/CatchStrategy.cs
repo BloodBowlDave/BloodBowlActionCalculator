@@ -1,4 +1,4 @@
-﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Models;
 
@@ -8,12 +8,14 @@ namespace ActionCalculator.Strategies.BallHandling
     {
         private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
+        private readonly ICalculationContext _context;
         private readonly ID6 _d6;
 
-        public CatchStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
+        public CatchStrategy(ICalculator calculator, IProHelper proHelper, ICalculationContext context, ID6 d6)
         {
             _calculator = calculator;
             _proHelper = proHelper;
+            _context = context;
             _d6 = d6;
         }
 
@@ -27,7 +29,18 @@ namespace ActionCalculator.Strategies.BallHandling
 
             _calculator.Resolve(p * success, r, i, usedSkills);
 
-            p *= success * failure;
+            // CP Season 3: once per game, +1 modifier to one agility test (roll of 1 always fails)
+            var cpS3Success = _context.Season == Season.Season3
+                && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)
+                && action.Roll > 2
+                ? 1m / 6 : 0m;
+            if (cpS3Success > 0)
+            {
+                _calculator.Resolve(p * cpS3Success, r, i, usedSkills | CalculatorSkills.Pro);
+            }
+            failure -= cpS3Success;
+
+            p *= failure * success;
 
             if (canUseSkill(CalculatorSkills.Catch, usedSkills))
             {
@@ -40,7 +53,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 _calculator.Resolve(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro);
                 return;
             }
-        
+
             _calculator.Resolve(p * lonerSuccess, r - 1, i, usedSkills);
         }
     }

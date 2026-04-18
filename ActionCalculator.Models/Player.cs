@@ -16,12 +16,13 @@ namespace ActionCalculator.Models
             ProSuccess = 2m / 3;
         }
 
-        public Player(Guid id, CalculatorSkills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, int incorporealValue)
+        public Player(Guid id, CalculatorSkills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, StarPlayer? starPlayer = null)
         {
             Id = id;
+            StarPlayer = starPlayer;
             Skills = skills;
             LonerValue = lonerValue;
-            BreakTackleValue = skills.Contains(CalculatorSkills.Incorporeal) ? incorporealValue : breakTackleValue;
+            BreakTackleValue = breakTackleValue;
             MightyBlowValue = mightyBlowValue;
             DirtyPlayerValue = dirtyPlayerValue;
             ProSuccess = skills.Contains(CalculatorSkills.ConsummateProfessional) ? 1m : 2m / 3;
@@ -29,6 +30,7 @@ namespace ActionCalculator.Models
 
 
         public Guid Id { get; }
+        public StarPlayer? StarPlayer { get; set; }
         public CalculatorSkills Skills { get; set; }
         public int LonerValue { get; set; }
         public int BreakTackleValue { get; set; }
@@ -41,7 +43,6 @@ namespace ActionCalculator.Models
             var underlyingSkill = skill switch
             {
                 CalculatorSkills.OldPro => CalculatorSkills.Pro,
-                CalculatorSkills.Incorporeal => CalculatorSkills.BreakTackle,
                 CalculatorSkills.ConsummateProfessional => CalculatorSkills.Pro,
                 _ => skill
             };
@@ -50,9 +51,11 @@ namespace ActionCalculator.Models
         }
 
         public override string ToString() =>
-            string.Join(',', Skills.ToEnumerable(CalculatorSkills.None)
-                .Select(x => x.GetDescriptionFromValue() + GetSkillRoll(x))
-                .OrderBy(x => x));
+            StarPlayer.HasValue
+                ? StarPlayerRules.ShortNameByStarPlayer[StarPlayer.Value]
+                : string.Join(',', Skills.ToEnumerable(CalculatorSkills.None)
+                    .Select(x => x.GetDescriptionFromValue() + GetSkillRoll(x))
+                    .OrderBy(x => x));
 
         private string GetSkillRoll(CalculatorSkills skill) =>
             skill switch
@@ -61,7 +64,6 @@ namespace ActionCalculator.Models
                 CalculatorSkills.DirtyPlayer => DirtyPlayerValue.ToString(),
                 CalculatorSkills.MightyBlow => MightyBlowValue.ToString(),
                 CalculatorSkills.BreakTackle => BreakTackleValue.ToString(),
-                CalculatorSkills.Incorporeal => BreakTackleValue.ToString(),
                 _ => ""
             };
 

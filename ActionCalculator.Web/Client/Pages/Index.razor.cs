@@ -43,13 +43,16 @@ namespace ActionCalculator.Web.Client.Pages
 
         protected override void OnParametersSet()
         {
-            _calculations[0].Season = Season;
+            _calculations[0].Season = ParseSeason(Season);
         }
+
+        private static Models.Season ParseSeason(string season) =>
+            season == "Season 2" ? Models.Season.Season2 : Models.Season.Season3;
 
         private void AddAction(Models.Actions.Action action)
         {
             var player = new Player(CurrentPlayer.Id, CurrentPlayer.Skills, CurrentPlayer.LonerValue,
-                CurrentPlayer.BreakTackleValue, CurrentPlayer.MightyBlowValue, CurrentPlayer.DirtyPlayerValue, 0);
+                CurrentPlayer.BreakTackleValue, CurrentPlayer.MightyBlowValue, CurrentPlayer.DirtyPlayerValue);
 
             CurrentCalculation().PlayerActions.Add(new PlayerAction(player, action, 0));
         }
@@ -89,7 +92,7 @@ namespace ActionCalculator.Web.Client.Pages
             }
             else
             {
-                _calculations.Add(new Calculation(new PlayerActions(), 1, Season));
+                _calculations.Add(new Calculation(new PlayerActions(), 1, ParseSeason(Season)));
                 CurrentPlayer = new Player();
             }
         }
@@ -153,10 +156,9 @@ namespace ActionCalculator.Web.Client.Pages
             var block = (Block)CurrentCalculation().PlayerActions[index].Action;
             var wasUsingFrenzy = block.NumberOfNonCriticalFailures > 0;
 
-            block.NumberOfNonCriticalFailures = value;
-
             if (value > 0 && !wasUsingFrenzy)
             {
+                block.NumberOfNonCriticalFailures = value;
                 var mainPlayerAction = CurrentCalculation().PlayerActions[index];
                 var followUpBlock = new Block(block.NumberOfDice, block.NumberOfSuccessfulResults, 0, false, false, true);
                 var followUpPlayerAction = new PlayerAction(mainPlayerAction.Player, followUpBlock, mainPlayerAction.Depth + 1)
@@ -165,8 +167,10 @@ namespace ActionCalculator.Web.Client.Pages
                     EndOfBranch = true
                 };
                 CurrentCalculation().PlayerActions.Insert(index + 1, followUpPlayerAction);
+                return;
             }
-            else if (value == 0 && wasUsingFrenzy)
+
+            if (value == 0 && wasUsingFrenzy)
             {
                 var nextIndex = index + 1;
                 if (nextIndex < CurrentCalculation().PlayerActions.Count && IsFrenzyFollowUp(nextIndex))
@@ -174,6 +178,8 @@ namespace ActionCalculator.Web.Client.Pages
                     CurrentCalculation().PlayerActions.RemoveAt(nextIndex);
                 }
             }
+
+            block.NumberOfNonCriticalFailures = value;
         }
 
         private void FrenzyDiceChanged(Tuple<int, int> indexAndValue)

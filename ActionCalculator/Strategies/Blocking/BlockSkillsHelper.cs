@@ -18,8 +18,10 @@ namespace ActionCalculator.Strategies.Blocking
         public CalculatorSkills SkillsToUse(Player player, Block block, int r, CalculatorSkills usedSkills, decimal successOnOneDie, decimal success)
         {
             var result = CalculatorSkills.None;
+            if (player.CanUseSkill(CalculatorSkills.SavageBlow, usedSkills)) result |= CalculatorSkills.SavageBlow;
             if (UseBrawler(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Brawler;
             if (UseHatred(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Hatred;
+            if (player.CanUseSkill(CalculatorSkills.UnstoppableMomentum, usedSkills)) result |= CalculatorSkills.UnstoppableMomentum;
             if (_proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Pro;
             return result;
         }

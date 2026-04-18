@@ -2,7 +2,7 @@
 {
     public class Calculation
     {
-        public Calculation(PlayerActions playerActions, int rerolls, string season = "Season 3")
+        public Calculation(PlayerActions playerActions, int rerolls, Season season = Season.Season3)
         {
             PlayerActions = playerActions;
             Rerolls = rerolls;
@@ -11,9 +11,9 @@
 
         public PlayerActions PlayerActions { get; }
         public int Rerolls { get; set; }
-        public string Season { get; set; } = "Season 3";
+        public Season Season { get; set; } = Season.Season3;
 
         public override string ToString() =>
-            PlayerActions.ToString() + (Season == "Season 2" ? "~S2" : "");
+            PlayerActions.ToString() + (Season == Season.Season2 ? "~S2" : "");
     }
 }

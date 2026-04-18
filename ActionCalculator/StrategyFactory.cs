@@ -21,7 +21,7 @@ namespace ActionCalculator
             _serviceProvider = serviceProvider;
         }
 
-        public IActionStrategy GetActionStrategy(Action action, ICalculator calculator, ActionType? previousActionType, bool nonCriticalFailure, string season = "Season 3")
+        public IActionStrategy GetActionStrategy(Action action, ICalculator calculator, ActionType? previousActionType, bool nonCriticalFailure, Season season = Season.Season3)
         {
             var actionType = action.ActionType;
 

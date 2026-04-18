@@ -48,7 +48,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             if (_proHelper.UsePro(player, throwTeamMate, r, usedSkills, success, success))
             {
-                _calculator.Resolve(inaccurateThrowWithoutReroll, r, i, usedSkills, true);
+                _calculator.Resolve(p * inaccurateThrowWithoutReroll, r, i, usedSkills, true);
 
                 usedSkills |= CalculatorSkills.Pro;
                 ExecuteReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, accurateThrowAfterFailure, inaccurateThrowAfterFailure);

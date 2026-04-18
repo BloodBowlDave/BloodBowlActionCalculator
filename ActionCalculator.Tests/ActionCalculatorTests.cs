@@ -1,5 +1,4 @@
 using ActionCalculator.Abstractions;
-using ActionCalculator.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -8,7 +7,7 @@ namespace ActionCalculator.Tests
     public class ActionCalculatorTests
     {
         private readonly ICalculator _calculator;
-        private readonly IPlayerActionsBuilder _playerActionsBuilder;
+        private readonly ICalculationBuilder _calculationBuilder;
 
         public ActionCalculatorTests()
         {
@@ -19,7 +18,7 @@ namespace ActionCalculator.Tests
             var serviceProvider = services.BuildServiceProvider();
 
             _calculator = serviceProvider.GetService<ICalculator>();
-            _playerActionsBuilder = serviceProvider.GetService<IPlayerActionsBuilder>();
+            _calculationBuilder = serviceProvider.GetService<ICalculationBuilder>();
         }
 
         [Theory]
@@ -96,7 +95,6 @@ namespace ActionCalculator.Tests
         [InlineData("BT2:D5,D4", 1, 0.44444, 0.72222)]
         [InlineData("BT2:D3¬,D4", 0, 0.63889)]
         [InlineData("BT2:D3¬,D4", 1, 0.55556, 0.86111)]
-        [InlineData("D,I3,L4:D3,D3", 0, 0.90741)]
         //hatred
         [InlineData("H:1D3%", 0, 0.58333)]
         [InlineData("H:1D3%", 1, 0.58333, 0.75000)]
@@ -106,8 +104,6 @@ namespace ActionCalculator.Tests
         [InlineData("CL,MB1:2D3,B8,J8", 0, 0.18229)]
         [InlineData("CL,MB1:2D3,B9,J8", 0, 0.18229)]
         [InlineData("CL,SM:2D2,B9,J8", 0, 0.15271)]
-        //consummate professional
-        [InlineData("CP,L3,SF:R2,R2,2D2", 1, 0.52512, 0.68071)]
         //dodge
         [InlineData("D:D2,D2", 1, 0.92593, 0.94522)]
         [InlineData("D:D2;D:D2", 0, 0.94522)]
@@ -145,6 +141,15 @@ namespace ActionCalculator.Tests
         //lone fouler
         [InlineData("LF:F8", 0, 0.65972)]
         [InlineData("DP1,LF:F8", 0, 0.82639)]
+        //unstoppable momentum
+        [InlineData("UM:1D2", 0, 0.55556)]
+        [InlineData("UM:1D2", 1, 0.55556)]
+        [InlineData("UM:2D3", 0, 0.87500)]
+        [InlineData("UM:2D3", 1, 0.87500)]
+        //savage blow
+        [InlineData("SB:1D2", 0, 0.55556)]
+        [InlineData("SB:2D2", 0, 0.80247)]
+        [InlineData("SB:-2D2", 0, 0.30864)]
         //dauntless
         [InlineData("L2',2D2|1D2", 1, 0.51852, 0.76132)]
         [InlineData("L2,2D2|1D2", 0, 0.51852)]
@@ -214,10 +219,19 @@ namespace ActionCalculator.Tests
         //chainsaw
         [InlineData("W8", 0, 0.41667)]
         [InlineData("W8[:2D2]", 0, 0.74074)]
-        public void ActionCalculatorReturnsExpectedResult(string playerActionsString, int rerolls, params double[] expected)
+        //consummate professional - season 2
+        [InlineData("CP:D3~S2", 0, 0.88889)]
+        [InlineData("CP,L3,SF:R2,R2,2D2~S2", 1, 0.52512, 0.68071)]
+        //consummate professional - season 3: once per game +1 modifier to one agility test, roll of 1 always fails
+        [InlineData("CP:D2", 0, 0.83333)]  // Roll=2: no benefit (only roll-1=1 which always fails)
+        [InlineData("CP:D3", 0, 0.83333)]  // Roll=3: +1/6 (rolling 2 → +1 = 3 success)
+        [InlineData("CP:D4", 0, 0.66667)]  // Roll=4: +1/6 (rolling 3 → +1 = 4 success)
+        [InlineData("CP:D5", 0, 0.50000)]  // Roll=5: +1/6 (rolling 4 → +1 = 5 success)
+        [InlineData("CP:C3", 0, 0.83333)]  // Catch Roll=3: same +1/6 benefit
+        public void ActionCalculatorReturnsExpectedResult(string calculationString, int rerolls, params double[] expected)
         {
-            var playerActions = _playerActionsBuilder.Build(playerActionsString);
-            var result = _calculator.Calculate(new Calculation(playerActions, rerolls));
+            var calculation = _calculationBuilder.Build(calculationString, rerolls);
+            var result = _calculator.Calculate(calculation);
 
             Assert.Equal(expected.Length, result.Results.Length);
 
@@ -226,8 +240,82 @@ namespace ActionCalculator.Tests
                 Assert.Equal((decimal)expected[i], result.Results[i], 5);
             }
 
+            Assert.Equal(calculationString, calculation.ToString());
+        }
 
-            Assert.Equal(playerActionsString, playerActions.ToString());
+        [Theory]
+        //star players
+        [InlineData("Akhorne:D3,L3,2D2|-2D2,B9", 1, 0.18747, 0.23015)]
+        [InlineData("Anqi:1D2", 0, 0.55556)]
+        [InlineData("Barik:P2;C2", 1, 0.81019, 0.94522)]
+        [InlineData("Bilerot:F8", 1, 0.82639)]
+        [InlineData("Boa:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Bomber:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Karina:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Cindy:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Luthor:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("Crumble:U3,D3", 1, 0.79012)]
+        [InlineData("Dribl:D3,F8", 1, 0.64198)]
+        [InlineData("Drull:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Drull:T8", 0, 0.58333)]
+        [InlineData("Eldril:D3,Y3,C3", 1, 0.70233, 0.79012)]
+        [InlineData("Estelle:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Frank:D5,2D3,B8", 1, 0.21875, 0.30078)]
+        [InlineData("Fungus:4/6,2D3,B8", 1, 0.38889, 0.43750)]
+        [InlineData("Glart:2D3,B9", 1, 0.31250, 0.35156)]
+        [InlineData("Gloriel:D3,P2;C2", 1, 0.72016, 0.84019)]
+        [InlineData("Glotl:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Grak:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Grashnak:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Gretchen:D3,D3", 1, 0.74074, 0.76543)]
+        [InlineData("Grom:R2,D5,2D3,B8", 1, 0.21267, 0.29243)]
+        [InlineData("Guffle:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("H'thark:R2,D5,2D3", 1, 0.42535, 0.53168)]
+        [InlineData("Hakflem:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Helmut:2D2,B8", 1, 0.32922, 0.40238)]
+        [InlineData("Ivan:1D3%,2D2", 1, 0.36188, 0.44869)]
+        [InlineData("Ivar:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("Jeremiah:D3,P2;C,DC:C2", 1, 0.84019)]
+        [InlineData("Jordell:D3,2D2;DC:C2", 1, 0.41152, 0.57156)]
+        [InlineData("Josef:2,2", 2, 0.69444, 0.84877, 0.85734)]
+        [InlineData("Karla:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Kiroth:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("Kreek:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Borak:2D3,B8,F8", 1, 0.25521, 0.29774)]
+        [InlineData("Lucien:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Max:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("Zug:2D3,B8", 1, 0.54167, 0.60938)]
+        [InlineData("Morg:H5;G4", 1, 0.38889, 0.60185)]
+        [InlineData("Nobbla:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Puggy:D3,2D2", 1, 0.49383, 0.64015)]
+        [InlineData("Rashnack:F8,2", 1, 0.28935, 0.31346)]
+        [InlineData("Ripper:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Roxanna:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Rumbelow:2D3,B8", 1, 0.43750, 0.49219)]
+        [InlineData("Scyla:2D3,B9", 1, 0.31250, 0.35156)]
+        [InlineData("Scrappa:R2,D3,F8", 1, 0.50412)]
+        [InlineData("Skitter:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Skrorg:2D3,B9", 1, 0.31250, 0.35156)]
+        [InlineData("Skrull:P2;C2", 1, 0.81019, 0.94522)]
+        [InlineData("Gobbo:D3,F8", 1, 0.37037)]
+        [InlineData("Thorsson:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("Valen:P2;C2", 1, 0.81019, 0.94522)]
+        [InlineData("Varag:1D3%,2D3,B8", 1, 0.27884, 0.32948)]
+        [InlineData("Wilhelm:2D2,B9,J8", 1, 0.15271, 0.18665)]
+        [InlineData("Wither:2,2", 2, 0.69444, 0.81019, 0.81501)]
+        [InlineData("Zolcath:R2,2D3,B8", 1, 0.42535, 0.47852)]
+        [InlineData("Griff:R2,2D2,D3~S2", 1, 0.48011, 0.62236)]
+        public void StarPlayerActionCalculatorReturnsExpectedResult(string calculationString, int rerolls, params double[] expected)
+        {
+            var calculation = _calculationBuilder.Build(calculationString, rerolls);
+            var result = _calculator.Calculate(calculation);
+
+            Assert.Equal(expected.Length, result.Results.Length);
+
+            for (var i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal((decimal)expected[i], result.Results[i], 5);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace ActionCalculator.Models
 {
     [Flags]
-    public enum CalculatorSkills : uint
+    public enum CalculatorSkills : ulong
     {
         None = 0,
         [Description("D")]
@@ -66,9 +66,6 @@ namespace ActionCalculator.Models
         [Description("S")]
         [HideFromPlayerEditor]
         Slayer = 16777216,
-        [Description("I")]
-        [HideFromPlayerEditor]
-        Incorporeal = 33554432,
         [Description("BR")]
         [HideFromPlayerEditor]
         BlindRage = 67108864,
@@ -81,6 +78,15 @@ namespace ActionCalculator.Models
         [Description("H")]
         Hatred = 536870912,
         [Description("LF")]
-        LoneFouler = 1073741824
+        LoneFouler = 1073741824,
+        [Description("SB")]
+        [HideFromPlayerEditor]
+        SavageBlow = 2147483648,
+        [Description("ASP")]
+        [HideFromPlayerEditor]
+        ASneakyPair = 4294967296,
+        [Description("UM")]
+        [HideFromPlayerEditor]
+        UnstoppableMomentum = 8589934592
     }
 }

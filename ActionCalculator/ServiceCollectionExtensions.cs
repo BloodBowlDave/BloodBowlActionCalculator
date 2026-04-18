@@ -18,12 +18,14 @@ namespace ActionCalculator
     {
         public static void AddActionCalculatorServices(this IServiceCollection services)
         {
+            services.AddSingleton<ICalculationContext, CalculationContext>();
             services.AddSingleton<IActionParserFactory, ActionParserFactory>();
             services.AddSingleton<IActionTypeValidator, ActionTypeValidator>();
             services.AddSingleton<ICalculator, Calculator>();
             services.AddSingleton<IBlockSkillsHelper, BlockSkillsHelper>();
             services.AddSingleton<ID6, D6>();
             services.AddSingleton<IEqualityComparer<decimal>, ProbabilityComparer>();
+            services.AddSingleton<ICalculationBuilder, CalculationBuilder>();
             services.AddSingleton<IPlayerActionsBuilder, PlayerActionsBuilder>();
             services.AddSingleton<IPlayerBuilder, PlayerBuilder>();
             services.AddSingleton<IProHelper, ProHelper>();

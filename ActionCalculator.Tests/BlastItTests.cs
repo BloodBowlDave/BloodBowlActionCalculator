@@ -21,14 +21,14 @@ namespace ActionCalculator.Tests
         {
             var d8 = new List<Scatter>
             {
-                new(0, 1),//2
-                new(1, 1),//3
-                new(1, 0),//4
-                new(1, -1),//5
-                new(0, -1),//6
+                new(0, 1),  //2
+                new(1, 1),  //3
+                new(1, 0),  //4
+                new(1, -1), //5
+                new(0, -1), //6
                 new(-1, -1),//7
-                new(-1, 0),//8
-                new(-1, 1)//1
+                new(-1, 0), //8
+                new(-1, 1)  //1
             };
 
             var groupedFirstScatters = d8.GroupBy(x => x.DistanceFromZero()).ToList();

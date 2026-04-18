@@ -17,11 +17,13 @@ namespace ActionCalculator.Strategies.Blocking
         private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> _outcomes = new();
         private List<int> _successfulValues = new();
         private List<int> _nonCriticalFailureValues = new();
+        private List<List<int>> _rolls = new();
         private int _rollsCount;
         private int _rerollCount;
         private bool _useBrawler;
         private bool _usePro;
         private bool _useBrawlerAndPro;
+        private bool _useSavageBlow;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
         private decimal _lonerSuccess;
@@ -62,19 +64,20 @@ namespace ActionCalculator.Strategies.Blocking
                 : (decimal)(_successfulValues.Count + _nonCriticalFailureValues.Count) / 6;
 
             var numberOfDice = -block.NumberOfDice;
-            var rolls = _d6.Rolls(numberOfDice);
+            _rolls = _d6.Rolls(numberOfDice);
             var success = (decimal) Math.Pow((double) successOnOneDie, numberOfDice);
 
-            _rollsCount = rolls.Count;
+            _rollsCount = _rolls.Count;
             var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
             _useBrawler = skillsToUse.Contains(CalculatorSkills.Brawler);
             _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
             _useBrawlerAndPro = _useBrawler && _proHelper.UsePro(player, block, r, usedSkills, successOnOneDie * successOnOneDie, success);
+            _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
 
-            foreach (var roll in rolls)
+            foreach (var roll in _rolls)
             {
                 var failureCount = roll.Count - roll.Count(_successfulValues.Contains);
                 var nonCriticalFailureCount = roll.Count(_nonCriticalFailureValues.Contains);
@@ -97,7 +100,7 @@ namespace ActionCalculator.Strategies.Blocking
                 }
             }
 
-            foreach (var reroll in rolls)
+            foreach (var reroll in _rolls)
             {
                 AddOutcome(_rerollCount * _lonerSuccess / _rollsCount / _rollsCount, r - 1, CalculatorSkills.None, reroll);
             }
@@ -110,6 +113,12 @@ namespace ActionCalculator.Strategies.Blocking
             if (nonCriticalFailureCount == 1 && !_rerollNonCriticalFailure)
             {
                 AddNonCriticalFailure(1m / _rollsCount, r, CalculatorSkills.None);
+                return;
+            }
+
+            if (_useSavageBlow)
+            {
+                SavageBlowOneFailure(roll, r);
                 return;
             }
 
@@ -177,6 +186,12 @@ namespace ActionCalculator.Strategies.Blocking
             if (nonCriticalFailureCount == 2 && !_rerollNonCriticalFailure)
             {
                 AddNonCriticalFailure(1m / _rollsCount, r, CalculatorSkills.None);
+                return;
+            }
+
+            if (_useSavageBlow)
+            {
+                SavageBlowTwoFailures(roll, r);
                 return;
             }
 
@@ -255,11 +270,53 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
+            if (_useSavageBlow)
+            {
+                SavageBlowThreeFailures(r);
+                return;
+            }
+
             AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, CalculatorSkills.None, roll);
 
             _rerollCount++;
         }
         
+        private void SavageBlowOneFailure(IReadOnlyCollection<int> roll, int r)
+        {
+            var rollList = roll.ToList();
+            var failureIndex = rollList.FindIndex(v => !_successfulValues.Contains(v));
+
+            for (var i = 1; i <= 6; i++)
+            {
+                var reroll = new List<int>(rollList) { [failureIndex] = i };
+                AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.SavageBlow, reroll);
+            }
+        }
+
+        private void SavageBlowTwoFailures(IReadOnlyList<int> roll, int r)
+        {
+            var failureIndices = Enumerable.Range(0, roll.Count)
+                .Where(i => !_successfulValues.Contains(roll[i]))
+                .ToList();
+
+            for (var i = 1; i <= 6; i++)
+            {
+                for (var j = 1; j <= 6; j++)
+                {
+                    var reroll = new List<int>(roll) { [failureIndices[0]] = i, [failureIndices[1]] = j };
+                    AddOutcome(1m / _rollsCount / 36, r, CalculatorSkills.SavageBlow, reroll);
+                }
+            }
+        }
+
+        private void SavageBlowThreeFailures(int r)
+        {
+            foreach (var reroll in _rolls)
+            {
+                AddOutcome(1m / _rollsCount / _rollsCount, r, CalculatorSkills.SavageBlow, reroll);
+            }
+        }
+
         private void AddOutcome(decimal p, int r, CalculatorSkills usedSkills, IReadOnlyCollection<int> roll)
         {
             if (p == 0)

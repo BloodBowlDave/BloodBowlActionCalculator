@@ -49,7 +49,7 @@ namespace ActionCalculator.Strategies.BallHandling
 
             if (_proHelper.UsePro(player, pass, r, usedSkills, success, success))
             {
-                _calculator.Resolve(inaccuratePassWithoutReroll, r, i, usedSkills, true);
+                _calculator.Resolve(p * inaccuratePassWithoutReroll, r, i, usedSkills, true);
 
                 usedSkills |= CalculatorSkills.Pro;
                 ExecuteReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, accuratePassAfterFailure, inaccuratePassAfterFailure);

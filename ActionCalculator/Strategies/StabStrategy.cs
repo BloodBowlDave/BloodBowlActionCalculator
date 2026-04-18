@@ -17,8 +17,10 @@ namespace ActionCalculator.Strategies
 
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
+            var player = playerAction.Player;
             var action = playerAction.Action;
-            var success = _d6.Success(2, action.Roll);
+            var modifier = player.CanUseSkill(CalculatorSkills.ASneakyPair, usedSkills) ? 1 : 0;
+            var success = _d6.Success(2, action.Roll - modifier);
 
             _calculator.Resolve(p * success, r, i, usedSkills);
             _calculator.Resolve(p * (1 - success), r, i, usedSkills, true);
