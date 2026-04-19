@@ -8,13 +8,13 @@ namespace ActionCalculator
     {
         public Player Build(string playerInput)
         {
-            StarPlayer? starPlayer = null;
+            string? shortName = null;
             var input = playerInput;
 
             if (StarPlayerRules.ByShortName.TryGetValue(playerInput, out var rule))
             {
-                starPlayer = rule.StarPlayer;
-                input = rule.SkillsInput;
+                shortName = playerInput;
+                input = ResolveDwarvenScourge(rule.SkillsInput, vsDwarves: playerInput.EndsWith('*'));
             }
 
             var skillsWithValues = GetSkillsWithValues(input);
@@ -25,7 +25,20 @@ namespace ActionCalculator
                 GetSkillValue(skillsWithValues, CalculatorSkills.BreakTackle),
                 GetSkillValue(skillsWithValues, CalculatorSkills.MightyBlow),
                 GetSkillValue(skillsWithValues, CalculatorSkills.DirtyPlayer),
-                starPlayer);
+                shortName);
+        }
+
+        private static string ResolveDwarvenScourge(string skillsInput, bool vsDwarves)
+        {
+            if (!skillsInput.Contains("DS"))
+                return skillsInput;
+
+            var skills = skillsInput.Split(',').ToList();
+            skills.Remove("DS");
+            if (!vsDwarves)
+                skills.Remove("H");
+            skills.Add(vsDwarves ? "MB2" : "MB1");
+            return string.Join(',', skills);
         }
 
         private static List<Tuple<CalculatorSkills, int>> GetSkillsWithValues(string playerInput) =>

@@ -87,6 +87,9 @@ namespace ActionCalculator.Models
         ASneakyPair = 4294967296,
         [Description("UM")]
         [HideFromPlayerEditor]
-        UnstoppableMomentum = 8589934592
+        UnstoppableMomentum = 8589934592,
+        [Description("DS")]
+        [HideFromPlayerEditor]
+        DwarvenScourge = 17179869184
     }
 }

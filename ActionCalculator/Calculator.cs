@@ -44,6 +44,10 @@ namespace ActionCalculator
 
         public void Resolve(decimal p, int r, int i, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
+            if (p > 1) {
+                throw new InvalidOperationException("Probability cannot exceed one.");
+            }
+
             if (p == 0 || r < 0)
             {
                 return;

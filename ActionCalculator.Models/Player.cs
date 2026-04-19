@@ -16,10 +16,10 @@ namespace ActionCalculator.Models
             ProSuccess = 2m / 3;
         }
 
-        public Player(Guid id, CalculatorSkills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, StarPlayer? starPlayer = null)
+        public Player(Guid id, CalculatorSkills skills, int lonerValue, int breakTackleValue, int mightyBlowValue, int dirtyPlayerValue, string? shortName = null)
         {
             Id = id;
-            StarPlayer = starPlayer;
+            ShortName = shortName;
             Skills = skills;
             LonerValue = lonerValue;
             BreakTackleValue = breakTackleValue;
@@ -30,7 +30,7 @@ namespace ActionCalculator.Models
 
 
         public Guid Id { get; }
-        public StarPlayer? StarPlayer { get; set; }
+        public string? ShortName { get; set; }
         public CalculatorSkills Skills { get; set; }
         public int LonerValue { get; set; }
         public int BreakTackleValue { get; set; }
@@ -51,8 +51,8 @@ namespace ActionCalculator.Models
         }
 
         public override string ToString() =>
-            StarPlayer.HasValue
-                ? StarPlayerRules.ShortNameByStarPlayer[StarPlayer.Value]
+            ShortName != null
+                ? ShortName
                 : string.Join(',', Skills.ToEnumerable(CalculatorSkills.None)
                     .Select(x => x.GetDescriptionFromValue() + GetSkillRoll(x))
                     .OrderBy(x => x));

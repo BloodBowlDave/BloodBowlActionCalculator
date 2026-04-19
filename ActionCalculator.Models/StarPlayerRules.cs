@@ -34,7 +34,7 @@ namespace ActionCalculator.Models
             new(StarPlayer.HtharkTheUnstoppable,        StarPlayerSkill.UnstoppableMomentum,    ["Block", "Break Tackle", "Defensive", "Juggernaut", "Loner (4+)", "Sprint", "Sure Feet", "Thick Skull", "Unsteady"],                                                   "BT,SF,L4,UM"),
             new(StarPlayer.HakflemSkuttlespike,         StarPlayerSkill.Treacherous,            ["Dodge", "Extra Arms", "Loner (4+)", "Prehensile Tail", "Two Heads"],                                                                                                  "D,L4"),
             new(StarPlayer.HelmutWulf,                  StarPlayerSkill.OldPro,                 ["Chainsaw", "Loner (4+)", "No Ball", "Pro", "Secret Weapon", "Stand Firm"],                                                                                            "P,L4,OP"),
-            new(StarPlayer.IvanTheAnimalDeathshroud,    StarPlayerSkill.DwarfenScourge,         ["Block", "Disturbing Presence", "Hatred (Dwarf)", "Juggernaut", "Loner (4+)", "Regeneration", "Strip Ball", "Tackle"],                                                  "L4,H"),
+            new(StarPlayer.IvanTheAnimalDeathshroud,    StarPlayerSkill.DwarfenScourge,         ["Block", "Disturbing Presence", "Hatred (Dwarf)", "Juggernaut", "Loner (4+)", "Regeneration", "Strip Ball", "Tackle"],                                                 "L4,DS,H"),
             new(StarPlayer.IvarEriksson,                StarPlayerSkill.RaidingParty,           ["Block", "Guard", "Loner (4+)", "Tackle"],                                                                                                                             "L4"),
             new(StarPlayer.JeremiahKool,                StarPlayerSkill.TheFlashingBlade,       ["Block", "Diving Catch", "Dodge", "Dump-Off", "Loner (4+)", "Nerves Of Steel", "On The Ball", "Pass", "Sidestep"],                                                     "D,PA,DC,L4"),
             new(StarPlayer.JordellFreshbreeze,          StarPlayerSkill.SwiftAsTheBreeze,       ["Block", "Diving Catch", "Dodge", "Leap", "Loner (4+)", "Sidestep", "Steady Footing"],                                                                                 "D,DC,L4"),
@@ -89,12 +89,22 @@ namespace ActionCalculator.Models
                     .Cast<ShortNameAttribute>()
                     .First().Name);
 
-        public static IReadOnlyDictionary<string, StarPlayerRule> ByShortName { get; } =
-            All.ToDictionary(r => typeof(StarPlayer)
-                .GetField(r.StarPlayer.ToString())!
-                .GetCustomAttributes(typeof(ShortNameAttribute), false)
-                .Cast<ShortNameAttribute>()
-                .First().Name,
+        public static IReadOnlyDictionary<string, StarPlayerRule> ByShortName { get; } = BuildByShortName();
+
+        private static Dictionary<string, StarPlayerRule> BuildByShortName()
+        {
+            var dict = All.ToDictionary(
+                r => typeof(StarPlayer)
+                    .GetField(r.StarPlayer.ToString())!
+                    .GetCustomAttributes(typeof(ShortNameAttribute), false)
+                    .Cast<ShortNameAttribute>()
+                    .First().Name,
                 StringComparer.OrdinalIgnoreCase);
+
+            var ivan = All.First(r => r.StarPlayer == StarPlayer.IvanTheAnimalDeathshroud);
+            dict["Ivan*"] = ivan;
+
+            return dict;
+        }
     }
 }
