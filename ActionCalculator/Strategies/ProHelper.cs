@@ -22,7 +22,8 @@ namespace ActionCalculator.Strategies
             var cpIsProReroll = _context.Season != Season.Season3;
 
             if (!canUseSkill(CalculatorSkills.Pro, usedSkills) &&
-                !(cpIsProReroll && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)))
+                !(cpIsProReroll && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)) &&
+                !canUseSkill(CalculatorSkills.HalflingLuck, usedSkills))
             {
                 return false;
             }

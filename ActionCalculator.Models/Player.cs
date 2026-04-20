@@ -25,7 +25,7 @@ namespace ActionCalculator.Models
             BreakTackleValue = breakTackleValue;
             MightyBlowValue = mightyBlowValue;
             DirtyPlayerValue = dirtyPlayerValue;
-            ProSuccess = skills.Contains(CalculatorSkills.ConsummateProfessional) ? 1m : 2m / 3;
+            ProSuccess = (skills.Contains(CalculatorSkills.ConsummateProfessional) || skills.Contains(CalculatorSkills.HalflingLuck)) ? 1m : 2m / 3;
         }
 
 
@@ -44,6 +44,7 @@ namespace ActionCalculator.Models
             {
                 CalculatorSkills.OldPro => CalculatorSkills.Pro,
                 CalculatorSkills.ConsummateProfessional => CalculatorSkills.Pro,
+                CalculatorSkills.HalflingLuck => CalculatorSkills.Pro,
                 _ => skill
             };
 

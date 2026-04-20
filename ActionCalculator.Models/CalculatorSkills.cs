@@ -90,6 +90,12 @@ namespace ActionCalculator.Models
         UnstoppableMomentum = 8589934592,
         [Description("DS")]
         [HideFromPlayerEditor]
-        DwarvenScourge = 17179869184
+        DwarvenScourge = 17179869184,
+        [Description("LC")]
+        [HideFromPlayerEditor]
+        LordOfChaos = 34359738368,
+        [Description("HL")]
+        [HideFromPlayerEditor]
+        HalflingLuck = 68719476736
     }
 }
