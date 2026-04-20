@@ -1,6 +1,6 @@
 
 <MudItem Class="action-summary">
-    <MudPaper Style="min-height: 51px; overflow: visible;">
+    <MudPaper>
 
         <h6 @onclick="() => RemoveActionByIndex(Index)">
             @if (PlayerAction.RequiresNonCriticalFailure && Action.ActionType == ActionType.Block)

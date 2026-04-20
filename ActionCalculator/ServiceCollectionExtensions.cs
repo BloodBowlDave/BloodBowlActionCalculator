@@ -53,6 +53,7 @@ namespace ActionCalculator
             services.AddSingleton<InjuryStrategy>();
             services.AddSingleton<InterferenceStrategy>();
             services.AddSingleton<LandingStrategy>();
+            services.AddSingleton<LeapStrategy>();
             services.AddSingleton<NonRerollableStrategy>();
             services.AddSingleton<PassStrategy>();
             services.AddSingleton<PickUpStrategy>();
@@ -82,6 +83,7 @@ namespace ActionCalculator
             services.AddSingleton<InjuryParser>();
             services.AddSingleton<InterferenceParser>();
             services.AddSingleton<LandingParser>();
+            services.AddSingleton<LeapParser>();
             services.AddSingleton<NonRerollableParser>();
             services.AddSingleton<PassParser>();
             services.AddSingleton<PickupParser>();

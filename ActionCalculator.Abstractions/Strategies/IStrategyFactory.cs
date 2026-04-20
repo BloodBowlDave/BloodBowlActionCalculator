@@ -5,6 +5,6 @@ namespace ActionCalculator.Abstractions.Strategies
 {
 	public interface IStrategyFactory
     {
-        IActionStrategy GetActionStrategy(Action action, ICalculator calculator, ActionType? previousActionType, bool nonCriticalFailure, Season season = Season.Season3);
+        IActionStrategy GetActionStrategy(Action action, ICalculator calculator, bool nonCriticalFailure);
     }
 }

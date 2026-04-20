@@ -256,7 +256,8 @@ namespace ActionCalculator.Web.Client.Pages
         {
             var (index, value) = indexAndValue;
             var action = CurrentCalculation().PlayerActions[index].Action;
-            ((Dodge)action).UseDivingTackle = value;
+            if (action is Dodge dodge) dodge.UseDivingTackle = value;
+            else if (action is Leap leap) leap.UseDivingTackle = value;
         }
 
         private void ToggleBrawler(Tuple<int, bool> indexAndValue)

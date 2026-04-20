@@ -259,10 +259,16 @@ h2 {
     overflow: visible !important;
 }
 
+.calculation-summary .mud-item {
+    display: flex;
+    flex-direction: column;
+}
+
 .calculation-summary .mud-paper {
     min-height: 75px;
     overflow: visible !important;
     white-space: nowrap;
+    flex: 1;
 }
 
 .calculation-summary .player-skills {

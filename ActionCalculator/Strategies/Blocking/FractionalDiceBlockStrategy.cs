@@ -24,6 +24,9 @@ namespace ActionCalculator.Strategies.Blocking
         private bool _usePro;
         private bool _useBrawlerAndPro;
         private bool _useSavageBlow;
+        private bool _useHatred;
+        private bool _useUnstoppableMomentum;
+        private bool _useLordOfChaos;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
         private decimal _lonerSuccess;
@@ -73,6 +76,9 @@ namespace ActionCalculator.Strategies.Blocking
             _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
             _useBrawlerAndPro = _useBrawler && _proHelper.UsePro(player, block, r, usedSkills, successOnOneDie * successOnOneDie, success);
             _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
+            _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
+            _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum);
+            _useLordOfChaos = skillsToUse.Contains(CalculatorSkills.LordOfChaos);
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
@@ -125,6 +131,18 @@ namespace ActionCalculator.Strategies.Blocking
             if (_useBrawler && indexOfBothDown != -1)
             {
                 Brawler(r);
+                return;
+            }
+
+            if ((_useHatred && roll.Contains(1)) || _useUnstoppableMomentum)
+            {
+                RerollMinDie(roll, r);
+                return;
+            }
+
+            if (_useLordOfChaos)
+            {
+                LordOfChaosReroll(roll, r);
                 return;
             }
 
@@ -198,6 +216,18 @@ namespace ActionCalculator.Strategies.Blocking
             if (_useBrawlerAndPro && indexOfBothDown != -1)
             {
                 BrawlerAndPro(roll, r, indexOfBothDown);
+                return;
+            }
+
+            if ((_useHatred && roll.Contains(1)) || _useUnstoppableMomentum)
+            {
+                RerollMinDie(roll, r);
+                return;
+            }
+
+            if (_useLordOfChaos)
+            {
+                LordOfChaosReroll(roll, r);
                 return;
             }
 
@@ -276,11 +306,67 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
+            if ((_useHatred && roll.Contains(1)) || _useUnstoppableMomentum)
+            {
+                RerollMinDie(roll, r);
+                return;
+            }
+
+            if (_useLordOfChaos)
+            {
+                LordOfChaosReroll(roll, r);
+                return;
+            }
+
             AddOutcome((1 - _lonerSuccess) / _rollsCount, r - 1, CalculatorSkills.None, roll);
 
             _rerollCount++;
         }
-        
+
+        private void RerollMinDie(IEnumerable<int> roll, int r)
+        {
+            var rollList = roll.ToList();
+            var indexOfMin = rollList.IndexOf(rollList.Min());
+            for (var i = 1; i <= 6; i++)
+            {
+                var reroll = new List<int>(rollList) { [indexOfMin] = i };
+                AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.None, reroll);
+            }
+        }
+
+        private void LordOfChaosReroll(IEnumerable<int> roll, int r)
+        {
+            var rollList = roll.ToList();
+            var indexOfMin = rollList.IndexOf(rollList.Min());
+            for (var i = 1; i <= 6; i++)
+            {
+                var lcReroll = new List<int>(rollList) { [indexOfMin] = i };
+                var p = 1m / _rollsCount / 6;
+
+                if (lcReroll.All(_successfulValues.Contains))
+                {
+                    AddSuccess(p, r, CalculatorSkills.LordOfChaos);
+                    continue;
+                }
+
+                if (lcReroll.All(_successfulValues.Concat(_nonCriticalFailureValues).Contains))
+                {
+                    AddNonCriticalFailure(p, r, CalculatorSkills.LordOfChaos);
+                    continue;
+                }
+
+                if (r == 0)
+                {
+                    continue;
+                }
+
+                foreach (var reroll in _rolls)
+                {
+                    AddOutcome(p * _lonerSuccess / _rollsCount, r - 1, CalculatorSkills.LordOfChaos, reroll);
+                }
+            }
+        }
+
         private void SavageBlowOneFailure(IReadOnlyCollection<int> roll, int r)
         {
             var rollList = roll.ToList();

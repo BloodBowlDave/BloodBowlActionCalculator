@@ -68,34 +68,37 @@ namespace ActionCalculator.Models
         Slayer = 16777216,
         [Description("BR")]
         [HideFromPlayerEditor]
-        BlindRage = 67108864,
+        BlindRage = 33554432,
         [Description("BI")]
         [HideFromPlayerEditor]
-        BlastIt = 134217728,
+        BlastIt = 67108864,
         [Description("WD")]
         [HideFromPlayerEditor]
-        WhirlingDervish = 268435456,
+        WhirlingDervish = 134217728,
         [Description("H")]
-        Hatred = 536870912,
+        Hatred = 268435456,
         [Description("LF")]
-        LoneFouler = 1073741824,
+        LoneFouler = 536870912,
         [Description("SB")]
         [HideFromPlayerEditor]
-        SavageBlow = 2147483648,
+        SavageBlow = 1073741824,
         [Description("ASP")]
         [HideFromPlayerEditor]
-        ASneakyPair = 4294967296,
+        ASneakyPair = 2147483648,
         [Description("UM")]
         [HideFromPlayerEditor]
-        UnstoppableMomentum = 8589934592,
+        UnstoppableMomentum = 4294967296,
         [Description("DS")]
         [HideFromPlayerEditor]
-        DwarvenScourge = 17179869184,
+        DwarvenScourge = 8589934592,
         [Description("LC")]
         [HideFromPlayerEditor]
-        LordOfChaos = 34359738368,
+        LordOfChaos = 17179869184,
         [Description("HL")]
         [HideFromPlayerEditor]
-        HalflingLuck = 68719476736
+        HalflingLuck = 34359738368,
+        [Description("TC")]
+        [HideFromPlayerEditor]
+        ToxinConnoisseur = 68719476736
     }
 }

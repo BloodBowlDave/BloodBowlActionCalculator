@@ -24,6 +24,7 @@ namespace ActionCalculator.Strategies.Blocking
         private bool _usePro;
         private bool _useSavageBlow;
         private bool _useUnstoppableMomentum;
+        private bool _useLordOfChaos;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
         private decimal _lonerSuccess;
@@ -72,6 +73,7 @@ namespace ActionCalculator.Strategies.Blocking
             _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
             _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
             _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum);
+            _useLordOfChaos = skillsToUse.Contains(CalculatorSkills.LordOfChaos);
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
 
@@ -107,7 +109,7 @@ namespace ActionCalculator.Strategies.Blocking
 
                     if (rollWithoutBothDown.Any(_nonCriticalFailureValues.Contains))
                     {
-                        Brawler(roll, r, indexOfBothDown);
+                        RerollDieAt(roll, r, indexOfBothDown);
                     }
                 }
 
@@ -123,20 +125,26 @@ namespace ActionCalculator.Strategies.Blocking
 
             if (_useBrawler && indexOfBothDown != -1)
             {
-                Brawler(roll, r, indexOfBothDown);
+                RerollDieAt(roll, r, indexOfBothDown);
                 return;
             }
 
             var indexOfSkull = roll.IndexOf(1);
             if (_useHatred && indexOfSkull != -1)
             {
-                Hatred(roll, r, indexOfSkull);
+                RerollDieAt(roll, r, indexOfSkull);
                 return;
             }
 
             if (_useUnstoppableMomentum)
             {
                 UnstoppableMomentum(roll, r);
+                return;
+            }
+
+            if (_useLordOfChaos)
+            {
+                LordOfChaos(roll, r);
                 return;
             }
 
@@ -167,6 +175,38 @@ namespace ActionCalculator.Strategies.Blocking
             }
         }
 
+        private void LordOfChaos(List<int> roll, int r)
+        {
+            var indexOfLowestValue = roll.IndexOf(roll.Min());
+            for (var i = 1; i <= 6; i++)
+            {
+                var lcReroll = new List<int>(roll) { [indexOfLowestValue] = i };
+                var p = 1m / _rollsCount / 6;
+
+                if (lcReroll.Any(_successfulValues.Contains))
+                {
+                    AddSuccess(p, r, CalculatorSkills.LordOfChaos);
+                    continue;
+                }
+
+                if (lcReroll.Any(_nonCriticalFailureValues.Contains))
+                {
+                    AddNonCriticalFailure(p, r, CalculatorSkills.LordOfChaos);
+                    continue;
+                }
+
+                if (r == 0)
+                {
+                    continue;
+                }
+
+                foreach (var reroll in _rolls)
+                {
+                    AddOutcome(p * _lonerSuccess / _rollsCount, r - 1, CalculatorSkills.LordOfChaos, reroll);
+                }
+            }
+        }
+
         private void Pro(List<int> roll, int r)
         {
             AddOutcome((1 - _proSuccess) / _rollsCount, r, CalculatorSkills.Pro, roll);
@@ -187,7 +227,7 @@ namespace ActionCalculator.Strategies.Blocking
             }
         }
 
-        private void Brawler(IReadOnlyCollection<int> roll, int r, int indexOfBothDown)
+        private void RerollDieAt(IReadOnlyCollection<int> roll, int r, int rerollIndex)
         {
             for (var i = 1; i <= 6; i++)
             {
@@ -197,28 +237,28 @@ namespace ActionCalculator.Strategies.Blocking
                     continue;
                 }
 
-                var brawlerReroll = new List<int>(roll) { [indexOfBothDown] = i };
+                var rerolled = new List<int>(roll) { [rerollIndex] = i };
 
                 if (!_usePro)
                 {
                     continue;
                 }
 
-                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, brawlerReroll);
-                ProAfterBrawler(brawlerReroll, r, indexOfBothDown);
+                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, rerolled);
+                ProAfterReroll(rerolled, r, rerollIndex);
             }
         }
 
-        private void ProAfterBrawler(IReadOnlyList<int> brawlerReroll, int r, int indexOfBothDown)
+        private void ProAfterReroll(IReadOnlyList<int> roll, int r, int excludeIndex)
         {
             var indexOfLowestValue = -1;
             var lowestValue = 99;
 
-            for (var i = 0; i < brawlerReroll.Count; i++)
+            for (var i = 0; i < roll.Count; i++)
             {
-                var rollValue = brawlerReroll[i];
+                var rollValue = roll[i];
 
-                if (i == indexOfBothDown || rollValue >= lowestValue)
+                if (i == excludeIndex || rollValue >= lowestValue)
                 {
                     continue;
                 }
@@ -234,56 +274,7 @@ namespace ActionCalculator.Strategies.Blocking
 
             for (var i = 1; i <= 6; i++)
             {
-                var proReroll = new List<int>(brawlerReroll) { [indexOfLowestValue] = i };
-                AddOutcome(_proSuccess / _rollsCount / 36, r, CalculatorSkills.Pro, proReroll);
-            }
-        }
-
-        private void Hatred(IReadOnlyCollection<int> roll, int r, int indexOfSkull)
-        {
-            for (var i = 1; i <= 6; i++)
-            {
-                if (_successfulValues.Contains(i))
-                {
-                    AddSuccess(1m / _rollsCount / 6, r, CalculatorSkills.None);
-                    continue;
-                }
-
-                var hatredReroll = new List<int>(roll) { [indexOfSkull] = i };
-
-                if (!_usePro) { continue; }
-
-                AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, hatredReroll);
-                ProAfterHatred(hatredReroll, r, indexOfSkull);
-            }
-        }
-
-        private void ProAfterHatred(IReadOnlyList<int> hatredReroll, int r, int indexOfSkull)
-        {
-            var indexOfLowestValue = -1;
-            var lowestValue = 99;
-
-            for (var i = 0; i < hatredReroll.Count; i++)
-            {
-                var rollValue = hatredReroll[i];
-
-                if (i == indexOfSkull || rollValue >= lowestValue)
-                {
-                    continue;
-                }
-
-                indexOfLowestValue = i;
-                lowestValue = rollValue;
-            }
-
-            if (indexOfLowestValue == -1)
-            {
-                return;
-            }
-
-            for (var i = 1; i <= 6; i++)
-            {
-                var proReroll = new List<int>(hatredReroll) { [indexOfLowestValue] = i };
+                var proReroll = new List<int>(roll) { [indexOfLowestValue] = i };
                 AddOutcome(_proSuccess / _rollsCount / 36, r, CalculatorSkills.Pro, proReroll);
             }
         }

@@ -168,6 +168,9 @@
                 var msgEl = document.getElementById('bb-message');
                 var gifEl = document.getElementById('bb-gif');
 
+                gifEl.onerror = function () {
+                    document.querySelector('.bb-gif-frame').style.display = 'none';
+                };
                 gifEl.src = gifs[Math.floor(Math.random() * gifs.length)];
                 msgEl.textContent = messages[Math.floor(Math.random() * messages.length)];
 
@@ -184,7 +187,7 @@
         <a class="dismiss">&#x1F5D9;</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }</script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 </body>
 

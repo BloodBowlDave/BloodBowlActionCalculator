@@ -10,11 +10,13 @@ namespace ActionCalculator.Strategies.BallHandling
     {
         private readonly ICalculator _calculator;
         private readonly IProHelper _proHelper;
+        private readonly ICalculationContext _context;
 
-        public PassStrategy(ICalculator calculator, IProHelper proHelper)
+        public PassStrategy(ICalculator calculator, IProHelper proHelper, ICalculationContext context)
         {
             _calculator = calculator;
             _proHelper = proHelper;
+            _context = context;
         }
 
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
@@ -40,6 +42,12 @@ namespace ActionCalculator.Strategies.BallHandling
             var accuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * success;
             var inaccuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * inaccuratePass;
             var inaccuratePassWithoutReroll = rerollInaccuratePass ? 0m : inaccuratePass;
+
+            if (_context.Season != Season.Season3 && canUseSkill(CalculatorSkills.TheBallista, usedSkills))
+            {
+                ExecuteReroll(p, r, i, usedSkills, accuratePassAfterFailure, inaccuratePassWithoutReroll + inaccuratePassAfterFailure);
+                return;
+            }
 
             if (canUseSkill(CalculatorSkills.Pass, usedSkills))
             {

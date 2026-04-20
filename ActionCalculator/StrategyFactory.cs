@@ -15,13 +15,15 @@ namespace ActionCalculator
     public class StrategyFactory : IStrategyFactory
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly ICalculationContext _context;
 
-        public StrategyFactory(IServiceProvider serviceProvider)
+        public StrategyFactory(IServiceProvider serviceProvider, ICalculationContext context)
         {
             _serviceProvider = serviceProvider;
+            _context = context;
         }
 
-        public IActionStrategy GetActionStrategy(Action action, ICalculator calculator, ActionType? previousActionType, bool nonCriticalFailure, Season season = Season.Season3)
+        public IActionStrategy GetActionStrategy(Action action, ICalculator calculator, bool nonCriticalFailure)
         {
             var actionType = action.ActionType;
 
@@ -42,11 +44,12 @@ namespace ActionCalculator
                 ActionType.Foul => _serviceProvider.GetService<FoulStrategy>(),
                 ActionType.HailMaryPass => _serviceProvider.GetService<HailMaryPassStrategy>(),
                 ActionType.Hypnogaze => _serviceProvider.GetService<HypnogazeStrategy>(),
-                ActionType.Injury => previousActionType == ActionType.Foul 
-                    ? _serviceProvider.GetService<FoulInjuryStrategy>() 
+                ActionType.Injury => _context.PreviousActionType == ActionType.Foul
+                    ? _serviceProvider.GetService<FoulInjuryStrategy>()
                     : _serviceProvider.GetService<InjuryStrategy>(),
                 ActionType.Interference => _serviceProvider.GetService<InterferenceStrategy>(),
                 ActionType.Landing => _serviceProvider.GetService<LandingStrategy>(),
+                ActionType.Leap => _serviceProvider.GetService<LeapStrategy>(),
                 ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableStrategy>(),
                 ActionType.Pass => _serviceProvider.GetService<PassStrategy>(),
                 ActionType.PickUp => _serviceProvider.GetService<PickUpStrategy>(),

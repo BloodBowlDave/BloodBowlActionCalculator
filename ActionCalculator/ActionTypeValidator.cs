@@ -24,6 +24,7 @@ namespace ActionCalculator
                 ActionType.ThrowTeammate => !previousDauntless,
                 ActionType.Dauntless => !previousDauntless,
                 ActionType.Interference => !previousDauntless && previousActionType is ActionType.Pass,
+                ActionType.Leap => !previousDauntless,
                 ActionType.Tentacles => !previousDauntless,
                 ActionType.Shadowing => !previousDauntless,
                 ActionType.ArgueTheCall => !previousDauntless && (previousActionType is ActionType.Foul

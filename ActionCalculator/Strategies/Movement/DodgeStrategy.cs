@@ -44,15 +44,16 @@ namespace ActionCalculator.Strategies.Movement
             _calculator.Resolve(p * success, r, i, usedSkills);
 
             // CP Season 3: once per game, +1 modifier to one agility test (roll of 1 always fails)
-            var cpS3Success = _context.Season == Season.Season3
+            var consummateProfessionalSuccess = _context.Season == Season.Season3
                 && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)
                 && dodge.Roll > 2
                 ? 1m / 6 : 0m;
-            if (cpS3Success > 0)
+
+            if (consummateProfessionalSuccess > 0)
             {
-                _calculator.Resolve(p * cpS3Success, r, i, usedSkills | CalculatorSkills.Pro);
+                _calculator.Resolve(p * consummateProfessionalSuccess, r, i, usedSkills | CalculatorSkills.Pro);
             }
-            failure -= cpS3Success;
+            failure -= consummateProfessionalSuccess;
 
             var successUsingBreakTackle = successIncludingBreakTackle - success;
             failure -= successUsingBreakTackle;

@@ -228,6 +228,7 @@ failure -= cpS3Success;
 | `SB` | SavageBlow | hidden |
 | `ASP` | ASneakyPair | hidden |
 | `UM` | UnstoppableMomentum | hidden |
+| `LC` | LordOfChaos | hidden |
 
 `Loner` and `BreakTackle` store a numeric value (the roll threshold) appended to their abbreviation: `L4`, `BT2`.  
 `DirtyPlayer` and `MightyBlow` store a modifier value: `DP1`, `MB1`.
@@ -284,6 +285,7 @@ Star players are addressed by short name (e.g. `Griff:R2,2D2,D3`). Their skills 
 | `Morg` | The Ballista | `MB,L4,TB,H` |
 | `Puggy` | Halfling Luck | `D,L3` |
 | `H'thark` | Unstoppable Momentum | `BT,SF,L4,UM` |
+| `Borak` | Lord of Chaos | `MB,L3,DP1,SG,LC` |
 | `Rumbelow` | Ram | `L4,R` |
 | `Wilhelm` | Savage Mauling | `C,CL,L4,SM` |
 | `Zug` | Crushing Blow | `MB,L4,CR` |

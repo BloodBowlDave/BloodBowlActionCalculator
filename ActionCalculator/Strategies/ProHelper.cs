@@ -19,10 +19,10 @@ namespace ActionCalculator.Strategies
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
             // In Season 3, Consummate Professional is a +1 modifier (not a Pro reroll)
-            var cpIsProReroll = _context.Season != Season.Season3;
+            var consummateProfessionalIsProReroll = _context.Season == Season.Season2;
 
             if (!canUseSkill(CalculatorSkills.Pro, usedSkills) &&
-                !(cpIsProReroll && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)) &&
+                !(consummateProfessionalIsProReroll && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)) &&
                 !canUseSkill(CalculatorSkills.HalflingLuck, usedSkills))
             {
                 return false;

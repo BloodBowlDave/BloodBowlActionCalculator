@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Block = ActionCalculator.Models.Actions.Block;
 using Player = ActionCalculator.Models.Player;
 using Dodge = ActionCalculator.Models.Actions.Dodge;
+using Leap = ActionCalculator.Models.Actions.Leap;
 using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Web.Client.Pages.Components.Calculation
@@ -71,7 +72,12 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
 
         private bool BreakTackle() => ((Dodge)Action).UseBreakTackle;
 
-        private bool DivingTackle() => ((Dodge)Action).UseDivingTackle;
+        private bool DivingTackle() => Action.ActionType switch
+        {
+            ActionType.Dodge => ((Dodge)Action).UseDivingTackle,
+            ActionType.Leap => ((Leap)Action).UseDivingTackle,
+            _ => false
+        };
 
         private bool UseBrawler() => ((Block)Action).UseBrawler;
 
@@ -157,6 +163,11 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
                 options.Add("Affected by Diving Tackle");
             }
 
+            if (Action.ActionType == ActionType.Leap)
+            {
+                options.Add("Affected by Diving Tackle");
+            }
+
             if (Action.ActionType is ActionType.Pass or ActionType.ThrowTeammate)
             {
                 options.Add("Reroll Inaccurate");
@@ -188,6 +199,11 @@ namespace ActionCalculator.Web.Client.Pages.Components.Calculation
             if (Action.ActionType == ActionType.Dodge)
             {
                 if (Player.CanUseSkill(CalculatorSkills.BreakTackle, CalculatorSkills.None) && BreakTackle()) selected.Add("Use Break Tackle");
+                if (DivingTackle()) selected.Add("Affected by Diving Tackle");
+            }
+
+            if (Action.ActionType == ActionType.Leap)
+            {
                 if (DivingTackle()) selected.Add("Affected by Diving Tackle");
             }
 
