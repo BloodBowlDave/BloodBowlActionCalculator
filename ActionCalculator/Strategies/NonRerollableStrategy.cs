@@ -6,17 +6,8 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies
 {
-    public class NonRerollableStrategy : IActionStrategy
+    public class NonRerollableStrategy(ICalculator calculator, ID6 d6) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly ID6 _d6;
-
-        public NonRerollableStrategy(ICalculator calculator, ID6 d6)
-        {
-            _calculator = calculator;
-            _d6 = d6;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
@@ -24,15 +15,15 @@ namespace ActionCalculator.Strategies
             var roll = action.Roll;
             var denominator = action.Denominator;
 
-            var success = denominator == 12 ? _d6.Success(2, roll) : (decimal)roll / denominator;
+            var success = denominator == 12 ? d6.Success(2, roll) : (decimal)roll / denominator;
 
             var failure = 1 - success;
 
-            _calculator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
+            calculator.Resolve(p * success, r, i, usedSkills, nonCriticalFailure);
 
             if (player.CanUseSkill(CalculatorSkills.WhirlingDervish, usedSkills) && !usedSkills.Contains(CalculatorSkills.WhirlingDervish) && denominator == 6)
             {
-                _calculator.Resolve(p * failure * success, r, i, usedSkills | CalculatorSkills.WhirlingDervish);
+                calculator.Resolve(p * failure * success, r, i, usedSkills | CalculatorSkills.WhirlingDervish);
             }
         }
     }

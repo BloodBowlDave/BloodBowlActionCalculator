@@ -1,15 +1,9 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Dodge : Action
+	public class Dodge(int roll, bool usePro, bool useDivingTackle, bool useBreakTackle) : Action(ActionType.Dodge, roll, usePro)
 	{
-		public Dodge(int roll, bool usePro, bool useDivingTackle, bool useBreakTackle) : base(ActionType.Dodge, roll, usePro)
-		{
-			UseDivingTackle = useDivingTackle;
-			UseBreakTackle = useBreakTackle;
-		}
-    
-		public bool UseDivingTackle { get; set; }
-        public bool UseBreakTackle { get; set; }
+        public bool UseDivingTackle { get; set; } = useDivingTackle;
+        public bool UseBreakTackle { get; set; } = useBreakTackle;
 
         public override string ToString() => $"{(char) ActionType}{Roll}{(!UseBreakTackle ? "¬" : "")}{(UseDivingTackle ? "\"" : "")}{(UsePro ? "*" : "")}";
 	}

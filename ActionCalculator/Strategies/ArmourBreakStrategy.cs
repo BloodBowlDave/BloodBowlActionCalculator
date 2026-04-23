@@ -6,17 +6,9 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies
 {
-    public class ArmourBreakStrategy : IActionStrategy
+    public class ArmourBreakStrategy(ICalculator calculator, ID6 iD6, ICalculationContext context) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly ID6 _iD6;
         private const CalculatorSkills SkillsAffectingArmour = CalculatorSkills.Ram | CalculatorSkills.MightyBlow | CalculatorSkills.Slayer | CalculatorSkills.CrushingBlow;
-
-        public ArmourBreakStrategy(ICalculator calculator, ID6 iD6)
-        {
-            _calculator = calculator;
-            _iD6 = iD6;
-        }
 
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
@@ -29,8 +21,8 @@ namespace ActionCalculator.Strategies
 
             if (canUseSkill(CalculatorSkills.Claw, usedSkills) && roll >= 8)
             {
-                var success = _iD6.Success(2, 8);
-                _calculator.Resolve(p * success, r, i, usedSkills);
+                var success = iD6.Success(2, 8);
+                calculator.Resolve(p * success, r, i, usedSkills);
 
                 if (!useOldPro)
                 {
@@ -39,7 +31,7 @@ namespace ActionCalculator.Strategies
 
                 var successesWithOldPro = GetSuccessesWithOldPro(new Dictionary<CalculatorSkills, int> { { CalculatorSkills.None, 8 } });
                 var successWithOldPro = (decimal)successesWithOldPro[CalculatorSkills.None] / 216;
-                _calculator.Resolve(p * (1 - success) * proSuccess * successWithOldPro, r, i, usedSkills | CalculatorSkills.Pro);
+                calculator.Resolve(p * (1 - success) * proSuccess * successWithOldPro, r, i, usedSkills | CalculatorSkills.Pro);
 
                 return;
             }
@@ -49,8 +41,8 @@ namespace ActionCalculator.Strategies
 
             foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
             {
-                var success = _iD6.Success(2, minimumRoll) - succeedWithPreviousSkills;
-                _calculator.Resolve(p * success, r, i, usedSkills | skills);
+                var success = iD6.Success(2, minimumRoll) - succeedWithPreviousSkills;
+                calculator.Resolve(p * success, r, i, usedSkills | skills);
                 succeedWithPreviousSkills += success;
             }
 
@@ -61,17 +53,22 @@ namespace ActionCalculator.Strategies
 
             foreach (var (skills, successes) in GetSuccessesWithOldPro(skillsWithMinimumRoll))
             {
-                _calculator.Resolve(p * proSuccess * successes / 216, r, i, usedSkills | skills | CalculatorSkills.Pro);
+                calculator.Resolve(p * proSuccess * successes / 216, r, i, usedSkills | skills | CalculatorSkills.Pro);
             }
         }
 
         private Dictionary<CalculatorSkills, int> GetSuccessesWithOldPro(Dictionary<CalculatorSkills, int> skillsWithMinimumRoll)
         {
+            if (context.PreviousActionType != ActionType.Block)
+            {
+                return [];
+            }
+
             var successesWithOldPro = skillsWithMinimumRoll.ToDictionary(x => x.Key, _ => 0);
 
             var lowestSuccessfulArmourRoll = skillsWithMinimumRoll.Last().Value;
             
-            foreach (var roll in _iD6.Rolls(2).Where(x => x.Sum() < lowestSuccessfulArmourRoll))
+            foreach (var roll in iD6.Rolls(2).Where(x => x.Sum() < lowestSuccessfulArmourRoll))
             {
                 var highestRoll = roll.Max();
             

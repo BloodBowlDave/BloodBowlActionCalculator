@@ -5,12 +5,8 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
-	public class CatchInaccuratePassStrategy : IActionStrategy
+	public class CatchInaccuratePassStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly IProHelper _proHelper;
-        private readonly ID6 _d6;
-
         private const decimal ScatterToTarget = 24m / 512;
         private const decimal ScatterToTargetOrAdjacent = 240m / 512;
         private const decimal ScatterThenBounce = (ScatterToTargetOrAdjacent - ScatterToTarget) / 8;
@@ -22,13 +18,6 @@ namespace ActionCalculator.Strategies.BallHandling
 
         private Dictionary<Tuple<int, CalculatorSkills>, decimal> _outcomes = new();
 
-        public CatchInaccuratePassStrategy(ICalculator calculator, IProHelper proHelper, ID6 d6)
-        {
-            _calculator = calculator;
-            _proHelper = proHelper;
-            _d6 = d6;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             _outcomes = new Dictionary<Tuple<int, CalculatorSkills>, decimal>();
@@ -39,20 +28,20 @@ namespace ActionCalculator.Strategies.BallHandling
             var canUseDivingCatch = player.CanUseSkill(CalculatorSkills.DivingCatch, usedSkills);
 
             var scatteredPassRoll = action.Roll + (blastIt ? 0 : 1) + (canUseDivingCatch ? 1 : 0);
-            var success = _d6.Success(1, scatteredPassRoll);
+            var success = d6.Success(1, scatteredPassRoll);
             var failure = 1 - success;
 
             CatchScatteredPass(r, playerAction, usedSkills, success, failure);
 
             var bouncingBallRoll = action.Roll + 1 + (canUseDivingCatch ? 1 : 0);
-            success = _d6.Success(1, bouncingBallRoll);
+            success = d6.Success(1, bouncingBallRoll);
             failure = 1 - success;
 
             CatchBouncingBall(r, playerAction, usedSkills, success, failure);
 
             foreach (var ((rerolls, skills), value) in _outcomes)
             {
-                _calculator.Resolve(p * value, rerolls, i, skills);
+                calculator.Resolve(p * value, rerolls, i, skills);
             }
         }
 
@@ -99,7 +88,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
+            if (proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
             {
                 var scatterSuccess = failDivingCatch * proSuccess * scatter * success;
 
@@ -126,7 +115,7 @@ namespace ActionCalculator.Strategies.BallHandling
         {
             var player = playerAction.Player;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
-            var success = _d6.Success(1, playerAction.Action.Roll);
+            var success = d6.Success(1, playerAction.Action.Roll);
 
             AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills), successNoReroll);
 
@@ -136,7 +125,7 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
+            if (proHelper.UsePro(player, playerAction.Action, r, usedSkills, success, success))
             {
                 AddOrUpdateOutcomes(new Tuple<int, CalculatorSkills>(r, usedSkills | CalculatorSkills.Pro), successWithReroll * proSuccess);
                 return;

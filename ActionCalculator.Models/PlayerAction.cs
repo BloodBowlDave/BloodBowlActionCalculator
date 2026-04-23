@@ -2,18 +2,11 @@
 
 namespace ActionCalculator.Models
 {
-    public class PlayerAction
+    public class PlayerAction(Player player, Action action, int depth)
     {
-        public PlayerAction(Player player, Action action, int depth)
-        {
-            Player = player;
-            Action = action;
-            Depth = depth;
-        }
-
-        public Player Player { get; set; }
-        public Action Action { get; }
-        public int Depth { get; }
+        public Player Player { get; set; } = player;
+        public Action Action { get; } = action;
+        public int Depth { get; } = depth;
         public int BranchId { get; set; }
         public bool RequiresNonCriticalFailure { get; set; }
         public bool EndOfBranch { get; set; }

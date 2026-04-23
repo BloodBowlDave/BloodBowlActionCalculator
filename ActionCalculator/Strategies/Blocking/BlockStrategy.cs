@@ -7,11 +7,8 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Blocking
 {
-    public class BlockStrategy : IActionStrategy
+    public class BlockStrategy(ICalculator calculator, IBlockSkillsHelper blockSkillsHelper, ID6 d6) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly IBlockSkillsHelper _blockSkillsHelper;
-        private readonly ID6 _d6;
         private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> _outcomes = new();
         private List<int> _successfulValues = new();
         private List<int> _nonCriticalFailureValues = new();
@@ -29,20 +26,13 @@ namespace ActionCalculator.Strategies.Blocking
         private decimal _proSuccess;
         private decimal _lonerSuccess;
 
-        public BlockStrategy(ICalculator calculator, IBlockSkillsHelper blockSkillsHelper, ID6 d6)
-        {
-            _calculator = calculator;
-            _blockSkillsHelper = blockSkillsHelper;
-            _d6 = d6;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             foreach (var outcome in GetOutcomes(r, playerAction, usedSkills))
             {
                 var ((outcomeNonCriticalFailure, rerollsRemaining, outcomeSkillsUsed), pOutcome) = outcome;
 
-                _calculator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
+                calculator.Resolve(p * pOutcome, rerollsRemaining, i, usedSkills | outcomeSkillsUsed, outcomeNonCriticalFailure);
             }
         }
 
@@ -54,19 +44,19 @@ namespace ActionCalculator.Strategies.Blocking
 
             var block = (Block) playerAction.Action;
             var numberOfSuccessfulResults = block.NumberOfSuccessfulResults;
-            _successfulValues = _d6.Rolls().Take(numberOfSuccessfulResults).ToList();
-            _nonCriticalFailureValues = _d6.Rolls().Skip(numberOfSuccessfulResults).Take(block.NumberOfNonCriticalFailures).ToList();
+            _successfulValues = d6.Rolls().Take(numberOfSuccessfulResults).ToList();
+            _nonCriticalFailureValues = d6.Rolls().Skip(numberOfSuccessfulResults).Take(block.NumberOfNonCriticalFailures).ToList();
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
             var successOnOneDie = _rerollNonCriticalFailure
                 ? (decimal) _successfulValues.Count / 6
                 : (decimal) (_successfulValues.Count + _nonCriticalFailureValues.Count) / 6;
 
             var numberOfDice = block.NumberOfDice;
-            _rolls = _d6.Rolls(numberOfDice);
+            _rolls = d6.Rolls(numberOfDice);
             var success = 1 - (decimal)Math.Pow((double)(1 - successOnOneDie), numberOfDice);
 
             _rollsCount = _rolls.Count;
-            var skillsToUse = _blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
+            var skillsToUse = blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
             _useBrawler = skillsToUse.Contains(CalculatorSkills.Brawler);
             _canUseBrawler = player.CanUseSkill(CalculatorSkills.Brawler, usedSkills);
             _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);

@@ -4,26 +4,17 @@ using ActionCalculator.Models;
 
 namespace ActionCalculator.Strategies
 {
-    public class StabStrategy : IActionStrategy
+    public class StabStrategy(ICalculator calculator, ID6 d6) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly ID6 _d6;
-        
-        public StabStrategy(ICalculator calculator, ID6 d6)
-        {
-            _calculator = calculator;
-            _d6 = d6;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var action = playerAction.Action;
             var modifier = player.CanUseSkill(CalculatorSkills.ASneakyPair, usedSkills) ? 1 : 0;
-            var success = _d6.Success(2, action.Roll - modifier);
+            var success = d6.Success(2, action.Roll - modifier);
 
-            _calculator.Resolve(p * success, r, i, usedSkills);
-            _calculator.Resolve(p * (1 - success), r, i, usedSkills, true);
+            calculator.Resolve(p * success, r, i, usedSkills);
+            calculator.Resolve(p * (1 - success), r, i, usedSkills, true);
         }
     }
 }

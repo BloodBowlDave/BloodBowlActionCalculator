@@ -1,11 +1,7 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Foul : Action
+	public class Foul(int roll) : Action(ActionType.Foul, roll, false)
 	{
-		public Foul(int roll) : base(ActionType.Foul, roll, false)
-		{
-		}
-
-		public override bool IsRerollable() => false;
+        public override bool IsRerollable() => false;
 	}
 }

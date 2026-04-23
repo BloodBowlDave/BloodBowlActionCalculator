@@ -7,15 +7,8 @@ using Xunit.Abstractions;
 
 namespace ActionCalculator.Tests
 {
-    public class BlastItTests
+    public class BlastItTests(ITestOutputHelper testOutputHelper)
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public BlastItTests(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
         [Fact(Skip = "Skipping because it takes too long to run.")]
         public void Test()
         {
@@ -298,13 +291,13 @@ namespace ActionCalculator.Tests
 
             foreach (var firstScatterStrategy in bestOverallStrategy.FirstScatterStrategies)
             {
-                _testOutputHelper.WriteLine(firstScatterStrategy.ToString());
+                testOutputHelper.WriteLine(firstScatterStrategy.ToString());
             }
 
 
             foreach (var secondScatterStrategy in bestOverallStrategy.SecondScatterStrategies)
             {
-                _testOutputHelper.WriteLine(secondScatterStrategy.ToString());
+                testOutputHelper.WriteLine(secondScatterStrategy.ToString());
             }
 
             var thirdScatterGroups = bestOverallStrategy.ThirdScatterStrategies.GroupBy(x =>
@@ -313,7 +306,7 @@ namespace ActionCalculator.Tests
             foreach (var thirdScatterStrategyGroup in bestOverallStrategy.ThirdScatterStrategies.GroupBy(x =>
                          new Tuple<decimal, decimal>(x.ThirdScatter.SecondScatter.DistanceFromZero(), x.ThirdScatter.DistanceFromZero())))
             {
-                _testOutputHelper.WriteLine(thirdScatterStrategyGroup.First().ToString());
+                testOutputHelper.WriteLine(thirdScatterStrategyGroup.First().ToString());
             }
             
             Assert.Equal(0.124267578125m, bestDirectScatter);

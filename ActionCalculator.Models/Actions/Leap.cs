@@ -1,13 +1,8 @@
 namespace ActionCalculator.Models.Actions
 {
-    public class Leap : Action
+    public class Leap(int roll, bool usePro, bool useDivingTackle = false) : Action(ActionType.Leap, roll, usePro)
     {
-        public Leap(int roll, bool usePro, bool useDivingTackle = false) : base(ActionType.Leap, roll, usePro)
-        {
-            UseDivingTackle = useDivingTackle;
-        }
-
-        public bool UseDivingTackle { get; set; }
+        public bool UseDivingTackle { get; set; } = useDivingTackle;
 
         public override string ToString() => $"{(char)ActionType}{Roll}{(UseDivingTackle ? "\"" : "")}{(UsePro ? "*" : "")}";
     }

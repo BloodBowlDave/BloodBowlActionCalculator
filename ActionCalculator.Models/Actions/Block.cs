@@ -1,25 +1,14 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-    public class Block : Action
+    public class Block(int numberOfDice, int numberOfSuccessfulResults, int numberOfNonCriticalFailures,
+        bool useBrawler, bool usePro, bool rerollNonCriticalFailure, bool useHatred = false) : Action(ActionType.Block, 0, usePro)
     {
-        public Block(int numberOfDice, int numberOfSuccessfulResults, int numberOfNonCriticalFailures,
-            bool useBrawler, bool usePro, bool rerollNonCriticalFailure, bool useHatred = false)
-            : base(ActionType.Block, 0, usePro)
-        {
-            NumberOfDice = numberOfDice;
-            NumberOfSuccessfulResults = numberOfSuccessfulResults;
-            NumberOfNonCriticalFailures = numberOfNonCriticalFailures;
-            UseBrawler = useBrawler;
-            RerollNonCriticalFailure = rerollNonCriticalFailure;
-            UseHatred = useHatred;
-        }
-
-        public bool UseBrawler { get; set; }
-        public bool UseHatred { get; set; }
-        public int NumberOfDice { get; set; }
-        public int NumberOfSuccessfulResults { get; set; }
-        public int NumberOfNonCriticalFailures { get; set; }
-        public bool RerollNonCriticalFailure { get; }
+        public bool UseBrawler { get; set; } = useBrawler;
+        public bool UseHatred { get; set; } = useHatred;
+        public int NumberOfDice { get; set; } = numberOfDice;
+        public int NumberOfSuccessfulResults { get; set; } = numberOfSuccessfulResults;
+        public int NumberOfNonCriticalFailures { get; set; } = numberOfNonCriticalFailures;
+        public bool RerollNonCriticalFailure { get; } = rerollNonCriticalFailure;
 
         public override string ToString() => $"{NumberOfDice}D{NumberOfSuccessfulResults}{(NumberOfNonCriticalFailures > 0 ? "!" + NumberOfNonCriticalFailures : "")}{(UseBrawler ? "^" : "")}{(UseHatred ? "%" : "")}{(UsePro ? "*" : "")}{(!RerollNonCriticalFailure ? "'" : "")}";
 

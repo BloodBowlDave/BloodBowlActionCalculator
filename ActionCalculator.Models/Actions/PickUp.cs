@@ -1,9 +1,6 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class PickUp : Action
+	public class PickUp(int roll, bool usePro) : Action(ActionType.PickUp, roll, usePro)
 	{
-		public PickUp(int roll, bool usePro) : base(ActionType.PickUp, roll, usePro)
-		{
-		}
-	}
+    }
 }

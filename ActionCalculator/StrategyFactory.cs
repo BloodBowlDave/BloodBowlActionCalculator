@@ -12,53 +12,44 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ActionCalculator
 {
-    public class StrategyFactory : IStrategyFactory
+    public class StrategyFactory(IServiceProvider serviceProvider, ICalculationContext context) : IStrategyFactory
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ICalculationContext _context;
-
-        public StrategyFactory(IServiceProvider serviceProvider, ICalculationContext context)
-        {
-            _serviceProvider = serviceProvider;
-            _context = context;
-        }
-
         public IActionStrategy GetActionStrategy(Action action, ICalculator calculator, bool nonCriticalFailure)
         {
             var actionType = action.ActionType;
 
             IActionStrategy? actionStrategy = actionType switch
             {
-                ActionType.ArgueTheCall => _serviceProvider.GetService<ArgueTheCallStrategy>(),
-                ActionType.ArmourBreak => _serviceProvider.GetService<ArmourBreakStrategy>(),
+                ActionType.ArgueTheCall => serviceProvider.GetService<ArgueTheCallStrategy>(),
+                ActionType.ArmourBreak => serviceProvider.GetService<ArmourBreakStrategy>(),
                 ActionType.Block => ((Block)action).NumberOfDice > 0 
-                    ? _serviceProvider.GetService<BlockStrategy>() 
-                    : _serviceProvider.GetService<FractionalDiceBlockStrategy>(),
-                ActionType.Bribe => _serviceProvider.GetService<BribeStrategy>(),
+                    ? serviceProvider.GetService<BlockStrategy>() 
+                    : serviceProvider.GetService<FractionalDiceBlockStrategy>(),
+                ActionType.Bribe => serviceProvider.GetService<BribeStrategy>(),
                 ActionType.Catch => nonCriticalFailure 
-                    ? _serviceProvider.GetService<CatchInaccuratePassStrategy>() 
-                    : _serviceProvider.GetService<CatchStrategy>(),
-                ActionType.Chainsaw => _serviceProvider.GetService<ChainsawStrategy>(),
-                ActionType.Dauntless => _serviceProvider.GetService<DauntlessStrategy>(),
-                ActionType.Dodge => _serviceProvider.GetService<DodgeStrategy>(),
-                ActionType.Foul => _serviceProvider.GetService<FoulStrategy>(),
-                ActionType.HailMaryPass => _serviceProvider.GetService<HailMaryPassStrategy>(),
-                ActionType.Hypnogaze => _serviceProvider.GetService<HypnogazeStrategy>(),
-                ActionType.Injury => _context.PreviousActionType == ActionType.Foul
-                    ? _serviceProvider.GetService<FoulInjuryStrategy>()
-                    : _serviceProvider.GetService<InjuryStrategy>(),
-                ActionType.Interference => _serviceProvider.GetService<InterferenceStrategy>(),
-                ActionType.Landing => _serviceProvider.GetService<LandingStrategy>(),
-                ActionType.Leap => _serviceProvider.GetService<LeapStrategy>(),
-                ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableStrategy>(),
-                ActionType.Pass => _serviceProvider.GetService<PassStrategy>(),
-                ActionType.PickUp => _serviceProvider.GetService<PickUpStrategy>(),
-                ActionType.Rush => _serviceProvider.GetService<RushStrategy>(),
-                ActionType.Shadowing => _serviceProvider.GetService<ShadowingStrategy>(),
-                ActionType.Stab => _serviceProvider.GetService<StabStrategy>(),
-                ActionType.Tentacles => _serviceProvider.GetService<TentaclesStrategy>(),
-                ActionType.ThrowTeammate => _serviceProvider.GetService<ThrowTeammateStrategy>(),
-                ActionType.Rerollable => _serviceProvider.GetService<RerollableStrategy>(),
+                    ? serviceProvider.GetService<CatchInaccuratePassStrategy>() 
+                    : serviceProvider.GetService<CatchStrategy>(),
+                ActionType.Chainsaw => serviceProvider.GetService<ChainsawStrategy>(),
+                ActionType.Dauntless => serviceProvider.GetService<DauntlessStrategy>(),
+                ActionType.Dodge => serviceProvider.GetService<DodgeStrategy>(),
+                ActionType.Foul => serviceProvider.GetService<FoulStrategy>(),
+                ActionType.HailMaryPass => serviceProvider.GetService<HailMaryPassStrategy>(),
+                ActionType.Hypnogaze => serviceProvider.GetService<HypnogazeStrategy>(),
+                ActionType.Injury => context.PreviousActionType == ActionType.Foul
+                    ? serviceProvider.GetService<FoulInjuryStrategy>()
+                    : serviceProvider.GetService<InjuryStrategy>(),
+                ActionType.Interference => serviceProvider.GetService<InterferenceStrategy>(),
+                ActionType.Landing => serviceProvider.GetService<LandingStrategy>(),
+                ActionType.Leap => serviceProvider.GetService<LeapStrategy>(),
+                ActionType.NonRerollable => serviceProvider.GetService<NonRerollableStrategy>(),
+                ActionType.Pass => serviceProvider.GetService<PassStrategy>(),
+                ActionType.PickUp => serviceProvider.GetService<PickUpStrategy>(),
+                ActionType.Rush => serviceProvider.GetService<RushStrategy>(),
+                ActionType.Shadowing => serviceProvider.GetService<ShadowingStrategy>(),
+                ActionType.Stab => serviceProvider.GetService<StabStrategy>(),
+                ActionType.Tentacles => serviceProvider.GetService<TentaclesStrategy>(),
+                ActionType.ThrowTeammate => serviceProvider.GetService<ThrowTeammateStrategy>(),
+                ActionType.Rerollable => serviceProvider.GetService<RerollableStrategy>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), actionType, null)
             };
 

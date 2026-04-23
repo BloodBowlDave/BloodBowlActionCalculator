@@ -1,12 +1,8 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class ArmourBreak : Action
+	public class ArmourBreak(int roll) : Action(ActionType.ArmourBreak, roll, false)
 	{
-		public ArmourBreak(int roll) : base(ActionType.ArmourBreak, roll, false)
-		{
-		}
-
-		public override string ToString() => $"{(char) ActionType}{Roll}";
+        public override string ToString() => $"{(char) ActionType}{Roll}";
 
 		public override bool IsRerollable() => false;
 	}

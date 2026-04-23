@@ -5,15 +5,8 @@ using ActionCalculator.Models.Actions;
 
 namespace ActionCalculator.Strategies.Blocking
 {
-    public class BlockSkillsHelper : IBlockSkillsHelper
+    public class BlockSkillsHelper(IProHelper proHelper) : IBlockSkillsHelper
     {
-        private readonly IProHelper _proHelper;
-
-        public BlockSkillsHelper(IProHelper proHelper)
-        {
-            _proHelper = proHelper;
-        }
-
         public CalculatorSkills SkillsToUse(Player player, Block block, int r, CalculatorSkills usedSkills, decimal successOnOneDie, decimal success)
         {
             var result = CalculatorSkills.None;
@@ -22,7 +15,7 @@ namespace ActionCalculator.Strategies.Blocking
             if (UseHatred(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Hatred;
             if (player.CanUseSkill(CalculatorSkills.UnstoppableMomentum, usedSkills)) result |= CalculatorSkills.UnstoppableMomentum;
             if (player.CanUseSkill(CalculatorSkills.LordOfChaos, usedSkills)) result |= CalculatorSkills.LordOfChaos;
-            if (_proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Pro;
+            if (proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Pro;
             return result;
         }
 

@@ -1,15 +1,10 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Tentacles : Action
+	public class Tentacles(bool usePro, bool rerollFailure, int difference) : Action(ActionType.Tentacles, difference, usePro)
 	{
-		public Tentacles(bool usePro, bool rerollFailure, int difference) : base(ActionType.Tentacles, difference, usePro)
-		{
-			RerollFailure = rerollFailure;
-		}
-    
-		public bool RerollFailure { get; }
+        public bool RerollFailure { get; } = rerollFailure;
 
-		public override string ToString() => $"{(char)ActionType}{GetModifier()}{(!RerollFailure ? "'" : "")}";
+        public override string ToString() => $"{(char)ActionType}{GetModifier()}{(!RerollFailure ? "'" : "")}";
 
 		private string GetModifier() => Roll > 0 ? "+" + Roll : Roll.ToString();
 	}

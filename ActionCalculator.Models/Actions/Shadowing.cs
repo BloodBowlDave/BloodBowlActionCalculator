@@ -1,18 +1,11 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Shadowing : Action
+	public class Shadowing(bool usePro, bool rerollFailure, int difference) : Action(ActionType.Shadowing, difference, usePro)
 	{
-		public Shadowing(bool usePro, bool rerollFailure, int difference) : base(ActionType.Shadowing, difference, usePro)
-		{
-			RerollFailure = rerollFailure;
-			Difference = difference;
-		}
-    
-		public bool RerollFailure { get; }
-		private int Difference { get; }
+        public bool RerollFailure { get; } = rerollFailure;
 
-		public override string ToString() => $"{(char) ActionType}{GetDifference()}{(!RerollFailure ? "'" : "")}";
+        public override string ToString() => $"{(char) ActionType}{GetDifference()}{(!RerollFailure ? "'" : "")}";
 
-		private string GetDifference() => Difference > 0 ? "+" + Difference : Difference.ToString();
+		private string GetDifference() => difference > 0 ? "+" + difference : difference.ToString();
 	}
 }

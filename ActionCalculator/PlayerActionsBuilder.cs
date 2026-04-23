@@ -4,17 +4,9 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator
 {
-    public class PlayerActionsBuilder : IPlayerActionsBuilder
+    public class PlayerActionsBuilder(IActionParserFactory actionParserFactory, IPlayerBuilder playerBuilder) : IPlayerActionsBuilder
     {
-        private readonly IActionParserFactory _actionParserFactory;
-        private readonly IPlayerBuilder _playerBuilder;
         private List<PlayerAction> _playerActions = new();
-
-        public PlayerActionsBuilder(IActionParserFactory actionParserFactory, IPlayerBuilder playerBuilder)
-        {
-            _actionParserFactory = actionParserFactory;
-            _playerBuilder = playerBuilder;
-        }
 
         public PlayerActions Build(string playerActionsString)
         {
@@ -43,7 +35,7 @@ namespace ActionCalculator
             switch (specialCharacter)
             {
                 case ':':
-                    player = _playerBuilder.Build(calculation[..index]);
+                    player = playerBuilder.Build(calculation[..index]);
                     BuildPlayerActions(calculation[(index + 1)..], player, depth);
                     break;
                 case '{':
@@ -174,14 +166,14 @@ namespace ActionCalculator
             {
                 var actionSplit = actionString.Split('|');
 
-                yield return _actionParserFactory.GetActionParser(actionSplit[0]).Parse(actionSplit[0]);
+                yield return actionParserFactory.GetActionParser(actionSplit[0]).Parse(actionSplit[0]);
 
                 if (actionSplit.Length == 1)
                 {
                     continue;
                 }
                 
-                yield return _actionParserFactory.GetActionParser(actionSplit[1]).Parse(actionSplit[1]);
+                yield return actionParserFactory.GetActionParser(actionSplit[1]).Parse(actionSplit[1]);
             }
         }
 

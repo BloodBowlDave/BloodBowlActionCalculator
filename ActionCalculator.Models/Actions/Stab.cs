@@ -1,11 +1,7 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-    public class Stab : Action
+    public class Stab(int roll) : Action(ActionType.Stab, roll, false)
     {
-        public Stab(int roll) : base(ActionType.Stab, roll, false)
-        {
-        }
-
         public override bool IsRerollable() => false;
     }
 }

@@ -1,11 +1,7 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-    public class Chainsaw : Action
+    public class Chainsaw(int roll) : Action(ActionType.Chainsaw, roll, false)
     {
-        public Chainsaw(int roll) : base(ActionType.Chainsaw, roll, false)
-        {
-        }
-
         public override bool IsRerollable() => false;
     }
 }

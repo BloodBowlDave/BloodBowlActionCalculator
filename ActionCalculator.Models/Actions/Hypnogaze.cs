@@ -1,14 +1,9 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Hypnogaze : Action
+	public class Hypnogaze(int roll, bool usePro, bool rerollFailure) : Action(ActionType.Hypnogaze, roll, usePro)
 	{
-		public Hypnogaze(int roll, bool usePro, bool rerollFailure) : base(ActionType.Hypnogaze, roll, usePro)
-		{
-			RerollFailure = rerollFailure;
-		}
-    
-		public bool RerollFailure { get; }
+        public bool RerollFailure { get; } = rerollFailure;
 
-		public override string ToString() => $"{(char) ActionType}{Roll}{(!RerollFailure ? "'" : "")}";
+        public override string ToString() => $"{(char) ActionType}{Roll}{(!RerollFailure ? "'" : "")}";
 	}
 }

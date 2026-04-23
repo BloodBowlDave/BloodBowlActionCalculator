@@ -3,15 +3,8 @@ using ActionCalculator.Models;
 
 namespace ActionCalculator
 {
-    public class CalculationBuilder : ICalculationBuilder
+    public class CalculationBuilder(IPlayerActionsBuilder playerActionsBuilder) : ICalculationBuilder
     {
-        private readonly IPlayerActionsBuilder _playerActionsBuilder;
-
-        public CalculationBuilder(IPlayerActionsBuilder playerActionsBuilder)
-        {
-            _playerActionsBuilder = playerActionsBuilder;
-        }
-
         public Calculation Build(string calculationString, int rerolls)
         {
             var season = Season.Season3;
@@ -23,7 +16,7 @@ namespace ActionCalculator
                 season = Season.Season2;
             }
 
-            return new Calculation(_playerActionsBuilder.Build(input), rerolls, season);
+            return new Calculation(playerActionsBuilder.Build(input), rerolls, season);
         }
     }
 }

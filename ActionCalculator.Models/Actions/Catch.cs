@@ -1,9 +1,6 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-    public class Catch : Action
+    public class Catch(int roll, bool usePro) : Action(ActionType.Catch, roll, usePro)
     {
-        public Catch(int roll, bool usePro) : base(ActionType.Catch, roll, usePro)
-        {
-        }
     }
 }

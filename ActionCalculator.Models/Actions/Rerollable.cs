@@ -1,11 +1,7 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Rerollable : Action
+	public class Rerollable(int roll, bool usePro) : Action(ActionType.Rerollable, roll, usePro)
 	{
-		public Rerollable(int roll, bool usePro) : base(ActionType.Rerollable, roll, usePro)
-		{
-		}
-    
-		public override string ToString() => Roll + (UsePro ? "*" : "");
+        public override string ToString() => Roll + (UsePro ? "*" : "");
 	}
 }

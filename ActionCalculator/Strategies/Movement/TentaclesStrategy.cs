@@ -6,17 +6,8 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Movement
 {
-    public class TentaclesStrategy : IActionStrategy
+    public class TentaclesStrategy(ICalculator calculator, IProHelper proHelper) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly IProHelper _proHelper;
-
-        public TentaclesStrategy(ICalculator calculator, IProHelper proHelper)
-        {
-            _calculator = calculator;
-            _proHelper = proHelper;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
@@ -26,11 +17,11 @@ namespace ActionCalculator.Strategies.Movement
             var failure = (decimal)(tentacles.Roll + 1).ThisOrMinimum(1).ThisOrMaximum(6) / 6;
             var success = 1 - failure;
 
-            _calculator.Resolve(p * success, r, i, usedSkills);
+            calculator.Resolve(p * success, r, i, usedSkills);
 
             p *= failure;
 
-            if (_proHelper.UsePro(player, tentacles, r, usedSkills, success, success))
+            if (proHelper.UsePro(player, tentacles, r, usedSkills, success, success))
             {
                 ExecuteReroll(p, r, i, usedSkills | CalculatorSkills.Pro, proSuccess, success, failure);
                 return;
@@ -42,13 +33,13 @@ namespace ActionCalculator.Strategies.Movement
                 return;
             }
 
-            _calculator.Resolve(p, r, i, usedSkills, true);
+            calculator.Resolve(p, r, i, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal rerollSuccess, decimal success, decimal failure)
         {
-            _calculator.Resolve(p * rerollSuccess * success, r, i, usedSkills);
-            _calculator.Resolve(p * (1 - rerollSuccess + rerollSuccess * failure), r, i, usedSkills, true);
+            calculator.Resolve(p * rerollSuccess * success, r, i, usedSkills);
+            calculator.Resolve(p * (1 - rerollSuccess + rerollSuccess * failure), r, i, usedSkills, true);
         }
     }
 }

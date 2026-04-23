@@ -5,34 +5,21 @@ using FluentValidation;
 
 namespace ActionCalculator
 {
-    public class Calculator : ICalculator
+    public class Calculator(IStrategyFactory strategyFactory, IValidator<Calculation> calculationValidator, ICalculationContext context) : ICalculator
     {
-        private readonly IStrategyFactory _strategyFactory;
-        private readonly IValidator<Calculation> _calculationValidator;
-        private readonly ICalculationContext _context;
-
-        private Calculation _calculation;
-        private decimal[] _results;
-
-        public Calculator(IStrategyFactory strategyFactory, IValidator<Calculation> calculationValidator, ICalculationContext context)
-        {
-            _strategyFactory = strategyFactory;
-            _calculationValidator = calculationValidator;
-            _context = context;
-            _calculation = null!;
-            _results = null!;
-        }
+        private Calculation _calculation = null!;
+        private decimal[] _results = null!;
 
         public CalculationResult Calculate(Calculation calculation)
         {
-            var validationResult = _calculationValidator.Validate(calculation);
+            var validationResult = calculationValidator.Validate(calculation);
 
             if (!validationResult.IsValid)
             {
                 return new CalculationResult(validationResult.Errors);
             }
 
-            _context.Season = calculation.Season;
+            context.Season = calculation.Season;
             _calculation = calculation;
             _results = new decimal[calculation.Rerolls * 2 + 1];
 
@@ -118,7 +105,7 @@ namespace ActionCalculator
                 playerAction = _calculation.PlayerActions[i];
             }
 
-            _context.PreviousActionType = previousActionType;
+            context.PreviousActionType = previousActionType;
 
             if (!IsStartOfBranch(previousPlayerAction, playerAction))
             {
@@ -216,7 +203,7 @@ namespace ActionCalculator
 
         private void Execute(PlayerAction playerAction, decimal p, int r, int i, CalculatorSkills usedSkills, bool nonCriticalFailure)
         {
-            var actionStrategy = _strategyFactory.GetActionStrategy(playerAction.Action, this, nonCriticalFailure);
+            var actionStrategy = strategyFactory.GetActionStrategy(playerAction.Action, this, nonCriticalFailure);
             actionStrategy.Execute(p, r, i, playerAction, usedSkills, nonCriticalFailure);
         }
 

@@ -6,17 +6,8 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.BallHandling
 {
-    public class ThrowTeammateStrategy : IActionStrategy
+    public class ThrowTeammateStrategy(ICalculator calculator, IProHelper proHelper) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly IProHelper _proHelper;
-
-        public ThrowTeammateStrategy(ICalculator calculator, IProHelper proHelper)
-        {
-            _calculator = calculator;
-            _proHelper = proHelper;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
@@ -32,7 +23,7 @@ namespace ActionCalculator.Strategies.BallHandling
             var success = successes / 6;
             var failure = failures / 6;
 
-            _calculator.Resolve(p * success, r, i, usedSkills);
+            calculator.Resolve(p * success, r, i, usedSkills);
 
             var inaccurateThrow = inaccurateThrows / 6;
             var rerollInaccurateThrow = throwTeamMate.RerollInaccurateThrow;
@@ -46,9 +37,9 @@ namespace ActionCalculator.Strategies.BallHandling
                 return;
             }
 
-            if (_proHelper.UsePro(player, throwTeamMate, r, usedSkills, success, success))
+            if (proHelper.UsePro(player, throwTeamMate, r, usedSkills, success, success))
             {
-                _calculator.Resolve(p * inaccurateThrowWithoutReroll, r, i, usedSkills, true);
+                calculator.Resolve(p * inaccurateThrowWithoutReroll, r, i, usedSkills, true);
 
                 usedSkills |= CalculatorSkills.Pro;
                 ExecuteReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, accurateThrowAfterFailure, inaccurateThrowAfterFailure);
@@ -58,17 +49,17 @@ namespace ActionCalculator.Strategies.BallHandling
             if (r > 0 && rerollInaccurateThrow)
             {
                 ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills | CalculatorSkills.Pro, accurateThrowAfterFailure, inaccurateThrowAfterFailure);
-                _calculator.Resolve(p * inaccurateThrow * (1 - lonerSuccess), r - 1, i, usedSkills, true);
+                calculator.Resolve(p * inaccurateThrow * (1 - lonerSuccess), r - 1, i, usedSkills, true);
                 return;
             }
 
-            _calculator.Resolve(p * inaccurateThrow, r, i, usedSkills, true);
+            calculator.Resolve(p * inaccurateThrow, r, i, usedSkills, true);
         }
 
         private void ExecuteReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal accurateThrow, decimal inaccurateThrow)
         {
-            _calculator.Resolve(p * accurateThrow, r, i, usedSkills);
-            _calculator.Resolve(p * inaccurateThrow, r, i, usedSkills, true);
+            calculator.Resolve(p * accurateThrow, r, i, usedSkills);
+            calculator.Resolve(p * inaccurateThrow, r, i, usedSkills, true);
         }
     }
 }

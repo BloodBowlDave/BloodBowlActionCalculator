@@ -2,16 +2,11 @@
 
 namespace ActionCalculator.Models.Actions
 {
-	public class NonRerollable : Action
+	public class NonRerollable(int numerator, int denominator) : Action(ActionType.NonRerollable, numerator, false)
 	{
-		public NonRerollable(int numerator, int denominator) : base(ActionType.NonRerollable, numerator, false)
-		{
-			Denominator = denominator;
-		}
-    
-		public int Denominator { get; }
+        public int Denominator { get; } = denominator;
 
-		public override string ToString() => $"{Roll}/{Denominator}";
+        public override string ToString() => $"{Roll}/{Denominator}";
 
         public override string GetDescription() => $"{Roll}/{Denominator} {ActionType.ToString().PascalCaseToSpaced()}";
 

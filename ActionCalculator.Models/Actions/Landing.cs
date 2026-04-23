@@ -1,9 +1,6 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Landing : Action
+	public class Landing(int roll, bool usePro) : Action(ActionType.Landing, roll, usePro)
 	{
-		public Landing(int roll, bool usePro) : base(ActionType.Landing, roll, usePro)
-		{
-		}
-	}
+    }
 }

@@ -5,45 +5,38 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ActionCalculator
 {
-    public class ActionParserFactory : IActionParserFactory
+    public class ActionParserFactory(IServiceProvider serviceProvider) : IActionParserFactory
     {
-        private readonly IServiceProvider _serviceProvider;
-
-        public ActionParserFactory(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
         public IActionParser GetActionParser(string input) 
         {
             var actionType = GetActionType(input);
 
             IActionParser? actionBuilder = actionType switch
             {
-                ActionType.ArgueTheCall => _serviceProvider.GetService<ArgueTheCallParser>(),
-                ActionType.ArmourBreak => _serviceProvider.GetService<ArmourBreakParser>(),
-                ActionType.Bribe => _serviceProvider.GetService<BribeParser>(),
-                ActionType.Catch => _serviceProvider.GetService<CatchParser>(),
-                ActionType.Chainsaw => _serviceProvider.GetService<ChainsawParser>(),
-                ActionType.Dauntless => _serviceProvider.GetService<DauntlessParser>(),
-                ActionType.Dodge => _serviceProvider.GetService<DodgeParser>(),
-                ActionType.Foul => _serviceProvider.GetService<FoulParser>(),
-                ActionType.HailMaryPass => _serviceProvider.GetService<HailMaryPassParser>(),
-                ActionType.Hypnogaze => _serviceProvider.GetService<HypnogazeParser>(),
-                ActionType.Injury => _serviceProvider.GetService<InjuryParser>(),
-                ActionType.Interference => _serviceProvider.GetService<InterferenceParser>(),
-                ActionType.Leap => _serviceProvider.GetService<LeapParser>(),
-                ActionType.Landing => _serviceProvider.GetService<LandingParser>(),
-                ActionType.NonRerollable => _serviceProvider.GetService<NonRerollableParser>(),
-                ActionType.Pass => _serviceProvider.GetService<PassParser>(),
-                ActionType.PickUp => _serviceProvider.GetService<PickupParser>(),
-                ActionType.Rerollable => _serviceProvider.GetService<RerollableParser>(),
-                ActionType.Rush => _serviceProvider.GetService<RushParser>(),
-                ActionType.Shadowing => _serviceProvider.GetService<ShadowingParser>(),
-                ActionType.Stab => _serviceProvider.GetService<StabParser>(),
-                ActionType.Tentacles => _serviceProvider.GetService<TentaclesParser>(),
-                ActionType.ThrowTeammate => _serviceProvider.GetService<ThrowTeammateParser>(),
-                ActionType.Block => _serviceProvider.GetService<BlockParser>(),
+                ActionType.ArgueTheCall => serviceProvider.GetService<ArgueTheCallParser>(),
+                ActionType.ArmourBreak => serviceProvider.GetService<ArmourBreakParser>(),
+                ActionType.Bribe => serviceProvider.GetService<BribeParser>(),
+                ActionType.Catch => serviceProvider.GetService<CatchParser>(),
+                ActionType.Chainsaw => serviceProvider.GetService<ChainsawParser>(),
+                ActionType.Dauntless => serviceProvider.GetService<DauntlessParser>(),
+                ActionType.Dodge => serviceProvider.GetService<DodgeParser>(),
+                ActionType.Foul => serviceProvider.GetService<FoulParser>(),
+                ActionType.HailMaryPass => serviceProvider.GetService<HailMaryPassParser>(),
+                ActionType.Hypnogaze => serviceProvider.GetService<HypnogazeParser>(),
+                ActionType.Injury => serviceProvider.GetService<InjuryParser>(),
+                ActionType.Interference => serviceProvider.GetService<InterferenceParser>(),
+                ActionType.Leap => serviceProvider.GetService<LeapParser>(),
+                ActionType.Landing => serviceProvider.GetService<LandingParser>(),
+                ActionType.NonRerollable => serviceProvider.GetService<NonRerollableParser>(),
+                ActionType.Pass => serviceProvider.GetService<PassParser>(),
+                ActionType.PickUp => serviceProvider.GetService<PickupParser>(),
+                ActionType.Rerollable => serviceProvider.GetService<RerollableParser>(),
+                ActionType.Rush => serviceProvider.GetService<RushParser>(),
+                ActionType.Shadowing => serviceProvider.GetService<ShadowingParser>(),
+                ActionType.Stab => serviceProvider.GetService<StabParser>(),
+                ActionType.Tentacles => serviceProvider.GetService<TentaclesParser>(),
+                ActionType.ThrowTeammate => serviceProvider.GetService<ThrowTeammateParser>(),
+                ActionType.Block => serviceProvider.GetService<BlockParser>(),
                 _ => throw new ArgumentOutOfRangeException()
             };
 

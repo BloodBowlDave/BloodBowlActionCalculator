@@ -1,17 +1,11 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Pass : Action
+	public class Pass(int roll, int modifier, bool usePro, bool rerollInaccuratePass) : Action(ActionType.Pass, roll, usePro)
 	{
-		public Pass(int roll, int modifier, bool usePro, bool rerollInaccuratePass) : base(ActionType.Pass, roll, usePro)
-		{
-			RerollInaccuratePass = rerollInaccuratePass;
-			Modifier = modifier;
-		}
-    
-		public bool RerollInaccuratePass { get; set; }
-        public int Modifier { get; }
-		
-		public override string ToString() => $"{(char) ActionType}{Roll}{GetModifier()}{(!RerollInaccuratePass ? "'" : "")}";
+        public bool RerollInaccuratePass { get; set; } = rerollInaccuratePass;
+        public int Modifier { get; } = modifier;
+
+        public override string ToString() => $"{(char) ActionType}{Roll}{GetModifier()}{(!RerollInaccuratePass ? "'" : "")}";
 
 		public override string GetDescription() => base.GetDescription() + (Modifier != 0 ? $" {GetModifier() + " Modifier"}" : "");
 

@@ -5,20 +5,13 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Strategies
 {
-    public class ProHelper : IProHelper
+    public class ProHelper(ICalculationContext context) : IProHelper
     {
-        private readonly ICalculationContext _context;
-
-        public ProHelper(ICalculationContext context)
-        {
-            _context = context;
-        }
-
         public bool UsePro(Player player, Action action, int r, CalculatorSkills usedSkills, decimal successWithPro, decimal successWithReroll)
         {
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
-            var consummateProfessionalIsProReroll = _context.Season == Season.Season2;
+            var consummateProfessionalIsProReroll = context.Season == Season.Season2;
 
             if (!canUseSkill(CalculatorSkills.Pro, usedSkills) &&
                 !(consummateProfessionalIsProReroll && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)) &&

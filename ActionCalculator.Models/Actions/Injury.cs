@@ -1,11 +1,7 @@
 ﻿namespace ActionCalculator.Models.Actions
 {
-	public class Injury : Action
+	public class Injury(int roll) : Action(ActionType.Injury, roll, false)
 	{
-		public Injury(int roll) : base(ActionType.Injury, roll, false)
-		{
-		}
-
-		public override bool IsRerollable() => false;
+        public override bool IsRerollable() => false;
 	}
 }
