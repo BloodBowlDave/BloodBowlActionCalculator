@@ -171,5 +171,29 @@ namespace ActionCalculator.Models
 
         [Description("Once per game when activated, Zolcath selects an opposition player within 3 squares. That player immediately becomes Distracted.")]
         ExcuseMeAreYouAZoat,
+
+        [Description("If Deeproot makes a Fumbled Throw when performing a Throw Team-mate Action, the player that was being thrown will Bounce as normal but will automatically land safely.")]
+        Reliable,
+
+        [Description("Once per game, when an opposition Big Guy is Knocked Down as a result of a Block Action performed by Grim, you may apply an additional +1 modifier to either the Armour Roll or the Injury Roll. This modifier may be applied after the roll has been made.")]
+        Slayer,
+
+        [Description("Once per half, when Maple declares a Block Action he may do so against an opposition player who is 2 squares away, following all the normal rules for performing a Block Action, though he may not follow up.")]
+        ViciousVines,
+
+        [Description("Once per half, if Rodney is Standing and begins his activation within 3 squares of a ball which is on the ground he may roll a D6. On a 3+, Rodney immediately gains possession of the ball.")]
+        CatchOfTheDay,
+
+        [Description("Once per game, after declaring that she will Leap but before rolling any dice, Rowana may choose to use this special rule. If she does, Rowana suffers no negative modifiers for the Agility Test to Leap and may choose to re-roll the result.")]
+        BoundingLeap,
+
+        [Description("Once per half, so long as she is Standing at the start of her activation, Swiftvine can place herself adjacent to a Standing opposition player within 3 squares and immediately make a Stab Special Action against them.")]
+        FuriousOutburst,
+
+        [Description("Once per game, when Willow performs a Block Action that would result in her being Knocked Down, she can choose to re-roll a single Block Dice.")]
+        WoodlandFury,
+
+        [Description("Once per half, at the start of his activation, Zzharg may select a Standing opposition player within 3 squares and roll a D6. On a 3+, the selected player is hit and an Armour Roll is made against them.")]
+        BlastinSolvesEverything,
     }
 }

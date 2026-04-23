@@ -99,6 +99,12 @@ namespace ActionCalculator.Models
         HalflingLuck = 34359738368,
         [Description("TC")]
         [HideFromPlayerEditor]
-        ToxinConnoisseur = 68719476736
+        ToxinConnoisseur = 68719476736,
+        [Description("TMT")]
+        [HideFromPlayerEditor]
+        ThinkingMansTroll = 137438953472,
+        [Description("BL")]
+        [HideFromPlayerEditor]
+        BoundingLeap = 274877906944
     }
 }

@@ -4,6 +4,11 @@ namespace ActionCalculator.Abstractions.Strategies
 {
     public interface IActionStrategy
     {
-        void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false);
+        void Execute(decimal p, 
+            int r, 
+            int i, 
+            PlayerAction playerAction, 
+            CalculatorSkills usedSkills, 
+            bool nonCriticalFailure = false);
     }
 }

@@ -7,26 +7,13 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Strategies.Movement
 {
-    public class DodgeStrategy : IActionStrategy
+    public class DodgeStrategy(ICalculator calculator, IProHelper proHelper, IConsummateProfessionalHelper consummateProfessionalHelper, ID6 d6) : IActionStrategy
     {
-        private readonly ICalculator _calculator;
-        private readonly IProHelper _proHelper;
-        private readonly ICalculationContext _context;
-        private readonly ID6 _d6;
-
-        public DodgeStrategy(ICalculator calculator, IProHelper proHelper, ICalculationContext context, ID6 d6)
-        {
-            _calculator = calculator;
-            _proHelper = proHelper;
-            _context = context;
-            _d6 = d6;
-        }
-
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
             var player = playerAction.Player;
             var dodge = (Dodge) playerAction.Action;
-            var success = _d6.Success(1, dodge.Roll);
+            var success = d6.Success(1, dodge.Roll);
             var failure = 1 - success;
             var (lonerSuccess, proSuccess, canUseSkill) = player;
 
@@ -41,17 +28,13 @@ namespace ActionCalculator.Strategies.Movement
                 success -= failureWithDivingTackle;
             }
 
-            _calculator.Resolve(p * success, r, i, usedSkills);
+            calculator.Resolve(p * success, r, i, usedSkills);
 
-            // CP Season 3: once per game, +1 modifier to one agility test (roll of 1 always fails)
-            var consummateProfessionalSuccess = _context.Season == Season.Season3
-                && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)
-                && dodge.Roll > 2
-                ? 1m / 6 : 0m;
+            var consummateProfessionalSuccess = consummateProfessionalHelper.GetAgilityRollSuccess(usedSkills, dodge.Roll, canUseSkill);
 
             if (consummateProfessionalSuccess > 0)
             {
-                _calculator.Resolve(p * consummateProfessionalSuccess, r, i, usedSkills | CalculatorSkills.Pro);
+                calculator.Resolve(p * consummateProfessionalSuccess, r, i, usedSkills | CalculatorSkills.Pro);
             }
             failure -= consummateProfessionalSuccess;
 
@@ -60,7 +43,7 @@ namespace ActionCalculator.Strategies.Movement
 
             if (useBreakTackleBeforeReroll)
             {
-                _calculator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | CalculatorSkills.BreakTackle);
+                calculator.Resolve(p * successUsingBreakTackle, r, i, usedSkills | CalculatorSkills.BreakTackle);
             }
             else if (CanUseBreakTackle(canUseSkill, usedSkills))
             {
@@ -74,7 +57,7 @@ namespace ActionCalculator.Strategies.Movement
                 return;
             }
 
-            if (_proHelper.UsePro(player, dodge, r, usedSkills, success, success))
+            if (proHelper.UsePro(player, dodge, r, usedSkills, success, success))
             {
                 DodgeReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, failure, success, successUsingBreakTackle, failureWithDivingTackle);
                 return;
@@ -97,7 +80,7 @@ namespace ActionCalculator.Strategies.Movement
         private decimal SuccessAfterModifiers(Action dodge, bool useDivingTackle, int breakTackleValue)
         {
             var roll = dodge.Roll + (useDivingTackle ? 2 : 0) - breakTackleValue;
-            return _d6.Success(1, roll);
+            return d6.Success(1, roll);
         }
 
         private void DodgeReroll(decimal p, int r, int i, CalculatorSkills usedSkills,
@@ -109,8 +92,8 @@ namespace ActionCalculator.Strategies.Movement
 
         private void DodgeReroll(decimal p, int r, int i, CalculatorSkills usedSkills, decimal failure, decimal success, decimal useDivingTackle)
         {
-            _calculator.Resolve(p * failure * success, r, i, usedSkills);
-            _calculator.Resolve(p * useDivingTackle * success, r, i, usedSkills | CalculatorSkills.DivingTackle);
+            calculator.Resolve(p * failure * success, r, i, usedSkills);
+            calculator.Resolve(p * useDivingTackle * success, r, i, usedSkills | CalculatorSkills.DivingTackle);
         }
     }
 }

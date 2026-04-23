@@ -29,6 +29,7 @@ namespace ActionCalculator
             services.AddSingleton<IPlayerActionsBuilder, PlayerActionsBuilder>();
             services.AddSingleton<IPlayerBuilder, PlayerBuilder>();
             services.AddSingleton<IProHelper, ProHelper>();
+            services.AddSingleton<IConsummateProfessionalHelper, ConsummateProfessionalHelper>();
             services.AddSingleton<IStrategyFactory, StrategyFactory>();
             services.AddSingleton<IValidator<Calculation>, CalculationValidator>();
 

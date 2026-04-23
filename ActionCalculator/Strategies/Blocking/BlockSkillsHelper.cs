@@ -2,7 +2,6 @@ using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Abstractions.Strategies.Blocking;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
-using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Blocking
 {

@@ -1,5 +1,4 @@
-﻿using ActionCalculator.Models;
-using Action = ActionCalculator.Models.Actions.Action;
+﻿using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Abstractions.Strategies
 {

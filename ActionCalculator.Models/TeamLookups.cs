@@ -1,5 +1,3 @@
-using ActionCalculator.Utilities;
-
 namespace ActionCalculator.Models
 {
     public static class TeamLookups
@@ -62,6 +60,7 @@ namespace ActionCalculator.Models
                 (Team.ChaosChosen, StarPlayer.GrashnakBlackhoof),
                 (Team.ChaosChosen, StarPlayer.LordBorak),
                 (Team.ChaosChosen, StarPlayer.MorgNThorg),
+                (Team.ChaosChosen, StarPlayer.ZzhargMadeye),
 
                 // Chaos Dwarf
                 (Team.ChaosDwarf, StarPlayer.AkhorneTheSquirrel),
@@ -77,6 +76,7 @@ namespace ActionCalculator.Models
                 (Team.ChaosDwarf, StarPlayer.ScrappaSorehead),
                 (Team.ChaosDwarf, StarPlayer.TheBlackGobbo),
                 (Team.ChaosDwarf, StarPlayer.VaragGhoulChewer),
+                (Team.ChaosDwarf, StarPlayer.ZzhargMadeye),
 
                 // Chaos Renegade
                 (Team.ChaosRenegade, StarPlayer.AkhorneTheSquirrel),
@@ -107,6 +107,7 @@ namespace ActionCalculator.Models
                 (Team.Dwarf, StarPlayer.Crumbleberry),
                 (Team.Dwarf, StarPlayer.FungusTheLoon),
                 (Team.Dwarf, StarPlayer.Grak),
+                (Team.Dwarf, StarPlayer.GrimIronjaw),
                 (Team.Dwarf, StarPlayer.HtharkTheUnstoppable),
                 (Team.Dwarf, StarPlayer.MorgNThorg),
                 (Team.Dwarf, StarPlayer.NobblaBlackwart),
@@ -135,11 +136,17 @@ namespace ActionCalculator.Models
                 (Team.Gnome, StarPlayer.AkhorneTheSquirrel),
                 (Team.Gnome, StarPlayer.CindyPiewhistle),
                 (Team.Gnome, StarPlayer.Crumbleberry),
+                (Team.Gnome, StarPlayer.DeeprootStrongbranch),
                 (Team.Gnome, StarPlayer.Grak),
                 (Team.Gnome, StarPlayer.GrombrindaTheWhiteDwarf),
+                (Team.Gnome, StarPlayer.MapleHighgrove),
                 (Team.Gnome, StarPlayer.MorgNThorg),
                 (Team.Gnome, StarPlayer.PuggyBaconbreath),
+                (Team.Gnome, StarPlayer.RodneyRoachbait),
+                (Team.Gnome, StarPlayer.RowanaForestfoot),
                 (Team.Gnome, StarPlayer.RumbelowSheepskin),
+                (Team.Gnome, StarPlayer.SwiftvineGlimmershard),
+                (Team.Gnome, StarPlayer.WillowRosebark),
 
                 // Goblin
                 (Team.Goblin, StarPlayer.AkhorneTheSquirrel),
@@ -160,11 +167,17 @@ namespace ActionCalculator.Models
                 (Team.Halfling, StarPlayer.AkhorneTheSquirrel),
                 (Team.Halfling, StarPlayer.CindyPiewhistle),
                 (Team.Halfling, StarPlayer.Crumbleberry),
+                (Team.Halfling, StarPlayer.DeeprootStrongbranch),
                 (Team.Halfling, StarPlayer.Grak),
                 (Team.Halfling, StarPlayer.GrombrindaTheWhiteDwarf),
+                (Team.Halfling, StarPlayer.MapleHighgrove),
                 (Team.Halfling, StarPlayer.MorgNThorg),
                 (Team.Halfling, StarPlayer.PuggyBaconbreath),
+                (Team.Halfling, StarPlayer.RodneyRoachbait),
+                (Team.Halfling, StarPlayer.RowanaForestfoot),
                 (Team.Halfling, StarPlayer.RumbelowSheepskin),
+                (Team.Halfling, StarPlayer.SwiftvineGlimmershard),
+                (Team.Halfling, StarPlayer.WillowRosebark),
 
                 // High Elf
                 (Team.HighElf, StarPlayer.AkhorneTheSquirrel),
@@ -289,6 +302,7 @@ namespace ActionCalculator.Models
                 (Team.Ogre, StarPlayer.RipperBolgrot),
                 (Team.Ogre, StarPlayer.ScrappaSorehead),
                 (Team.Ogre, StarPlayer.TheBlackGobbo),
+                (Team.Ogre, StarPlayer.GrimIronjaw),
                 (Team.Ogre, StarPlayer.VaragGhoulChewer),
 
                 // Old World Alliance
@@ -342,7 +356,7 @@ namespace ActionCalculator.Models
                 (Team.Skaven, StarPlayer.BomberDribblesnot),
                 (Team.Skaven, StarPlayer.Crumbleberry),
                 (Team.Skaven, StarPlayer.FungusTheLoon),
-                (Team.Skaven, StarPlayer.GlartSmarshrip),
+                (Team.Skaven, StarPlayer.GlartSmashrip),
                 (Team.Skaven, StarPlayer.Grak),
                 (Team.Skaven, StarPlayer.HakflemSkuttlespike),
                 (Team.Skaven, StarPlayer.KreekTheVerminatorRustgouger),
@@ -358,7 +372,7 @@ namespace ActionCalculator.Models
                 (Team.Snotling, StarPlayer.BomberDribblesnot),
                 (Team.Snotling, StarPlayer.Crumbleberry),
                 (Team.Snotling, StarPlayer.FungusTheLoon),
-                (Team.Snotling, StarPlayer.GlartSmarshrip),
+                (Team.Snotling, StarPlayer.GlartSmashrip),
                 (Team.Snotling, StarPlayer.Grak),
                 (Team.Snotling, StarPlayer.HakflemSkuttlespike),
                 (Team.Snotling, StarPlayer.KreekTheVerminatorRustgouger),
@@ -386,7 +400,7 @@ namespace ActionCalculator.Models
                 (Team.UnderworldDenizens, StarPlayer.BomberDribblesnot),
                 (Team.UnderworldDenizens, StarPlayer.Crumbleberry),
                 (Team.UnderworldDenizens, StarPlayer.FungusTheLoon),
-                (Team.UnderworldDenizens, StarPlayer.GlartSmarshrip),
+                (Team.UnderworldDenizens, StarPlayer.GlartSmashrip),
                 (Team.UnderworldDenizens, StarPlayer.Grak),
                 (Team.UnderworldDenizens, StarPlayer.HakflemSkuttlespike),
                 (Team.UnderworldDenizens, StarPlayer.KreekTheVerminatorRustgouger),
@@ -412,6 +426,7 @@ namespace ActionCalculator.Models
                 // Wood Elf
                 (Team.WoodElf, StarPlayer.AkhorneTheSquirrel),
                 (Team.WoodElf, StarPlayer.Crumbleberry),
+                (Team.WoodElf, StarPlayer.DeeprootStrongbranch),
                 (Team.WoodElf, StarPlayer.EldrilSidewinder),
                 (Team.WoodElf, StarPlayer.GlorielSummerbloom),
                 (Team.WoodElf, StarPlayer.Grak),
@@ -419,9 +434,14 @@ namespace ActionCalculator.Models
                 (Team.WoodElf, StarPlayer.JordellFreshbreeze),
                 (Team.WoodElf, StarPlayer.KirothKrakeneye),
                 (Team.WoodElf, StarPlayer.LucienSwift),
+                (Team.WoodElf, StarPlayer.MapleHighgrove),
                 (Team.WoodElf, StarPlayer.MorgNThorg),
+                (Team.WoodElf, StarPlayer.RodneyRoachbait),
+                (Team.WoodElf, StarPlayer.RowanaForestfoot),
                 (Team.WoodElf, StarPlayer.RoxannaDarknail),
+                (Team.WoodElf, StarPlayer.SwiftvineGlimmershard),
                 (Team.WoodElf, StarPlayer.ValenSwift),
+                (Team.WoodElf, StarPlayer.WillowRosebark),
                 (Team.WoodElf, StarPlayer.ZolcathTheZoat),
             };
 
