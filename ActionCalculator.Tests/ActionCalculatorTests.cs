@@ -313,7 +313,7 @@ namespace ActionCalculator.Tests
         [InlineData("Scyla:2D3,K9", 1, 0.31250, 0.35156)]
         [InlineData("Swiftvine:2,2", 1, 0.69444, 0.81019)]
         [InlineData("Scrappa:R2,D3,F8", 1, 0.50412)]
-        [InlineData("Skitter:D3,2D2", 1, 0.49383, 0.60357)]
+        [InlineData("Skitter:D3,R2,T8", 1, 0.48868, 0.52941)]
         [InlineData("Skrorg:2D3,K9", 1, 0.31250, 0.35156)]
         [InlineData("Skrull:P2;C2", 1, 0.81019, 0.94522)]
         [InlineData("Thorsson:2,2", 2, 0.69444, 0.81019, 0.81501)]

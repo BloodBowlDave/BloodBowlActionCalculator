@@ -12,9 +12,18 @@ namespace ActionCalculator.Strategies
             var action = playerAction.Action;
             var modifier = player.CanUseSkill(CalculatorSkills.ASneakyPair, usedSkills) ? 1 : 0;
             var success = d6.Success(2, action.Roll - modifier);
+            var failure = 1m - success;
 
             calculator.Resolve(p * success, r, i, usedSkills);
-            calculator.Resolve(p * (1 - success), r, i, usedSkills, true);
+
+            if (player.CanUseSkill(CalculatorSkills.MasterAssassin, usedSkills)) 
+            {
+                calculator.Resolve(p * failure * success, r, i, usedSkills | CalculatorSkills.MasterAssassin);
+                calculator.Resolve(p * failure * failure, r, i, usedSkills | CalculatorSkills.MasterAssassin, true);
+                return;
+            }
+
+            calculator.Resolve(p * failure, r, i, usedSkills, true);
         }
     }
 }

@@ -105,6 +105,9 @@ namespace ActionCalculator.Models
         ThinkingMansTroll = 137438953472,
         [Description("BL")]
         [HideFromPlayerEditor]
-        BoundingLeap = 274877906944
+        BoundingLeap = 274877906944,
+        [Description("MA")]
+        [HideFromPlayerEditor]
+        MasterAssassin = 549755813888
     }
 }
