@@ -108,6 +108,9 @@ namespace ActionCalculator.Models
         BoundingLeap = 274877906944,
         [Description("MA")]
         [HideFromPlayerEditor]
-        MasterAssassin = 549755813888
+        MasterAssassin = 549755813888,
+        [Description("WIT")]
+        [HideFromPlayerEditor]
+        WorkingInTandem = 1099511627776
     }
 }

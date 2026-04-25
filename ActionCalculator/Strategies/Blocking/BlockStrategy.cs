@@ -290,9 +290,11 @@ namespace ActionCalculator.Strategies.Blocking
             AddNonCriticalFailure(p, r, usedSkills);
         }
         
-        private void AddSuccess(decimal p, int r, CalculatorSkills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(false, r, usedSkills));
+        private void AddSuccess(decimal p, int r, CalculatorSkills usedSkills) => 
+            AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(false, r, usedSkills));
 
-        private void AddNonCriticalFailure(decimal p, int r, CalculatorSkills usedSkills) => AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(true, r, usedSkills));
+        private void AddNonCriticalFailure(decimal p, int r, CalculatorSkills usedSkills) => 
+            AddOrUpdateOutcomes(p, new Tuple<bool, int, CalculatorSkills>(true, r, usedSkills));
 
         private void AddOrUpdateOutcomes(decimal p, Tuple<bool, int, CalculatorSkills> key)
         {
