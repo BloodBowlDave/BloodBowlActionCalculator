@@ -15,6 +15,7 @@ namespace ActionCalculator.Strategies.Blocking
             if (UseHatred(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Hatred;
             if (player.CanUseSkill(CalculatorSkills.UnstoppableMomentum, usedSkills)) result |= CalculatorSkills.UnstoppableMomentum;
             if (player.CanUseSkill(CalculatorSkills.WorkingInTandem, usedSkills)) result |= CalculatorSkills.WorkingInTandem;
+            if (player.CanUseSkill(CalculatorSkills.WoodlandFury, usedSkills)) result |= CalculatorSkills.WoodlandFury;
             if (player.CanUseSkill(CalculatorSkills.LordOfChaos, usedSkills)) result |= CalculatorSkills.LordOfChaos;
             if (proHelper.UsePro(player, block, r, usedSkills, successOnOneDie, success)) result |= CalculatorSkills.Pro;
             return result;

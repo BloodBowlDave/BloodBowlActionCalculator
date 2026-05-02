@@ -111,6 +111,12 @@ namespace ActionCalculator.Models
         MasterAssassin = 549755813888,
         [Description("WIT")]
         [HideFromPlayerEditor]
-        WorkingInTandem = 1099511627776
+        WorkingInTandem = 1099511627776,
+        [Description("KS")]
+        [HideFromPlayerEditor]
+        KrumpAndSmash = 2199023255552,
+        [Description("WF")]
+        [HideFromPlayerEditor]
+        WoodlandFury = 4398046511104
     }
 }

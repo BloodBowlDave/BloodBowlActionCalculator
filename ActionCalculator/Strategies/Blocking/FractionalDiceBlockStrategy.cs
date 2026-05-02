@@ -22,6 +22,7 @@ namespace ActionCalculator.Strategies.Blocking
         private bool _useSavageBlow;
         private bool _useHatred;
         private bool _useUnstoppableMomentum;
+        private bool _useWoodlandFury;
         private bool _useLordOfChaos;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
@@ -67,6 +68,7 @@ namespace ActionCalculator.Strategies.Blocking
             _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
             _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum)
                 || skillsToUse.Contains(CalculatorSkills.WorkingInTandem);
+            _useWoodlandFury = skillsToUse.Contains(CalculatorSkills.WoodlandFury);
             _useLordOfChaos = skillsToUse.Contains(CalculatorSkills.LordOfChaos);
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
@@ -126,6 +128,12 @@ namespace ActionCalculator.Strategies.Blocking
             if ((_useHatred && roll.Contains(BlockResult.Skull)) || _useUnstoppableMomentum)
             {
                 RerollMinDie(roll, r);
+                return;
+            }
+
+            if (_useWoodlandFury && roll.Any(d => d == BlockResult.Skull || d == BlockResult.BothDown))
+            {
+                WoodlandFuryReroll(roll, r);
                 return;
             }
 
@@ -211,6 +219,12 @@ namespace ActionCalculator.Strategies.Blocking
             if ((_useHatred && roll.Contains(BlockResult.Skull)) || _useUnstoppableMomentum)
             {
                 RerollMinDie(roll, r);
+                return;
+            }
+
+            if (_useWoodlandFury && roll.Any(d => d == BlockResult.Skull || d == BlockResult.BothDown))
+            {
+                WoodlandFuryReroll(roll, r);
                 return;
             }
 
@@ -301,6 +315,12 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
+            if (_useWoodlandFury && roll.Any(d => d == BlockResult.Skull || d == BlockResult.BothDown))
+            {
+                WoodlandFuryReroll(roll, r);
+                return;
+            }
+
             if (_useLordOfChaos)
             {
                 LordOfChaosReroll(roll, r);
@@ -320,6 +340,17 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 var reroll = new List<BlockResult>(rollList) { [indexOfMin] = face };
                 AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.None, reroll);
+            }
+        }
+
+        private void WoodlandFuryReroll(IEnumerable<BlockResult> roll, int r)
+        {
+            var rollList = roll.ToList();
+            var indexOfMin = rollList.IndexOf(rollList.Min());
+            foreach (var face in blockDice.Rolls())
+            {
+                var reroll = new List<BlockResult>(rollList) { [indexOfMin] = face };
+                AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.WoodlandFury, reroll);
             }
         }
 

@@ -46,6 +46,22 @@ namespace ActionCalculator.Strategies
                 succeedWithPreviousSkills += success;
             }
 
+            var useKrumpAndSmash = canUseSkill(CalculatorSkills.KrumpAndSmash, usedSkills)
+                && context.PreviousActionType == ActionType.Block;
+
+            if (useKrumpAndSmash)
+            {
+                var kasFailure = 1 - succeedWithPreviousSkills;
+                var kasSucceedWithPreviousSkills = 0m;
+
+                foreach (var (skills, minimumRoll) in skillsWithMinimumRoll)
+                {
+                    var kasSuccess = iD6.Success(2, minimumRoll) - kasSucceedWithPreviousSkills;
+                    calculator.Resolve(p * kasFailure * kasSuccess, r, i, usedSkills | skills | CalculatorSkills.KrumpAndSmash);
+                    kasSucceedWithPreviousSkills += kasSuccess;
+                }
+            }
+
             if (!useOldPro)
             {
                 return;

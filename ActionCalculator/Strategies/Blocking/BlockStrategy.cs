@@ -20,6 +20,7 @@ namespace ActionCalculator.Strategies.Blocking
         private bool _usePro;
         private bool _useSavageBlow;
         private bool _canRerollOneDice;
+        private bool _useWoodlandFury;
         private bool _useLordOfChaos;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
@@ -62,6 +63,7 @@ namespace ActionCalculator.Strategies.Blocking
             _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
             _canRerollOneDice = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum)
                 || skillsToUse.Contains(CalculatorSkills.WorkingInTandem);
+            _useWoodlandFury = skillsToUse.Contains(CalculatorSkills.WoodlandFury);
             _useLordOfChaos = skillsToUse.Contains(CalculatorSkills.LordOfChaos);
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
@@ -103,6 +105,12 @@ namespace ActionCalculator.Strategies.Blocking
                     }
                 }
 
+                if (_useWoodlandFury && roll.All(d => d <= BlockResult.BothDown))
+                {
+                    WoodlandFury(roll, r);
+                    return;
+                }
+
                 AddOutcome(1m / _rollsCount, r, CalculatorSkills.None, roll);
                 return;
             }
@@ -123,6 +131,12 @@ namespace ActionCalculator.Strategies.Blocking
             if (_useHatred && indexOfSkull != -1)
             {
                 RerollDieAt(roll, r, indexOfSkull);
+                return;
+            }
+
+            if (_useWoodlandFury && roll.Any(d => d == BlockResult.Skull || d == BlockResult.BothDown))
+            {
+                WoodlandFury(roll, r);
                 return;
             }
 
@@ -162,6 +176,17 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 var umReroll = new List<BlockResult>(roll) { [indexOfLowestValue] = face };
                 AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.None, umReroll);
+            }
+        }
+
+        private void WoodlandFury(IEnumerable<BlockResult> roll, int r)
+        {
+            var rollList = roll.ToList();
+            var indexOfMin = rollList.IndexOf(rollList.Min());
+            foreach (var face in blockDice.Rolls())
+            {
+                var reroll = new List<BlockResult>(rollList) { [indexOfMin] = face };
+                AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.WoodlandFury, reroll);
             }
         }
 
