@@ -58,7 +58,8 @@ namespace ActionCalculator.Strategies.Blocking
             _rollsCount = _rolls.Count;
             var skillsToUse = blockSkillsHelper.SkillsToUse(player, block, r, usedSkills, successOnOneDie, success);
             _useBrawler = skillsToUse.Contains(CalculatorSkills.Brawler);
-            _canUseBrawler = player.CanUseSkill(CalculatorSkills.Brawler, usedSkills);
+            _canUseBrawler = _successfulValues.Count + _nonCriticalFailureValues.Count != 5
+                && player.CanUseSkill(CalculatorSkills.Brawler, usedSkills);
             _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
             _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
             _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
@@ -100,6 +101,7 @@ namespace ActionCalculator.Strategies.Blocking
                     if (rollWithoutBothDown.Any(_nonCriticalFailureValues.Contains))
                     {
                         RerollDieAt(roll, r, indexOfBothDown);
+                        return;
                     }
                 }
 
@@ -231,6 +233,7 @@ namespace ActionCalculator.Strategies.Blocking
 
                 if (!_usePro)
                 {
+                    AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.None, rerolled);
                     continue;
                 }
 

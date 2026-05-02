@@ -26,6 +26,11 @@ namespace ActionCalculator.Strategies.Blocking
                 return false;
             }
 
+            if (block.NumberOfSuccessfulResults + block.NumberOfNonCriticalFailures == 5)
+            {
+                return false;
+            }
+
             return r == 0
                    || block.UseBrawler
                    || successOnOneDie >= success * player.LonerSuccess();
