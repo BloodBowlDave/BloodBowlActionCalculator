@@ -1,4 +1,4 @@
-﻿using ActionCalculator.Abstractions;
+using ActionCalculator.Abstractions;
 using ActionCalculator.Abstractions.Strategies;
 using ActionCalculator.Abstractions.Strategies.Blocking;
 
@@ -8,12 +8,12 @@ using ActionCalculator.Utilities;
 
 namespace ActionCalculator.Strategies.Blocking
 {
-    public class FractionalDiceBlockStrategy(ICalculator calculator, IBlockSkillsHelper blockSkillsHelper, IProHelper proHelper, ID6 d6) : IActionStrategy
+    public class FractionalDiceBlockStrategy(ICalculator calculator, IBlockSkillsHelper blockSkillsHelper, IProHelper proHelper, IBlockDice blockDice) : IActionStrategy
     {
         private Dictionary<Tuple<bool, int, CalculatorSkills>, decimal> _outcomes = new();
-        private List<int> _successfulValues = new();
-        private List<int> _nonCriticalFailureValues = new();
-        private List<List<int>> _rolls = new();
+        private List<BlockResult> _successfulValues = new();
+        private List<BlockResult> _nonCriticalFailureValues = new();
+        private List<List<BlockResult>> _rolls = new();
         private int _rollsCount;
         private int _rerollCount;
         private bool _useBrawler;
@@ -48,14 +48,14 @@ namespace ActionCalculator.Strategies.Blocking
             _lonerSuccess = player.LonerSuccess();
 
             var numberOfSuccessfulResults = block.NumberOfSuccessfulResults;
-            _successfulValues = d6.Rolls().Take(numberOfSuccessfulResults).ToList();
-            _nonCriticalFailureValues = d6.Rolls().Skip(numberOfSuccessfulResults).Take(block.NumberOfNonCriticalFailures).ToList();
+            _successfulValues = blockDice.Rolls().Take(numberOfSuccessfulResults).ToList();
+            _nonCriticalFailureValues = blockDice.Rolls().Skip(numberOfSuccessfulResults).Take(block.NumberOfNonCriticalFailures).ToList();
             var successOnOneDie = _rerollNonCriticalFailure
                 ? (decimal)_successfulValues.Count / 6
                 : (decimal)(_successfulValues.Count + _nonCriticalFailureValues.Count) / 6;
 
             var numberOfDice = -block.NumberOfDice;
-            _rolls = d6.Rolls(numberOfDice);
+            _rolls = blockDice.Rolls(numberOfDice);
             var success = (decimal) Math.Pow((double) successOnOneDie, numberOfDice);
 
             _rollsCount = _rolls.Count;
@@ -75,7 +75,7 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 var failureCount = roll.Count - roll.Count(_successfulValues.Contains);
                 var nonCriticalFailureCount = roll.Count(_nonCriticalFailureValues.Contains);
-                var indexOfBothDown = roll.IndexOf(2);
+                var indexOfBothDown = roll.IndexOf(BlockResult.BothDown);
 
                 switch (failureCount)
                 {
@@ -102,7 +102,7 @@ namespace ActionCalculator.Strategies.Blocking
             return _outcomes;
         }
 
-        private void OneFailure(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
+        private void OneFailure(IReadOnlyCollection<BlockResult> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
         {
             if (nonCriticalFailureCount == 1 && !_rerollNonCriticalFailure)
             {
@@ -122,7 +122,7 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            if ((_useHatred && roll.Contains(1)) || _useUnstoppableMomentum)
+            if ((_useHatred && roll.Contains(BlockResult.Skull)) || _useUnstoppableMomentum)
             {
                 RerollMinDie(roll, r);
                 return;
@@ -153,41 +153,41 @@ namespace ActionCalculator.Strategies.Blocking
 
         private void Brawler(int r)
         {
-            for (var i = 2; i <= 6; i++)
+            foreach (var face in blockDice.Rolls().Where(f => f != BlockResult.Skull))
             {
-                if (_successfulValues.Contains(i))
+                if (_successfulValues.Contains(face))
                 {
                     AddSuccess(1m / _rollsCount / 6, r, CalculatorSkills.None);
                     continue;
                 }
 
-                if (_nonCriticalFailureValues.Contains(i))
+                if (_nonCriticalFailureValues.Contains(face))
                 {
                     AddNonCriticalFailure(1m / _rollsCount / 6, r, CalculatorSkills.None);
                 }
             }
         }
 
-        private void Pro(IReadOnlyCollection<int> roll, int r)
+        private void Pro(IReadOnlyCollection<BlockResult> roll, int r)
         {
             AddOutcome((1 - _proSuccess) / _rollsCount, r, CalculatorSkills.Pro, roll);
 
-            for (var i = 2; i <= 6; i++)
+            foreach (var face in blockDice.Rolls().Where(f => f != BlockResult.Skull))
             {
-                if (_successfulValues.Contains(i))
+                if (_successfulValues.Contains(face))
                 {
                     AddSuccess(_proSuccess / _rollsCount / 6, r, CalculatorSkills.Pro);
                     continue;
                 }
 
-                if (_nonCriticalFailureValues.Contains(i))
+                if (_nonCriticalFailureValues.Contains(face))
                 {
                     AddNonCriticalFailure(_proSuccess / _rollsCount / 6, r, CalculatorSkills.Pro);
                 }
             }
         }
 
-        private void TwoFailures(IReadOnlyList<int> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
+        private void TwoFailures(IReadOnlyList<BlockResult> roll, int r, int nonCriticalFailureCount, int indexOfBothDown)
         {
             if (nonCriticalFailureCount == 2 && !_rerollNonCriticalFailure)
             {
@@ -207,7 +207,7 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            if ((_useHatred && roll.Contains(1)) || _useUnstoppableMomentum)
+            if ((_useHatred && roll.Contains(BlockResult.Skull)) || _useUnstoppableMomentum)
             {
                 RerollMinDie(roll, r);
                 return;
@@ -229,19 +229,19 @@ namespace ActionCalculator.Strategies.Blocking
             _rerollCount++;
         }
 
-        private void BrawlerAndPro(IReadOnlyList<int> roll, int r, int indexOfBothDown)
+        private void BrawlerAndPro(IReadOnlyList<BlockResult> roll, int r, int indexOfBothDown)
         {
-            var brawlerRolls = new List<List<int>>();
+            var brawlerRolls = new List<List<BlockResult>>();
 
-            for (var i = 2; i <= 6; i++)
+            foreach (var face in blockDice.Rolls().Where(f => f != BlockResult.Skull))
             {
-                var rolledNonCriticalFailure = _nonCriticalFailureValues.Contains(i);
-                if (!_successfulValues.Contains(i) && !rolledNonCriticalFailure)
+                var rolledNonCriticalFailure = _nonCriticalFailureValues.Contains(face);
+                if (!_successfulValues.Contains(face) && !rolledNonCriticalFailure)
                 {
                     continue;
                 }
 
-                var brawlerRoll = new List<int>(roll) { [indexOfBothDown] = i };
+                var brawlerRoll = new List<BlockResult>(roll) { [indexOfBothDown] = face };
 
                 if (rolledNonCriticalFailure)
                 {
@@ -253,7 +253,7 @@ namespace ActionCalculator.Strategies.Blocking
             }
 
             var indexOfLowestValue = -1;
-            var lowestValue = 999;
+            var lowestValue = (BlockResult)int.MaxValue;
 
             for (var i = 0; i < roll.Count; i++)
             {
@@ -272,15 +272,15 @@ namespace ActionCalculator.Strategies.Blocking
             {
                 AddOutcome((1 - _proSuccess) / _rollsCount / 6, r, CalculatorSkills.Pro, brawlerRoll);
 
-                for (var i = 2; i <= 6; i++)
+                foreach (var face in blockDice.Rolls().Where(f => f != BlockResult.Skull))
                 {
-                    var proAndBrawlerRoll = new List<int>(brawlerRoll) { [indexOfLowestValue] = i };
+                    var proAndBrawlerRoll = new List<BlockResult>(brawlerRoll) { [indexOfLowestValue] = face };
                     AddOutcome(_proSuccess / _rollsCount / 36, r, CalculatorSkills.Pro, proAndBrawlerRoll);
                 }
             }
         }
 
-        private void ThreeFailures(IReadOnlyCollection<int> roll, int r, int nonCriticalFailureCount)
+        private void ThreeFailures(IReadOnlyCollection<BlockResult> roll, int r, int nonCriticalFailureCount)
         {
             if (nonCriticalFailureCount == 3 && !_rerollNonCriticalFailure)
             {
@@ -294,7 +294,7 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            if ((_useHatred && roll.Contains(1)) || _useUnstoppableMomentum)
+            if ((_useHatred && roll.Contains(BlockResult.Skull)) || _useUnstoppableMomentum)
             {
                 RerollMinDie(roll, r);
                 return;
@@ -311,24 +311,24 @@ namespace ActionCalculator.Strategies.Blocking
             _rerollCount++;
         }
 
-        private void RerollMinDie(IEnumerable<int> roll, int r)
+        private void RerollMinDie(IEnumerable<BlockResult> roll, int r)
         {
             var rollList = roll.ToList();
             var indexOfMin = rollList.IndexOf(rollList.Min());
-            for (var i = 1; i <= 6; i++)
+            foreach (var face in blockDice.Rolls())
             {
-                var reroll = new List<int>(rollList) { [indexOfMin] = i };
+                var reroll = new List<BlockResult>(rollList) { [indexOfMin] = face };
                 AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.None, reroll);
             }
         }
 
-        private void LordOfChaosReroll(IEnumerable<int> roll, int r)
+        private void LordOfChaosReroll(IEnumerable<BlockResult> roll, int r)
         {
             var rollList = roll.ToList();
             var indexOfMin = rollList.IndexOf(rollList.Min());
-            for (var i = 1; i <= 6; i++)
+            foreach (var face in blockDice.Rolls())
             {
-                var lcReroll = new List<int>(rollList) { [indexOfMin] = i };
+                var lcReroll = new List<BlockResult>(rollList) { [indexOfMin] = face };
                 var p = 1m / _rollsCount / 6;
 
                 if (lcReroll.All(_successfulValues.Contains))
@@ -355,29 +355,29 @@ namespace ActionCalculator.Strategies.Blocking
             }
         }
 
-        private void SavageBlowOneFailure(IReadOnlyCollection<int> roll, int r)
+        private void SavageBlowOneFailure(IReadOnlyCollection<BlockResult> roll, int r)
         {
             var rollList = roll.ToList();
             var failureIndex = rollList.FindIndex(v => !_successfulValues.Contains(v));
 
-            for (var i = 1; i <= 6; i++)
+            foreach (var face in blockDice.Rolls())
             {
-                var reroll = new List<int>(rollList) { [failureIndex] = i };
+                var reroll = new List<BlockResult>(rollList) { [failureIndex] = face };
                 AddOutcome(1m / _rollsCount / 6, r, CalculatorSkills.SavageBlow, reroll);
             }
         }
 
-        private void SavageBlowTwoFailures(IReadOnlyList<int> roll, int r)
+        private void SavageBlowTwoFailures(IReadOnlyList<BlockResult> roll, int r)
         {
             var failureIndices = Enumerable.Range(0, roll.Count)
                 .Where(i => !_successfulValues.Contains(roll[i]))
                 .ToList();
 
-            for (var i = 1; i <= 6; i++)
+            foreach (var face1 in blockDice.Rolls())
             {
-                for (var j = 1; j <= 6; j++)
+                foreach (var face2 in blockDice.Rolls())
                 {
-                    var reroll = new List<int>(roll) { [failureIndices[0]] = i, [failureIndices[1]] = j };
+                    var reroll = new List<BlockResult>(roll) { [failureIndices[0]] = face1, [failureIndices[1]] = face2 };
                     AddOutcome(1m / _rollsCount / 36, r, CalculatorSkills.SavageBlow, reroll);
                 }
             }
@@ -391,7 +391,7 @@ namespace ActionCalculator.Strategies.Blocking
             }
         }
 
-        private void AddOutcome(decimal p, int r, CalculatorSkills usedSkills, IReadOnlyCollection<int> roll)
+        private void AddOutcome(decimal p, int r, CalculatorSkills usedSkills, IReadOnlyCollection<BlockResult> roll)
         {
             if (p == 0)
             {

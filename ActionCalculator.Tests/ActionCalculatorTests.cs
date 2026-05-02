@@ -75,9 +75,9 @@ namespace ActionCalculator.Tests
         [InlineData("B,P:2D2!2{1D2}", 1, 0.55556, 0.87654)]
         [InlineData("B,P:2D2!2^{1D2}", 1, 0.65998, 0.85751)]
         [InlineData("B,P:2D2!2*{1D2}", 1, 0.76475, 0.81207)]
-        [InlineData("B,P:2D2!2'{1D2}", 1, 0.70782, 0.83745)]
+        [InlineData("B,P:2D2!2'{1D2}", 1, 0.68519, 0.82099)]
         [InlineData("B,P:2D2!2^'{1D2}", 1, 0.74640, 0.82047)]
-        [InlineData("B,P:2D2!2*'{1D2}", 1, 0.74897, 0.79835)]
+        [InlineData("B,P:2D2!2*'{1D2}", 1, 0.71948, 0.77915)]
         [InlineData("B,P:2D2!2^*'{1D2}", 1, 0.77418, 0.82510)]
         //brawler
         [InlineData("B,P:-2D2", 0, 0.23663)]

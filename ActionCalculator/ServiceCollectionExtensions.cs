@@ -24,6 +24,7 @@ namespace ActionCalculator
             services.AddSingleton<ICalculator, Calculator>();
             services.AddSingleton<IBlockSkillsHelper, BlockSkillsHelper>();
             services.AddSingleton<ID6, D6>();
+            services.AddSingleton<IBlockDice, BlockDice>();
             services.AddSingleton<IEqualityComparer<decimal>, ProbabilityComparer>();
             services.AddSingleton<ICalculationBuilder, CalculationBuilder>();
             services.AddSingleton<IPlayerActionsBuilder, PlayerActionsBuilder>();
