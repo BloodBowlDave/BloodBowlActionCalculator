@@ -19,7 +19,7 @@ namespace ActionCalculator.Strategies.Blocking
         private bool _useHatred;
         private bool _usePro;
         private bool _useSavageBlow;
-        private bool _useUnstoppableMomentum;
+        private bool _canRerollOneDice;
         private bool _useLordOfChaos;
         private bool _rerollNonCriticalFailure;
         private decimal _proSuccess;
@@ -60,7 +60,8 @@ namespace ActionCalculator.Strategies.Blocking
             _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
             _usePro = skillsToUse.Contains(CalculatorSkills.Pro);
             _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
-            _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum);
+            _canRerollOneDice = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum)
+                || skillsToUse.Contains(CalculatorSkills.WorkingInTandem);
             _useLordOfChaos = skillsToUse.Contains(CalculatorSkills.LordOfChaos);
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
             _rerollCount = 0;
@@ -125,9 +126,9 @@ namespace ActionCalculator.Strategies.Blocking
                 return;
             }
 
-            if (_useUnstoppableMomentum)
+            if (_canRerollOneDice)
             {
-                UnstoppableMomentum(roll, r);
+                RerollOneDice(roll, r);
                 return;
             }
 
@@ -154,7 +155,7 @@ namespace ActionCalculator.Strategies.Blocking
             _rerollCount++;
         }
 
-        private void UnstoppableMomentum(List<BlockResult> roll, int r)
+        private void RerollOneDice(List<BlockResult> roll, int r)
         {
             var indexOfLowestValue = roll.IndexOf(roll.Min());
             foreach (var face in blockDice.Rolls())

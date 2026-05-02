@@ -294,7 +294,7 @@ namespace ActionCalculator.Tests
         [InlineData("Karla:D3,2D2", 1, 0.49383, 0.60357)]
         [InlineData("Kiroth:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Kreek:2D3,K8", 1, 0.43750, 0.49219)]
-        [InlineData("Lucien:2D3,K8", 1, 0.43750, 0.49219)]
+        [InlineData("Lucien:2D3,K8", 1, 0.51042)]
         [InlineData("Luthor:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Maple:2D3,K8", 1, 0.47801, 0.50231)]
         [InlineData("Max:2,2", 2, 0.69444, 0.81019, 0.81501)]

@@ -65,7 +65,8 @@ namespace ActionCalculator.Strategies.Blocking
             _useBrawlerAndPro = _useBrawler && proHelper.UsePro(player, block, r, usedSkills, successOnOneDie * successOnOneDie, success);
             _useSavageBlow = skillsToUse.Contains(CalculatorSkills.SavageBlow);
             _useHatred = skillsToUse.Contains(CalculatorSkills.Hatred);
-            _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum);
+            _useUnstoppableMomentum = skillsToUse.Contains(CalculatorSkills.UnstoppableMomentum)
+                || skillsToUse.Contains(CalculatorSkills.WorkingInTandem);
             _useLordOfChaos = skillsToUse.Contains(CalculatorSkills.LordOfChaos);
             _rerollNonCriticalFailure = block.RerollNonCriticalFailure;
             _outcomes = new Dictionary<Tuple<bool, int, CalculatorSkills>, decimal>();
