@@ -316,6 +316,7 @@ namespace ActionCalculator.Tests
         [InlineData("Skitter:D3,R2,T8", 1, 0.48868, 0.52941)]
         [InlineData("Skrorg:2D3,K9", 1, 0.31250, 0.35156)]
         [InlineData("Skrull:P2;C2", 1, 0.81019, 0.94522)]
+        [InlineData("Skrull:P4", 1, 0.91667)]
         [InlineData("Thorsson:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Valen:P2;C2", 1, 0.81019, 0.94522)]
         [InlineData("Varag:1D3%,2D3,K8", 1, 0.39502, 0.46676)]

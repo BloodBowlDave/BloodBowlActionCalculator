@@ -117,6 +117,9 @@ namespace ActionCalculator.Models
         KrumpAndSmash = 2199023255552,
         [Description("WF")]
         [HideFromPlayerEditor]
-        WoodlandFury = 4398046511104
+        WoodlandFury = 4398046511104,
+        [Description("SPG")]
+        [HideFromPlayerEditor]
+        StrongPassingGame = 8796093022208
     }
 }

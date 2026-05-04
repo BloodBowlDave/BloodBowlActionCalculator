@@ -26,6 +26,17 @@ namespace ActionCalculator.Strategies.BallHandling
 
             calculator.Resolve(p * success, r, i, usedSkills);
 
+            if (canUseSkill(CalculatorSkills.StrongPassingGame, usedSkills))
+            {
+                var spgSuccesses = (10m - modifiedRoll).ThisOrMinimum(1).ThisOrMaximum(5);
+                var spgExtraSuccess = spgSuccesses - successes;
+                if (spgExtraSuccess > 0)
+                {
+                    calculator.Resolve(p * (spgExtraSuccess / 6), r, i, usedSkills | CalculatorSkills.StrongPassingGame);
+                    inaccuratePasses -= spgExtraSuccess;
+                }
+            }
+
             var inaccuratePass = inaccuratePasses / 6;
             var rerollInaccuratePass = pass.RerollInaccuratePass;
             var accuratePassAfterFailure = (failure + (rerollInaccuratePass ? inaccuratePass : 0)) * success;
