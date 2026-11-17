@@ -17,8 +17,8 @@ namespace ActionCalculator.Tests
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _calculator = serviceProvider.GetService<ICalculator>();
-            _calculationBuilder = serviceProvider.GetService<ICalculationBuilder>();
+            _calculator = serviceProvider.GetRequiredService<ICalculator>();
+            _calculationBuilder = serviceProvider.GetRequiredService<ICalculationBuilder>();
         }
 
         [Theory]

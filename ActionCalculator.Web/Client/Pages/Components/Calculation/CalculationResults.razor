@@ -1,4 +1,4 @@
-﻿@if (Results != null && Results.Any())
+﻿@if ((Results != null && Results.Any()) || HasInvalidResult)
 {
     <MudItem>
         <MudPaper Class="calculation-results">
@@ -30,16 +30,25 @@
                 <MudButton Variant="Variant.Outlined" OnClick="EditCalculation">Edit</MudButton>
             }
         
-            <MudTable Items="@Results" Striped="true" Breakpoint="Breakpoint.None" >
-                <HeaderContent>
-                    <MudTh>Rerolls Used</MudTh>
-                    <MudTh>Success %</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Rerolls Used">@context.Item1</MudTd>
-                    <MudTd DataLabel="Success %">@((context.Item2 * 100).ToString("00.0000"))</MudTd>
-                </RowTemplate>
-            </MudTable>
+            @if (HasInvalidResult)
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mt-3">
+                    This calculation produced an invalid result. Please report it, including the calculation above.
+                </MudAlert>
+            }
+            else
+            {
+                <MudTable Items="@Results" Striped="true" Breakpoint="Breakpoint.None" >
+                    <HeaderContent>
+                        <MudTh>Rerolls Used</MudTh>
+                        <MudTh>Success %</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Rerolls Used">@context.Item1</MudTd>
+                        <MudTd DataLabel="Success %">@((context.Item2 * 100).ToString("00.0000"))</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
     
         </MudPaper>
     </MudItem>
@@ -67,6 +76,9 @@
     
     [Parameter]
     public int CalculationIndex { get; set; }
+
+    [Parameter]
+    public bool HasInvalidResult { get; set; }
     
     private void RerollsChanged(int i)
     {

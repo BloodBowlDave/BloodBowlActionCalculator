@@ -6,6 +6,6 @@
 
         public override string ToString() => $"{(char) ActionType}{GetDifference()}{(!RerollFailure ? "'" : "")}";
 
-		private string GetDifference() => difference > 0 ? "+" + difference : difference.ToString();
+		private string GetDifference() => Roll > 0 ? "+" + Roll : Roll.ToString();
 	}
 }

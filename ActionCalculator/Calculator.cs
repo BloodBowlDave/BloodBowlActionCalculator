@@ -7,6 +7,8 @@ namespace ActionCalculator
 {
     public class Calculator(IStrategyFactory strategyFactory, IValidator<Calculation> calculationValidator, ICalculationContext context) : ICalculator
     {
+        private const decimal Tolerance = 0.0000000000000000001m;
+
         private Calculation _calculation = null!;
         private decimal[] _results = null!;
 
@@ -24,9 +26,22 @@ namespace ActionCalculator
             _results = new decimal[calculation.Rerolls * 2 + 1];
 
             Resolve(1m, calculation.Rerolls, -1, CalculatorSkills.None);
+
+            if (_results.Any(x => x < -Tolerance))
+            {
+                throw new InvalidCalculationResultException(calculation, _results);
+            }
+
             AggregateResults(_results);
 
-            return new CalculationResult(_results.Where(x => x > 0).ToArray());
+            var results = _results.Where(x => x > 0).ToArray();
+
+            if (results.Any(x => x > 1 + Tolerance) || results.Zip(results.Skip(1)).Any(x => x.Second < x.First - Tolerance))
+            {
+                throw new InvalidCalculationResultException(calculation, results);
+            }
+
+            return new CalculationResult(results);
         }
 
         public void Resolve(decimal p, int r, int i, CalculatorSkills usedSkills, bool nonCriticalFailure = false)

@@ -3,7 +3,7 @@
         <h5>Non-Rerollable Action</h5>
         
         <MudNumericField T="int" Label="Numerator" Min="1" Max="@(_denominator - 1)" @bind-Value="_numerator" Disabled="Disabled"/>
-        <MudText Style="display:inline-flex;position:relative;top:9px;" Disabled="Disabled">/</MudText>
+        <MudText Style="display:inline-flex;position:relative;top:9px;">/</MudText>
         <MudNumericField T="int" Label="Denominator" Min="2" Value="_denominator" ValueChanged="DenominatorChanged" Disabled="Disabled"/>
         <MudButton Variant="Variant.Outlined" OnClick="AddAction" Disabled="Disabled">Add</MudButton>
     </MudPaper>
