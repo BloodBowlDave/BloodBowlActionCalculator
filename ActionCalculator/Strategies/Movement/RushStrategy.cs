@@ -33,7 +33,7 @@ namespace ActionCalculator.Strategies.Movement
                 calculator.Resolve(p * failure * proSuccess * failure * pSteadyFooting, r, i, usedSkills | CalculatorSkills.Pro);
                 calculator.Resolve(p * failure * proSuccess * failure * (1m - pSteadyFooting) * lonerSuccess * pSteadyFooting, r - 1, i, usedSkills | CalculatorSkills.Pro);
                 calculator.Resolve(p * failure * (1m - proSuccess) * pSteadyFooting, r, i, usedSkills | CalculatorSkills.Pro);
-                calculator.Resolve(p * failure * (1m - proSuccess) * (1m - pSteadyFooting) * lonerSuccess * pSteadyFooting, r, i, usedSkills | CalculatorSkills.Pro);
+                calculator.Resolve(p * failure * (1m - proSuccess) * (1m - pSteadyFooting) * lonerSuccess * pSteadyFooting, r - 1, i, usedSkills | CalculatorSkills.Pro);
                 return;
             }
 

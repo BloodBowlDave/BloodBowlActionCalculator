@@ -29,7 +29,7 @@ namespace ActionCalculator.Strategies.Movement
 
             if (r > 0 && tentacles.RerollFailure)
             {
-                ExecuteReroll(p, r - 1, i, usedSkills | CalculatorSkills.Pro, lonerSuccess, success, failure);
+                ExecuteReroll(p, r - 1, i, usedSkills, lonerSuccess, success, failure);
                 return;
             }
 

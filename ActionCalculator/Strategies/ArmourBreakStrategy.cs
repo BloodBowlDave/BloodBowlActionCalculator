@@ -9,6 +9,7 @@ namespace ActionCalculator.Strategies
     public class ArmourBreakStrategy(ICalculator calculator, ID6 iD6, ICalculationContext context) : IActionStrategy
     {
         private const CalculatorSkills SkillsAffectingArmour = CalculatorSkills.Ram | CalculatorSkills.MightyBlow | CalculatorSkills.Slayer | CalculatorSkills.CrushingBlow;
+        private const int ClawMinimumRoll = 8;
 
         public void Execute(decimal p, int r, int i, PlayerAction playerAction, CalculatorSkills usedSkills, bool nonCriticalFailure = false)
         {
@@ -18,23 +19,6 @@ namespace ActionCalculator.Strategies
 
             var roll = armourBreak.Roll;
             var useOldPro = canUseSkill(CalculatorSkills.OldPro, usedSkills);
-
-            if (canUseSkill(CalculatorSkills.Claw, usedSkills) && roll >= 8)
-            {
-                var success = iD6.Success(2, 8);
-                calculator.Resolve(p * success, r, i, usedSkills);
-
-                if (!useOldPro)
-                {
-                    return;
-                }
-
-                var successesWithOldPro = GetSuccessesWithOldPro(new Dictionary<CalculatorSkills, int> { { CalculatorSkills.None, 8 } });
-                var successWithOldPro = (decimal)successesWithOldPro[CalculatorSkills.None] / 216;
-                calculator.Resolve(p * (1 - success) * proSuccess * successWithOldPro, r, i, usedSkills | CalculatorSkills.Pro);
-
-                return;
-            }
 
             var skillsWithMinimumRoll = GetSkillsWithMinimumRoll(player, usedSkills, roll);
             var succeedWithPreviousSkills = 0m;
@@ -109,11 +93,12 @@ namespace ActionCalculator.Strategies
         {
             var previousMinimumRoll = 99;
             var skillsWithMinimumRoll = new Dictionary<CalculatorSkills, int>();
+            var minimumRollWithoutSkills = player.CanUseSkill(CalculatorSkills.Claw, usedSkills) ? Math.Min(roll, ClawMinimumRoll) : roll;
 
             foreach (var skillCombination in GetSkillCombinations(player, usedSkills))
             {
                 var modifier = skillCombination.Sum(x => x.Item2);
-                var minimumRoll = roll - modifier;
+                var minimumRoll = skillCombination.Length == 0 ? minimumRollWithoutSkills : roll - modifier;
 
                 if (minimumRoll >= previousMinimumRoll)
                 {

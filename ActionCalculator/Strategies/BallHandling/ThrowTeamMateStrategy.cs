@@ -42,14 +42,29 @@ namespace ActionCalculator.Strategies.BallHandling
                 calculator.Resolve(p * inaccurateThrowWithoutReroll, r, i, usedSkills, true);
 
                 usedSkills |= CalculatorSkills.Pro;
-                ExecuteReroll(p * proSuccess, r, i, usedSkills | CalculatorSkills.Pro, accurateThrowAfterFailure, inaccurateThrowAfterFailure);
+                ExecuteReroll(p * proSuccess, r, i, usedSkills, accurateThrowAfterFailure, inaccurateThrowAfterFailure);
+
+                if (rerollInaccurateThrow)
+                {
+                    calculator.Resolve(p * (1 - proSuccess) * inaccurateThrow, r, i, usedSkills, true);
+                }
+
                 return;
             }
 
-            if (r > 0 && rerollInaccurateThrow)
+            if (r > 0)
             {
-                ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills | CalculatorSkills.Pro, accurateThrowAfterFailure, inaccurateThrowAfterFailure);
-                calculator.Resolve(p * inaccurateThrow * (1 - lonerSuccess), r - 1, i, usedSkills, true);
+                ExecuteReroll(p * lonerSuccess, r - 1, i, usedSkills, accurateThrowAfterFailure, inaccurateThrowAfterFailure);
+
+                if (rerollInaccurateThrow)
+                {
+                    calculator.Resolve(p * inaccurateThrow * (1 - lonerSuccess), r - 1, i, usedSkills, true);
+                }
+                else
+                {
+                    calculator.Resolve(p * inaccurateThrow, r, i, usedSkills, true);
+                }
+
                 return;
             }
 

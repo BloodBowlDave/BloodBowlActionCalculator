@@ -28,7 +28,7 @@ namespace ActionCalculator.Strategies.Movement
 
             calculator.Resolve(p * success, r, i, usedSkills);
 
-            var consummateProfessionalSuccess = consummateProfessionalHelper.GetAgilityRollSuccess(usedSkills, action.Roll, canUseSkill);
+            var consummateProfessionalSuccess = consummateProfessionalHelper.GetAgilityRollSuccess(usedSkills, action.Roll + (useDivingTackle ? 2 : 0), canUseSkill);
 
             if (consummateProfessionalSuccess > 0)
             {
