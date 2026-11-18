@@ -37,6 +37,7 @@ namespace ActionCalculator.Tests
         [InlineData("L4:E3", 1, 0.66667, 0.77778)]
         [InlineData("E3\"", 0, 0.33333)]
         [InlineData("E3\"", 1, 0.33333, 0.55556)]
+        [InlineData("BL:E4", 0, 0.75000)]
         //alternate branches
         [InlineData("(1/2)(1/4)(1/4)", 0, 1.00000)]
         [InlineData("(1/2,2)(1/4,3)(1/4,4)", 0, 0.70833)]
@@ -157,8 +158,15 @@ namespace ActionCalculator.Tests
         [InlineData("UM:2D3", 1, 0.87500)]
         [InlineData("UM:-2D2", 0, 0.25926)]
         [InlineData("UM:-2D3", 0, 0.50000)]
+        [InlineData("WIT:1D2", 0, 0.55556)]
+        [InlineData("WIT:1D2~S2", 0, 0.33333)]
+        [InlineData("WF:1D2", 0, 0.44444)]
+        [InlineData("WF:1D2~S2", 0, 0.33333)]
+        [InlineData("WF:2D3", 0, 0.86111)]
         //lord of chaos (fractional)
         [InlineData("LC:-2D3", 1, 0.50000, 0.62500)]
+        [InlineData("LC:1D2", 1, 0.55556, 0.70370)]
+        [InlineData("LC:1D2~S2", 1, 0.33333, 0.55556)]
         //savage blow
         [InlineData("SB:1D2", 0, 0.55556)]
         [InlineData("SB:2D2", 0, 0.80247)]
@@ -214,6 +222,7 @@ namespace ActionCalculator.Tests
         [InlineData("PA:P2,I6;C2", 1, 0.67515, 0.78768)]
         [InlineData("PA:P2;C2", 1, 0.81019, 0.94522)]
         [InlineData("CB,PA:P2,I6;C2", 1, 0.78768, 0.91896)]
+        [InlineData("SPG:P4;C3", 0, 0.55556)]
         [InlineData("P3'", 1, 0.83333, 0.97222)]
         [InlineData("P:P3", 0, 0.90741)]
         //ram
@@ -242,9 +251,11 @@ namespace ActionCalculator.Tests
         [InlineData("OP:2D2,K8", 0, 0.32922)]
         [InlineData("MB,OP:2D2,K8", 0, 0.40638)]
         [InlineData("MB2,OP:2D2,K8~S2", 0, 0.46468)]
+        [InlineData("KS:2D3,K8", 0, 0.49479)]
         //stab
         [InlineData("T8", 0, 0.41667)]
         [InlineData("T8[:2D2]", 0, 0.74074)]
+        [InlineData("MA:T8", 0, 0.65972)]
         //chainsaw
         [InlineData("W8", 0, 0.41667)]
         [InlineData("W8[:2D2]", 0, 0.74074)]
@@ -258,6 +269,9 @@ namespace ActionCalculator.Tests
         [InlineData("CP:D7", 0, 0.16667)]
         [InlineData("CP:D5\"", 0, 0.16667)]
         [InlineData("BT1,CP:D5,D5", 0, 0.36111)]
+        [InlineData("HL:R2", 0, 0.97222)]
+        [InlineData("TMT:D3", 0, 0.88889)]
+        [InlineData("WD:4/6", 0, 0.88889)]
         public void CalculatorTests(string calculationString, int rerolls, params double[] expected)
         {
             var calculation = _calculationBuilder.Build(calculationString, rerolls);
@@ -282,6 +296,8 @@ namespace ActionCalculator.Tests
         [InlineData("Boa:D3,2D2", 1, 0.49383, 0.60357)]
         [InlineData("Bomber:D3,2D2", 1, 0.49383, 0.60357)]
         [InlineData("Borak:2D3,K8,F8", 1, 0.29774, 0.31901)]
+        [InlineData("Borak:2D2", 1, 0.70370, 0.81344)]
+        [InlineData("Borak:2D2~S2", 1, 0.55556, 0.67901)]
         [InlineData("Bryce:W8", 1, 0.41667)]
         [InlineData("Karina:D3,2D2", 1, 0.49383, 0.60357)]
         [InlineData("Cindy:D3,2D2", 1, 0.49383, 0.60357)]
@@ -311,6 +327,7 @@ namespace ActionCalculator.Tests
         [InlineData("Helmut:2D2,K8", 1, 0.32922, 0.40238)]
         [InlineData("Ivan:2D3,K8", 1, 0.43750, 0.49219)]
         [InlineData("Ivan*:2D3%,K8", 1, 0.59182, 0.62191)]
+        [InlineData("Ivan*:2D3,K8", 0, 0.59182)]
         [InlineData("Ivar:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Jeremiah:D3,P2;C,DC:C2", 1, 0.84019)]
         [InlineData("Jordell:D3,2D2;DC:C2", 1, 0.42010, 0.58704)]
@@ -322,6 +339,8 @@ namespace ActionCalculator.Tests
         [InlineData("Kiroth:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Kreek:2D3,K8", 1, 0.43750, 0.49219)]
         [InlineData("Lucien:2D3,K8", 1, 0.51042)]
+        [InlineData("Lucien:2D3,K8", 0, 0.51042)]
+        [InlineData("Lucien:2D3,K8~S2", 1, 0.43750, 0.49219)]
         [InlineData("Luthor:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Maple:2D3,K8", 1, 0.47801, 0.50231)]
         [InlineData("Max:2,2", 2, 0.69444, 0.81019, 0.81501)]
@@ -330,6 +349,8 @@ namespace ActionCalculator.Tests
         [InlineData("Morg:H5;G4~S2", 1, 0.38889, 0.60185)]
         [InlineData("Nobbla:D3,2D2", 1, 0.49383, 0.60357)]
         [InlineData("Puggy:D3,2D2", 1, 0.49383, 0.64015)]
+        [InlineData("Puggy:R2,R2", 1, 0.92593, 0.93879)]
+        [InlineData("Puggy:R2,R2~S2", 1, 0.92593, 0.93557)]
         [InlineData("Rashnack:F8,2", 1, 0.28935, 0.31346)]
         [InlineData("Rashnack:T8,J8", 0, 0.17361)]
         [InlineData("Rodney:C3", 0, 0.88889)]
@@ -351,8 +372,13 @@ namespace ActionCalculator.Tests
         [InlineData("Varag*:1D3%,2D3,K8", 1, 0.39502, 0.47154)]
         [InlineData("Varag:1D3%,2D3,K8~S2", 1, 0.27083, 0.37240)]
         [InlineData("Varag*:1D3%,2D3,K8~S2", 1, 0.34523, 0.41210)]
+        [InlineData("Varag*:2D3,K8", 0, 0.67718)]
+        [InlineData("Varag*:2D3,K8~S2", 0, 0.59182)]
         [InlineData("Wilhelm:2D2,K9,J8", 1, 0.15271, 0.18665)]
         [InlineData("Willow:2D3,K8", 1, 0.35880, 0.36314)]
+        [InlineData("Willow:2D3,K8", 0, 0.35880)]
+        [InlineData("Willow:2D3,K8", 2, 0.35880, 0.36314)]
+        [InlineData("Willow:2D3,K8~S2", 1, 0.31250, 0.35156)]
         [InlineData("Wither:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Zolcath:R2,2D3,K8", 1, 0.42535, 0.47852)]
         [InlineData("Zug:2D3,K8", 1, 0.54167, 0.60938)]
@@ -386,6 +412,7 @@ namespace ActionCalculator.Tests
         [InlineData("DP2:F8~S2", 0, true)]
         //MB +1 always valid
         [InlineData("MB:2D3,K8", 0, true)]
+        [InlineData("DS,MB2:2D3,K8", 0, true)]
         //DP +1 always valid
         [InlineData("DP:F8", 0, true)]
         public void ValidationTests(string calculationString, int rerolls, bool expectedValid)
