@@ -10,7 +10,7 @@ namespace ActionCalculator.Web.Client.Pages
     {
         private List<Calculation> _calculations = new();
 
-        private readonly Dictionary<Tuple<int, string>, CalculationResult> _resultsLookup = new();
+        private readonly Dictionary<Tuple<int, string>, CalculationResult?> _resultsLookup = new();
 
         private bool _showPlayerEditor = true;
         private bool _showActionsContainer = true;
@@ -313,25 +313,38 @@ namespace ActionCalculator.Web.Client.Pages
             ((Block)action).NumberOfSuccessfulResults = value;
         }
 
-        private IEnumerable<Tuple<int, decimal>> GetResults(Calculation calculation)
+        private CalculationResult? GetCalculationResult(Calculation calculation)
         {
             var key = new Tuple<int, string>(calculation.Rerolls, calculation.ToString());
-            CalculationResult result;
 
-            if (_resultsLookup.ContainsKey(key))
+            if (_resultsLookup.TryGetValue(key, out var result))
             {
-                result = _resultsLookup[key];
+                return result;
             }
-            else
+
+            try
             {
                 result = Calculator.Calculate(calculation);
-
-                _resultsLookup.Add(key, result);
+            }
+            catch (InvalidCalculationResultException e)
+            {
+                Console.WriteLine(e.Message);
+                result = null;
             }
 
-            for (var i = 0; i < result.Results.Length; i++)
+            _resultsLookup.Add(key, result);
+            return result;
+        }
+
+        private bool HasInvalidResult(Calculation calculation) => GetCalculationResult(calculation) == null;
+
+        private IEnumerable<Tuple<int, decimal>> GetResults(Calculation calculation)
+        {
+            var results = GetCalculationResult(calculation)?.Results ?? [];
+
+            for (var i = 0; i < results.Length; i++)
             {
-                yield return new Tuple<int, decimal>(i, result.Results[i]);
+                yield return new Tuple<int, decimal>(i, results[i]);
             }
         }
     }

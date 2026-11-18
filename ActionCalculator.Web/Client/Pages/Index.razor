@@ -80,6 +80,7 @@
                     Calculation="_calculations[i]"
                     CalculationIndex="i"
                     Results="GetResults(_calculations[i]).ToList()"
+                    HasInvalidResult="HasInvalidResult(_calculations[i])"
                     OnSaveCalculation="SaveCalculation"
                     OnRerollsChanged="RerollsChanged"
                     OnClearCalculation="ClearCalculation"
