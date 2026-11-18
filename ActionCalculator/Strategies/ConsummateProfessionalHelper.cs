@@ -13,7 +13,7 @@ namespace ActionCalculator.Strategies
             Func<CalculatorSkills, CalculatorSkills, bool> canUseSkill) 
             => context.Season == Season.Season3
                 && canUseSkill(CalculatorSkills.ConsummateProfessional, usedSkills)
-                && roll > 2
+                && roll is >= 3 and <= 6
                 ? 1m / 6 : 0m;
     }
 }

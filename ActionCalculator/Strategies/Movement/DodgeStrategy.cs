@@ -30,11 +30,14 @@ namespace ActionCalculator.Strategies.Movement
 
             calculator.Resolve(p * success, r, i, usedSkills);
 
-            var consummateProfessionalSuccess = consummateProfessionalHelper.GetAgilityRollSuccess(usedSkills, dodge.Roll, canUseSkill);
+            var breakTackleBeforeReroll = useBreakTackleBeforeReroll ? player.BreakTackleValue : 0;
+            var modifiedRoll = dodge.Roll + (useDivingTackle ? 2 : 0) - breakTackleBeforeReroll;
+            var consummateProfessionalSuccess = consummateProfessionalHelper.GetAgilityRollSuccess(usedSkills, modifiedRoll, canUseSkill);
 
             if (consummateProfessionalSuccess > 0)
             {
-                calculator.Resolve(p * consummateProfessionalSuccess, r, i, usedSkills | CalculatorSkills.Pro);
+                var consummateProfessionalSkills = usedSkills | CalculatorSkills.Pro | (breakTackleBeforeReroll > 0 ? CalculatorSkills.BreakTackle : CalculatorSkills.None);
+                calculator.Resolve(p * consummateProfessionalSuccess, r, i, consummateProfessionalSkills);
             }
             failure -= consummateProfessionalSuccess;
 

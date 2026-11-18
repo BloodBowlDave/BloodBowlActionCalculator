@@ -46,8 +46,9 @@ namespace ActionCalculator.Strategies.Blocking
                 return false;
             }
 
-            return (r == 0 && block.UseHatred)
-                   || (r != 0 && successOnOneDie >= success * player.LonerSuccess());
+            return r == 0
+                   || block.UseHatred
+                   || successOnOneDie >= success * player.LonerSuccess();
         }
     }
 }

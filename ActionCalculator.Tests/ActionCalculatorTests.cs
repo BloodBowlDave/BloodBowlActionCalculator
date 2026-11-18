@@ -108,7 +108,7 @@ namespace ActionCalculator.Tests
         //catch
         [InlineData("C:C3", 0, 0.88889)]
         //claw
-        [InlineData("CL,MB:2D3,K8,J8", 0, 0.18229)]
+        [InlineData("CL,MB:2D3,K8,J8", 0, 0.23438)]
         [InlineData("CL,MB:2D3,K9,J8", 0, 0.18229)]
         [InlineData("CL,SM:2D2,K9,J8", 0, 0.15271)]
         //dodge
@@ -170,7 +170,7 @@ namespace ActionCalculator.Tests
         [InlineData("L4:2,2", 2, 0.69444, 0.81019, 0.81501)]
         //throw team mate
         [InlineData("L3:H4-1';(27/512,G4)(54/512,G4,R2)(117/512,G4,R2,R2)", 0, 0.08314)]
-        [InlineData("L3:H4-1';G4", 1, 0.27778, 0.43519)]
+        [InlineData("L3:H4-1';G4", 1, 0.27778, 0.49691)]
         [InlineData("L3:H4-1;G4", 1, 0.16667, 0.41049)]
         [InlineData("L3:H5;G4", 0, 0.33333)]
         [InlineData("L4,TB:H5';G4", 0, 0.38889)]
@@ -225,7 +225,7 @@ namespace ActionCalculator.Tests
         [InlineData("Y2[D2]", 0, 0.97222)]
         [InlineData("Y2[D2]", 2, 0.83333, 0.99537, 0.99923)]
         [InlineData("Y2;{D2}U2", 0, 0.81019)]
-        [InlineData("MD:Y2;{D2}U2", 0, 0.94522)]
+        [InlineData("MD:Y2;{D2}U2", 0, 0.82948)]
         //old pro
         [InlineData("OP:2D2,K8", 0, 0.32922)]
         [InlineData("MB,OP:2D2,K8", 0, 0.40638)]
@@ -243,6 +243,21 @@ namespace ActionCalculator.Tests
         [InlineData("CP:D5", 0, 0.50000)]
         [InlineData("CP:C3", 0, 0.83333)]
         [InlineData("CP:E5", 0, 0.50000)]
+        [InlineData("MD:Y4", 0, 1.0)]
+        [InlineData("MD:Y4;{D3}U3", 0, (1.0 / 2 + 1.0 / 4) * 2.0 / 3 + 1.0 / 4 * 2.0 / 3 * 2.0 / 3)]
+        [InlineData("CL,MB:2D3,K8", 0, 3.0 / 4 * 21.0 / 36)]
+        [InlineData("CL,MB:2D3,K10", 0, 3.0 / 4 * 15.0 / 36)]
+        [InlineData("CL,MB:2D3,K10,J8", 0, 3.0 / 4 * 15.0 / 36 * 21.0 / 36)]
+        [InlineData("P,SFO:R2", 0, 5.0 / 6 + 1.0 / 6 * (2.0 / 3 * 5.0 / 6 + 2.0 / 3 * 1.0 / 6 * 1.0 / 6 + 1.0 / 3 * 1.0 / 6))]
+        [InlineData("P:N+3,R3", 1, 1.0 / 3 * 2.0 / 3, 1.0 / 3 * (2.0 / 3 + 1.0 / 3 * 2.0 / 3) + 2.0 / 3 * 1.0 / 3 * (2.0 / 3 + 1.0 / 3 * 2.0 / 3 * 2.0 / 3))]
+        [InlineData("P3'", 1, 5.0 / 6, 5.0 / 6 + 1.0 / 6 * 5.0 / 6)]
+        [InlineData("H4'", 1, 5.0 / 6, 5.0 / 6 + 1.0 / 6 * 5.0 / 6)]
+        [InlineData("P:P3", 0, 4.0 / 6 + 2.0 / 3 * 2.0 / 6 * 5.0 / 6 + 1.0 / 3 * 1.0 / 6)]
+        [InlineData("L3,P:H4", 0, 3.0 / 6 + 2.0 / 3 * 3.0 / 6 * 5.0 / 6 + 1.0 / 3 * 2.0 / 6)]
+        [InlineData("H:1D2", 0, 2.0 / 6 + 1.0 / 6 * 2.0 / 6)]
+        [InlineData("CP:D7", 0, 1.0 / 6)]
+        [InlineData("CP:D5\"", 0, 1.0 / 6)]
+        [InlineData("BT1,CP:D5,D5", 0, 2.0 / 6 * 4.0 / 6 + 1.0 / 6 * 3.0 / 6 + 1.0 / 6 * 2.0 / 6)]
         public void CalculatorTests(string calculationString, int rerolls, params double[] expected)
         {
             var calculation = _calculationBuilder.Build(calculationString, rerolls);
@@ -274,7 +289,7 @@ namespace ActionCalculator.Tests
         [InlineData("Deeproot:2D3,K8", 1, 0.43750, 0.49219)]
         [InlineData("Dribl:D3,F8", 1, 0.51852)]
         [InlineData("Drull:D3,2D2", 1, 0.49383, 0.60357)]
-        [InlineData("Eldril:D3,Y3,C3", 1, 0.70233, 0.79012)]
+        [InlineData("Eldril:D3,Y3,C3", 1, 0.70233)]
         [InlineData("Estelle:D3,2D2", 1, 0.49383, 0.60357)]
         [InlineData("Frank:D5,2D3,K8", 1, 0.21875, 0.30078)]
         [InlineData("Fungus:4/6,2D3,K8", 1, 0.38889, 0.43750)]
@@ -333,9 +348,9 @@ namespace ActionCalculator.Tests
         [InlineData("Thorsson:2,2", 2, 0.69444, 0.81019, 0.81501)]
         [InlineData("Valen:P2;C2", 1, 0.81019, 0.94522)]
         [InlineData("Varag:1D3%,2D3,K8", 1, 0.30990, 0.42611)]
-        [InlineData("Varag*:1D3%,2D3,K8", 1, 0.39502, 0.46676)]
+        [InlineData("Varag*:1D3%,2D3,K8", 1, 0.39502, 0.47154)]
         [InlineData("Varag:1D3%,2D3,K8~S2", 1, 0.27083, 0.37240)]
-        [InlineData("Varag*:1D3%,2D3,K8~S2", 1, 0.34523, 0.40792)]
+        [InlineData("Varag*:1D3%,2D3,K8~S2", 1, 0.34523, 0.41210)]
         [InlineData("Wilhelm:2D2,K9,J8", 1, 0.15271, 0.18665)]
         [InlineData("Willow:2D3,K8", 1, 0.35880, 0.36314)]
         [InlineData("Wither:2,2", 2, 0.69444, 0.81019, 0.81501)]

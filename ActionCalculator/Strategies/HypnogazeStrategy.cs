@@ -21,7 +21,8 @@ namespace ActionCalculator.Strategies
 
             if (canUseSkill(CalculatorSkills.MesmerisingDance, usedSkills))
             {
-                ExecuteReroll(p, r, i, usedSkills, success, failure);
+                ExecuteReroll(p, r, i, usedSkills | CalculatorSkills.MesmerisingDance, success, failure);
+                return;
             }
 
             if (proHelper.UsePro(player, hypnogaze, r, usedSkills, success, success))

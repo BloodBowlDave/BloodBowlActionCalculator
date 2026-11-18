@@ -57,7 +57,7 @@ D,SF,L3,CP:R2,D3,C3
 ^^^^^^^^^^  player skills (comma-separated abbreviations)
            ^^^^^^^^ actions for that player
 ```
-A `;` switches to a new player: `P1:2D2;P2:D3`. A star player's short name can replace the skill list: `Griff:R2,D3`.
+A `;` switches to a new player: `P1:2D2;P2:D3`. A star player's short name can replace the skill list: `Griff:R2,D3`. A `*` after a star player's name (`Grim*`, `Morg*`) means they are playing against their hated opponents; without it their Hatred is removed. A generic player with `H` always has Hatred available.
 
 ### Action tokens
 
@@ -94,8 +94,8 @@ A `;` switches to a new player: `P1:2D2;P2:D3`. A star player's short name can r
 ```
 2D2!2    frenzy (2 non-critical-failure results → follow-up trigger)
 2D2*     use Pro
-2D2^     use Brawler
-2D2%     use Hatred (the target has the hated keyword)
+2D2^     use Brawler even when a team reroll looks better
+2D2%     use Hatred even when a team reroll looks better (Hatred is otherwise used automatically, like Brawler)
 2D2'     no reroll on non-critical failures (Stand Firm path)
 ```
 
@@ -197,7 +197,7 @@ Registered as singleton. `Calculator.Calculate()` sets `Season` before execution
 
 | Behaviour | Season 2 | Season 3 |
 |---|---|---|
-| **Consummate Professional** | Pro reroll with 100 % success — fires anywhere ProHelper is called | +1 modifier to one agility test (Dodge, Leap, Catch, Pick-Up, Landing); roll of 1 always fails |
+| **Consummate Professional** | Pro reroll with 100 % success — fires anywhere ProHelper is called | +1 modifier to one agility test (Dodge, Leap, Catch, Pick-Up, Landing); adds one face (`1/6`) only when the target after modifiers (Diving Tackle, Break Tackle, an inaccurate landing) is 3+ to 6+ |
 | **Hatred** | Not available to generic players | Available in player editor |
 | **Lone Fouler** | Not available | Available |
 | **Mighty Blow / Dirty Player** | Up to +2 | +1 only (except Dwarven Scourge) |
