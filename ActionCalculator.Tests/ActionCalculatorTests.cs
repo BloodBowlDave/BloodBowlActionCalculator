@@ -102,14 +102,18 @@ namespace ActionCalculator.Tests
         [InlineData("BT2:D3¬,D4", 0, 0.63889)]
         [InlineData("BT2:D3¬,D4", 1, 0.55556, 0.86111)]
         //hatred
+        [InlineData("H:1D2", 0, 0.38889)]
         [InlineData("H:1D3%", 1, 0.58333, 0.75000)]
         [InlineData("H:-2D2%", 0, 0.14815)]
         [InlineData("H:-2D2", 1, 0.14815, 0.21296)]
         //catch
         [InlineData("C:C3", 0, 0.88889)]
         //claw
+        [InlineData("CL,MB:2D3,K8", 0, 0.43750)]
         [InlineData("CL,MB:2D3,K8,J8", 0, 0.23438)]
         [InlineData("CL,MB:2D3,K9,J8", 0, 0.18229)]
+        [InlineData("CL,MB:2D3,K10", 0, 0.31250)]
+        [InlineData("CL,MB:2D3,K10,J8", 0, 0.18229)]
         [InlineData("CL,SM:2D2,K9,J8", 0, 0.15271)]
         //dodge
         [InlineData("D:D2,D2", 1, 0.92593, 0.94522)]
@@ -132,6 +136,7 @@ namespace ActionCalculator.Tests
         [InlineData("D:N+3[:N+2[:N+2,D3]D3]D2", 0, 0.65741)]
         [InlineData("N+2[:N+2,D3,U3]D3,U3", 0, 0.33333)]
         [InlineData("N+3", 0, 0.33333)]
+        [InlineData("P:N+3,R3", 1, 0.22222, 0.47737)]
         //fouling
         [InlineData("DP2:F8~S2", 0, 0.72222)]
         [InlineData("DP2:F8,J8~S2", 0, 0.42824)]
@@ -177,6 +182,8 @@ namespace ActionCalculator.Tests
         [InlineData("L4,TB:H5;G4", 0, 0.38889)]
         [InlineData("L4,TB:H5';G4~S2", 0, 0.38889)]
         [InlineData("L4,TB:H5;G4~S2", 0, 0.38889)]
+        [InlineData("H4'", 1, 0.83333, 0.97222)]
+        [InlineData("L3,P:H4", 0, 0.88889)]
         //hail mary pass
         [InlineData("M2;C,DC:C1", 1, 0.35156, 0.41016)]
         [InlineData("M2;C,DC:C2", 1, 0.30121, 0.35141)]
@@ -207,6 +214,8 @@ namespace ActionCalculator.Tests
         [InlineData("PA:P2,I6;C2", 1, 0.67515, 0.78768)]
         [InlineData("PA:P2;C2", 1, 0.81019, 0.94522)]
         [InlineData("CB,PA:P2,I6;C2", 1, 0.78768, 0.91896)]
+        [InlineData("P3'", 1, 0.83333, 0.97222)]
+        [InlineData("P:P3", 0, 0.90741)]
         //ram
         [InlineData("R:2D3,K8", 0, 0.43750)]
         [InlineData("R:2D3,K8,J8", 0, 0.23438)]
@@ -214,6 +223,7 @@ namespace ActionCalculator.Tests
         //steady footing
         [InlineData("SFO:R2", 0, 0.86111)]
         [InlineData("SFO:R2", 1, 0.83333, 0.97685)]
+        [InlineData("P,SFO:R2", 0, 0.93827)]
         [InlineData("SFO:D3", 0, 0.72222)]
         [InlineData("SFO:D3", 1, 0.66667, 0.90741)]
         [InlineData("SFO:E3", 0, 0.72222)]
@@ -226,6 +236,8 @@ namespace ActionCalculator.Tests
         [InlineData("Y2[D2]", 2, 0.83333, 0.99537, 0.99923)]
         [InlineData("Y2;{D2}U2", 0, 0.81019)]
         [InlineData("MD:Y2;{D2}U2", 0, 0.82948)]
+        [InlineData("MD:Y4", 0, 1.00000)]
+        [InlineData("MD:Y4;{D3}U3", 0, 0.61111)]
         //old pro
         [InlineData("OP:2D2,K8", 0, 0.32922)]
         [InlineData("MB,OP:2D2,K8", 0, 0.40638)]
@@ -243,18 +255,6 @@ namespace ActionCalculator.Tests
         [InlineData("CP:D5", 0, 0.50000)]
         [InlineData("CP:C3", 0, 0.83333)]
         [InlineData("CP:E5", 0, 0.50000)]
-        [InlineData("MD:Y4", 0, 1.00000)]
-        [InlineData("MD:Y4;{D3}U3", 0, 0.61111)]
-        [InlineData("CL,MB:2D3,K8", 0, 0.43750)]
-        [InlineData("CL,MB:2D3,K10", 0, 0.31250)]
-        [InlineData("CL,MB:2D3,K10,J8", 0, 0.18229)]
-        [InlineData("P,SFO:R2", 0, 0.93827)]
-        [InlineData("P:N+3,R3", 1, 0.22222, 0.47737)]
-        [InlineData("P3'", 1, 0.83333, 0.97222)]
-        [InlineData("H4'", 1, 0.83333, 0.97222)]
-        [InlineData("P:P3", 0, 0.90741)]
-        [InlineData("L3,P:H4", 0, 0.88889)]
-        [InlineData("H:1D2", 0, 0.38889)]
         [InlineData("CP:D7", 0, 0.16667)]
         [InlineData("CP:D5\"", 0, 0.16667)]
         [InlineData("BT1,CP:D5,D5", 0, 0.36111)]
