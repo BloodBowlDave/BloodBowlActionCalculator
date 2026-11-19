@@ -1,6 +1,7 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Models;
 using ActionCalculator.Models.Actions;
+using ActionCalculator.Web.Client.Editing;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 
@@ -8,22 +9,17 @@ namespace ActionCalculator.Web.Client.Pages
 {
     public partial class Index
     {
-        private List<Calculation> _calculations = new();
-
         private readonly Dictionary<Tuple<int, string>, CalculationResult?> _resultsLookup = new();
 
         private bool _showPlayerEditor = true;
         private bool _showActionsContainer = true;
         private bool _showCalculation = true;
 
-        [Inject] 
-        public IPlayerActionsBuilder PlayerActionsBuilder { get; set; } = null!;
+        [Inject]
+        public CalculationEditor Editor { get; set; } = null!;
 
         [Inject]
         public ICalculator Calculator { get; set; } = null!;
-
-        [Inject]
-        public IActionTypeValidator ActionTypeValidator { get; set; } = null!;
 
         [Inject]
         public IValidator<Calculation> CalculationValidator { get; set; } = null!;
@@ -31,218 +27,46 @@ namespace ActionCalculator.Web.Client.Pages
         [CascadingParameter(Name = "Season")]
         public string Season { get; set; } = "Season 3";
 
-        private Calculation CurrentCalculation() => _calculations.First();
+        private IReadOnlyList<Calculation> Calculations => Editor.Calculations;
 
-        private Player CurrentPlayer { get; set; }
+        private Calculation CurrentCalculation() => Editor.CurrentCalculation;
 
-        public Index()
-        {
-            _calculations.Add(new Calculation(new PlayerActions(), 1));
-            CurrentPlayer = new Player();
-        }
+        private Player CurrentPlayer => Editor.CurrentPlayer;
 
         protected override void OnParametersSet()
         {
-            _calculations[0].Season = ParseSeason(Season);
+            Editor.SetSeason(ParseSeason(Season));
         }
 
         private static Models.Season ParseSeason(string season) =>
             season == "Season 2" ? Models.Season.Season2 : Models.Season.Season3;
 
-        private void AddAction(Models.Actions.Action action)
-        {
-            var player = new Player(CurrentPlayer.Id, CurrentPlayer.Skills, CurrentPlayer.LonerValue,
-                CurrentPlayer.BreakTackleValue, CurrentPlayer.MightyBlowValue, CurrentPlayer.DirtyPlayerValue);
+        private void AddAction(Models.Actions.Action action) => Editor.AddAction(action);
 
-            CurrentCalculation().PlayerActions.Add(new PlayerAction(player, action, 0));
-        }
+        private void PlayerChanged(Player player) => Editor.ChangePlayer(player);
 
-        private void PlayerChanged(Player player)
-        {
-            CurrentPlayer = player;
+        private void NewPlayer() => Editor.NewPlayer();
 
-            foreach (var playerAction in CurrentCalculation().PlayerActions.Where(x => x.Player.Id == player.Id))
-            {
-                playerAction.Player = player;
-            }
-        }
+        private void EditPlayer(Guid playerId) => Editor.EditPlayer(playerId);
 
-        private void NewPlayer()
-        {
-            CurrentPlayer = new Player();
-        }
+        private void ClearCalculation(int index) => Editor.ClearCalculation(index);
 
-        private void EditPlayer(Guid playerId)
-        {
-            CurrentPlayer = CurrentCalculation().PlayerActions.First(x => x.Player.Id == playerId).Player;
-        }
+        private void RerollsChanged(Tuple<int, int> value) => Editor.SetRerolls(value.Item1, value.Item2);
 
-        private void ClearCalculation(int index)
-        {
-            _calculations.RemoveAt(index);
+        private void SaveCalculation(int index) => Editor.SaveCalculation(index);
 
-            if (index > 0)
-            {
-                return;
-            }
+        private void EditCalculation(int index) => Editor.EditCalculation(index);
 
-            if (_calculations.Any())
-            {
-                CurrentPlayer = CurrentCalculation().PlayerActions.Last().Player;
-            }
-            else
-            {
-                _calculations.Add(new Calculation(new PlayerActions(), 1, ParseSeason(Season)));
-                CurrentPlayer = new Player();
-            }
-        }
+        private int PlayerNumber() => Editor.PlayerNumber();
 
-        private void RerollsChanged(Tuple<int, int> value)
-        {
-            var (index, rerolls) = value;
+        private void PushesChanged(Tuple<int, int> indexAndValue) => Editor.SetPushes(indexAndValue.Item1, indexAndValue.Item2);
 
-            _calculations[index].Rerolls = rerolls;
-        }
-
-        private void SaveCalculation(int index)
-        {
-            var playerActions = PlayerActionsBuilder.Build(_calculations[index].PlayerActions.ToString());
-
-            _calculations.Add(new Calculation(playerActions, _calculations[index].Rerolls, _calculations[index].Season));
-        }
-
-        private void EditCalculation(int index)
-        {
-            var calculations = new List<Calculation> { _calculations[index] };
-
-            calculations.AddRange(_calculations.Where((_, i) => i != index));
-
-            _calculations = calculations;
-
-            CurrentPlayer = CurrentCalculation().PlayerActions.Last().Player;
-        }
-
-        private int PlayerNumber()
-        {
-            var playerIds = CurrentCalculation().PlayerActions.Select(x => x.Player.Id).Distinct().ToList();
-            var playerCount = playerIds.Count;
-            var playerIndex = playerIds.IndexOf(CurrentPlayer.Id);
-            
-            return playerIndex != -1 ? playerIndex + 1 : playerCount + 1;
-        }
-
-        private bool IsFrenzyFollowUp(int index)
-        {
-            var pa = CurrentCalculation().PlayerActions[index];
-            return pa.RequiresNonCriticalFailure &&
-                   pa.Action.ActionType == ActionType.Block &&
-                   index > 0 &&
-                   CurrentCalculation().PlayerActions[index - 1].Action.ActionType == ActionType.Block &&
-                   ((Block)CurrentCalculation().PlayerActions[index - 1].Action).NumberOfNonCriticalFailures > 0;
-        }
-
-        private bool IsFrenzyMainBlock(int index)
-        {
-            var pa = CurrentCalculation().PlayerActions[index];
-            return pa.Action.ActionType == ActionType.Block &&
-                   ((Block)pa.Action).NumberOfNonCriticalFailures > 0 &&
-                   index + 1 < CurrentCalculation().PlayerActions.Count &&
-                   IsFrenzyFollowUp(index + 1);
-        }
-
-        private void PushesChanged(Tuple<int, int> indexAndValue)
-        {
-            var (index, value) = indexAndValue;
-            var block = (Block)CurrentCalculation().PlayerActions[index].Action;
-            var wasUsingFrenzy = block.NumberOfNonCriticalFailures > 0;
-
-            if (value > 0 && !wasUsingFrenzy)
-            {
-                block.NumberOfNonCriticalFailures = value;
-                var mainPlayerAction = CurrentCalculation().PlayerActions[index];
-                var followUpBlock = new Block(block.NumberOfDice, block.NumberOfSuccessfulResults, 0, false, false, true);
-                var followUpPlayerAction = new PlayerAction(mainPlayerAction.Player, followUpBlock, mainPlayerAction.Depth + 1)
-                {
-                    RequiresNonCriticalFailure = true,
-                    EndOfBranch = true
-                };
-                CurrentCalculation().PlayerActions.Insert(index + 1, followUpPlayerAction);
-                return;
-            }
-
-            if (value == 0 && wasUsingFrenzy)
-            {
-                var nextIndex = index + 1;
-                if (nextIndex < CurrentCalculation().PlayerActions.Count && IsFrenzyFollowUp(nextIndex))
-                {
-                    CurrentCalculation().PlayerActions.RemoveAt(nextIndex);
-                }
-            }
-
-            block.NumberOfNonCriticalFailures = value;
-        }
+        private void RemoveAction(int index) => Editor.RemoveAction(index);
 
         private void FrenzyDiceChanged(Tuple<int, int> indexAndValue)
         {
             var (index, value) = indexAndValue;
             ((Block)CurrentCalculation().PlayerActions[index].Action).NumberOfDice = value;
-        }
-
-        private void RemoveAction(int index)
-        {
-            if (IsFrenzyMainBlock(index))
-            {
-                var followUpIndex = index + 1;
-                var followUp = CurrentCalculation().PlayerActions[followUpIndex];
-                ((Block)followUp.Action).NumberOfNonCriticalFailures = 0;
-                CurrentCalculation().PlayerActions[followUpIndex] = new PlayerAction(followUp.Player, followUp.Action, 0);
-            }
-            else if (IsFrenzyFollowUp(index))
-            {
-                ((Block)CurrentCalculation().PlayerActions[index - 1].Action).NumberOfNonCriticalFailures = 0;
-            }
-
-            CurrentCalculation().PlayerActions.RemoveAt(index);
-
-            RemoveInvalidPlayerActions();
-            
-            if (!CurrentCalculation().PlayerActions.Any() && _calculations.Count > 1)
-            {
-                _calculations.RemoveAt(0);
-            }
-
-            CurrentPlayer = CurrentCalculation().PlayerActions.Last().Player;
-        }
-
-        private void RemoveInvalidPlayerActions()
-        {
-            while (true)
-            {
-                var invalidPlayerActionIndexes = new List<int>();
-
-                for (var i = 0; i < CurrentCalculation().PlayerActions.Count; i++)
-                {
-                    var actionType = CurrentCalculation().PlayerActions[i].Action.ActionType;
-                    ActionType? previousActionType = i > 0 ? CurrentCalculation().PlayerActions[i - 1].Action.ActionType : null;
-                    ActionType? previousPreviousActionType =
-                        i > 1 ? CurrentCalculation().PlayerActions[i - 2].Action.ActionType : null;
-
-                    if (!ActionTypeValidator.ActionTypeIsValid(actionType, previousActionType, previousPreviousActionType))
-                    {
-                        invalidPlayerActionIndexes.Add(i);
-                    }
-                }
-
-                foreach (var invalidPlayerActionIndex in invalidPlayerActionIndexes)
-                {
-                    CurrentCalculation().PlayerActions.RemoveAt(invalidPlayerActionIndex);
-                }
-
-                if (!invalidPlayerActionIndexes.Any())
-                {
-                    break;
-                }
-            }
         }
 
         private void ToggleBreakTackle(Tuple<int, bool> indexAndValue)

@@ -22,12 +22,15 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Test
-        run: dotnet test ActionCalculator.Tests -c Release
+        run: dotnet test BloodBowl.sln -c Release
 
   build_and_deploy:
     needs: test
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v7
@@ -48,4 +51,3 @@ jobs:
           action: upload
           app_location: published/wwwroot
           skip_app_build: true
-          skip_api_build: true

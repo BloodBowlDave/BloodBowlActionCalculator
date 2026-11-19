@@ -16,10 +16,9 @@ namespace ActionCalculator
             {
                 BuildPlayerActions(playerActionsString, new Player(), 0);
             }
-            catch (Exception e)
+            catch (Exception e) when (e is not CalculationParseException)
             {
-                Console.WriteLine(e);
-                return new PlayerActions();
+                throw new CalculationParseException($"Could not read \"{playerActionsString}\"", e);
             }
 
             var playerActions = new PlayerActions();
@@ -35,7 +34,7 @@ namespace ActionCalculator
             switch (specialCharacter)
             {
                 case ':':
-                    player = playerBuilder.Build(calculation[..index]);
+                    player = BuildPlayer(calculation[..index]);
                     BuildPlayerActions(calculation[(index + 1)..], player, depth);
                     break;
                 case '{':
@@ -92,7 +91,7 @@ namespace ActionCalculator
         {
             if (lastIndexOfClosingBracket == -1)
             {
-                throw new Exception("No matching closing bracket.");
+                throw new CalculationParseException("No matching closing bracket");
             }
             
             foreach (var action in GetActions(calculation[..indexOfOpeningBracket]))
@@ -127,7 +126,7 @@ namespace ActionCalculator
         {
             if (lastIndexOfClosingBracket == -1)
             {
-                throw new Exception("No matching closing bracket.");
+                throw new CalculationParseException("No matching closing bracket");
             }
             
             foreach (var action in GetActions(calculation[..indexOfOpeningBracket]))
@@ -166,14 +165,43 @@ namespace ActionCalculator
             {
                 var actionSplit = actionString.Split('|');
 
-                yield return actionParserFactory.GetActionParser(actionSplit[0]).Parse(actionSplit[0]);
+                yield return ParseAction(actionSplit[0]);
 
                 if (actionSplit.Length == 1)
                 {
                     continue;
                 }
-                
-                yield return actionParserFactory.GetActionParser(actionSplit[1]).Parse(actionSplit[1]);
+
+                yield return ParseAction(actionSplit[1]);
+            }
+        }
+
+        private Action ParseAction(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new CalculationParseException("An action is missing between two commas");
+            }
+
+            try
+            {
+                return actionParserFactory.GetActionParser(token).Parse(token);
+            }
+            catch (Exception e)
+            {
+                throw new CalculationParseException($"Could not read the action \"{token}\"", e);
+            }
+        }
+
+        private Player BuildPlayer(string skills)
+        {
+            try
+            {
+                return playerBuilder.Build(skills);
+            }
+            catch (Exception e)
+            {
+                throw new CalculationParseException($"Could not read the player \"{skills}\"", e);
             }
         }
 

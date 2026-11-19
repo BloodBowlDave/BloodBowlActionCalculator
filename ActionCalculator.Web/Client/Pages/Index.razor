@@ -31,10 +31,10 @@
     {
         <ActionsContainer
             OnAddAction="AddAction"
-            Calculation="_calculations[0]"/>
+            Calculation="Calculations[0]"/>
     }
 
-    @if (_calculations[0].PlayerActions.Any())
+    @if (Calculations[0].PlayerActions.Any())
     {
     <MudDivider Style="Margin:6px 0 6px 0" DividerType="DividerType.Middle"/>
 
@@ -45,10 +45,10 @@
     </div>
     }
 
-    @if (_showCalculation && _calculations[0].PlayerActions.Any())
+    @if (_showCalculation && Calculations[0].PlayerActions.Any())
     {
         <CalculationSummary
-            Calculation="_calculations[0]"
+            Calculation="Calculations[0]"
             CurrentPlayerId="CurrentPlayer.Id"
             RemoveAction="RemoveAction"
             OnToggleBreakTackle="ToggleBreakTackle"
@@ -64,23 +64,23 @@
             OnEditPlayer="EditPlayer"/>
     }
 
-    @if (_calculations.Any(x => CalculationValidator.Validate(x).IsValid))
+    @if (Calculations.Any(x => CalculationValidator.Validate(x).IsValid))
     {
         <MudDivider Style="Margin:6px 0 6px 0" DividerType="DividerType.Middle"/>
 
-        @if (_calculations.Count > 1)
+        @if (Calculations.Count > 1)
         {
             <h4>Results</h4>
         }
 
         <MudGrid Spacing="1">
-            @for (var i = 0; i < _calculations.Count; i++)
+            @for (var i = 0; i < Calculations.Count; i++)
             {
                 <CalculationResults
-                    Calculation="_calculations[i]"
+                    Calculation="Calculations[i]"
                     CalculationIndex="i"
-                    Results="GetResults(_calculations[i]).ToList()"
-                    HasInvalidResult="HasInvalidResult(_calculations[i])"
+                    Results="GetResults(Calculations[i]).ToList()"
+                    HasInvalidResult="HasInvalidResult(Calculations[i])"
                     OnSaveCalculation="SaveCalculation"
                     OnRerollsChanged="RerollsChanged"
                     OnClearCalculation="ClearCalculation"
