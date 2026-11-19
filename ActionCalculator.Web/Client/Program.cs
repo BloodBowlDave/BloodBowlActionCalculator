@@ -1,5 +1,6 @@
 using ActionCalculator;
 using ActionCalculator.Web.Client;
+using ActionCalculator.Web.Client.Editing;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -14,6 +15,7 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 builder.Services.AddMudServices();
 
 builder.Services.AddActionCalculatorServices();
+builder.Services.AddTransient<CalculationEditor>();
 
 builder.Services.AddBlazoredLocalStorage();
 
