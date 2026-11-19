@@ -19,19 +19,19 @@
     
     <MudDivider Style="Margin:10px 0 10px 0" DividerType="DividerType.Middle"/>
     
-    @if (_calculations.Any(x => CalculationValidator.Validate(x).IsValid))
+    @if (Calculations.Any(x => CalculationValidator.Validate(x).IsValid))
     {
         <h4>Results</h4>
     }
 
     <MudGrid Spacing="1">
-        @for (var i = 0; i < _calculations.Count; i++)
+        @for (var i = 0; i < Calculations.Count; i++)
         {
             <CalculationResults
-                Calculation="_calculations[i]"
+                Calculation="Calculations[i]"
                 CalculationIndex="i" 
-                Results="GetResults(_calculations[i]).ToList()"
-                HasInvalidResult="HasInvalidResult(_calculations[i])"
+                Results="GetResults(Calculations[i]).ToList()"
+                HasInvalidResult="HasInvalidResult(Calculations[i])"
                 OnSaveCalculation="SaveCalculation"
                 OnRerollsChanged="RerollsChanged"
                 OnClearCalculation="ClearCalculation"

@@ -22,6 +22,11 @@ namespace ActionCalculator.Web.Client.Editing
             CurrentCalculation.Season = season;
         }
 
+        public void ReplaceCurrentCalculation(Calculation calculation)
+        {
+            _calculations[0] = calculation;
+        }
+
         public void AddAction(Action action)
         {
             var player = new Player(CurrentPlayer.Id, CurrentPlayer.Skills, CurrentPlayer.LonerValue,
