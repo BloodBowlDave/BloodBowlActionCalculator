@@ -169,7 +169,7 @@ namespace ActionCalculator.Web.Client.Editing
                 _calculations.RemoveAt(0);
             }
 
-            CurrentPlayer = CurrentCalculation.PlayerActions.Last().Player;
+            CurrentPlayer = CurrentCalculation.PlayerActions.LastOrDefault()?.Player ?? CurrentPlayer;
         }
 
         private bool IsFrenzyMainBlock(int index)

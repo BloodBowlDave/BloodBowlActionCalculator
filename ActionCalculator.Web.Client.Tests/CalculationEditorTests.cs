@@ -25,6 +25,19 @@ namespace ActionCalculator.Web.Client.Tests
         }
 
         [Fact]
+        public void RemoveAction_OfTheOnlyActionKeepsTheCurrentPlayer()
+        {
+            var player = new Player(Guid.NewGuid(), CalculatorSkills.Dodge, 0, 0, 0, 0);
+            _editor.ChangePlayer(player);
+            AddActions("D3");
+
+            _editor.RemoveAction(0);
+
+            Assert.Empty(_editor.CurrentCalculation.PlayerActions);
+            Assert.Equal(player.Id, _editor.CurrentPlayer.Id);
+        }
+
+        [Fact]
         public void RemoveAction_OfTheOnlyActionSwitchesToTheNextSavedCalculation()
         {
             AddActions("D3");
