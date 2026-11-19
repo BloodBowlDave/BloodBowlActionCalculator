@@ -70,6 +70,18 @@ namespace ActionCalculator.Web.Client.Tests
         }
 
         [Fact]
+        public void EditCalculation_OfAnEmptySavedCalculationStartsANewPlayer()
+        {
+            _editor.SaveCalculation(0);
+            _editor.ChangePlayer(new Player(Guid.NewGuid(), CalculatorSkills.Dodge, 0, 0, 0, 0));
+
+            _editor.EditCalculation(1);
+
+            Assert.Empty(_editor.CurrentCalculation.PlayerActions);
+            Assert.Equal(CalculatorSkills.None, _editor.CurrentPlayer.Skills);
+        }
+
+        [Fact]
         public void ClearCalculation_OfTheOnlyCalculationKeepsTheSeason()
         {
             _editor.SetSeason(Season.Season2);

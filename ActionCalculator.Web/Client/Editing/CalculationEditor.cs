@@ -67,15 +67,12 @@ namespace ActionCalculator.Web.Client.Editing
                 return;
             }
 
-            if (_calculations.Any())
-            {
-                CurrentPlayer = CurrentCalculation.PlayerActions.Last().Player;
-            }
-            else
+            if (_calculations.Count == 0)
             {
                 _calculations.Add(new Calculation(new PlayerActions(), 1, _season));
-                CurrentPlayer = new Player();
             }
+
+            CurrentPlayer = LastPlayerOrNew();
         }
 
         public void SetRerolls(int index, int rerolls)
@@ -98,7 +95,7 @@ namespace ActionCalculator.Web.Client.Editing
 
             _calculations = calculations;
 
-            CurrentPlayer = CurrentCalculation.PlayerActions.Last().Player;
+            CurrentPlayer = LastPlayerOrNew();
         }
 
         public bool IsFrenzyFollowUp(int index)
@@ -210,5 +207,7 @@ namespace ActionCalculator.Web.Client.Editing
                 playerActions.RemoveAt(invalidIndex);
             }
         }
+
+        private Player LastPlayerOrNew() => CurrentCalculation.PlayerActions.LastOrDefault()?.Player ?? new Player();
     }
 }
