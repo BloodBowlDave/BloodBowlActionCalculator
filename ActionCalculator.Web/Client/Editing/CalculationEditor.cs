@@ -5,7 +5,7 @@ using Action = ActionCalculator.Models.Actions.Action;
 
 namespace ActionCalculator.Web.Client.Editing
 {
-    public class CalculationEditor(IActionTypeValidator actionTypeValidator, IPlayerActionsBuilder playerActionsBuilder)
+    public class CalculationEditor(IActionTypeValidator actionTypeValidator, ICalculationBuilder calculationBuilder)
     {
         private List<Calculation> _calculations = [new Calculation(new PlayerActions(), 1)];
         private Season _season = Season.Season3;
@@ -53,10 +53,9 @@ namespace ActionCalculator.Web.Client.Editing
         public int PlayerNumber()
         {
             var playerIds = CurrentCalculation.PlayerActions.Select(x => x.Player.Id).Distinct().ToList();
-            var playerCount = playerIds.Count;
             var playerIndex = playerIds.IndexOf(CurrentPlayer.Id);
 
-            return playerIndex != -1 ? playerIndex + 1 : playerCount + 1;
+            return playerIndex != -1 ? playerIndex + 1 : playerIds.Count + 1;
         }
 
         public void ClearCalculation(int index)
@@ -86,9 +85,9 @@ namespace ActionCalculator.Web.Client.Editing
 
         public void SaveCalculation(int index)
         {
-            var playerActions = playerActionsBuilder.Build(_calculations[index].PlayerActions.ToString());
+            var calculation = _calculations[index];
 
-            _calculations.Add(new Calculation(playerActions, _calculations[index].Rerolls, _calculations[index].Season));
+            _calculations.Add(calculationBuilder.Build(calculation.ToString(), calculation.Rerolls));
         }
 
         public void EditCalculation(int index)
@@ -104,39 +103,41 @@ namespace ActionCalculator.Web.Client.Editing
 
         public bool IsFrenzyFollowUp(int index)
         {
-            var pa = CurrentCalculation.PlayerActions[index];
-            return pa.RequiresNonCriticalFailure &&
-                   pa.Action.ActionType == ActionType.Block &&
+            var playerActions = CurrentCalculation.PlayerActions;
+            var playerAction = playerActions[index];
+
+            return playerAction.RequiresNonCriticalFailure &&
+                   playerAction.Action.ActionType == ActionType.Block &&
                    index > 0 &&
-                   CurrentCalculation.PlayerActions[index - 1].Action.ActionType == ActionType.Block &&
-                   ((Block)CurrentCalculation.PlayerActions[index - 1].Action).NumberOfNonCriticalFailures > 0;
+                   playerActions[index - 1].Action is Block { NumberOfNonCriticalFailures: > 0 };
         }
 
         public void SetPushes(int index, int value)
         {
-            var block = (Block)CurrentCalculation.PlayerActions[index].Action;
+            var playerActions = CurrentCalculation.PlayerActions;
+            var block = (Block)playerActions[index].Action;
             var wasUsingFrenzy = block.NumberOfNonCriticalFailures > 0;
 
             if (value > 0 && !wasUsingFrenzy)
             {
                 block.NumberOfNonCriticalFailures = value;
-                var mainPlayerAction = CurrentCalculation.PlayerActions[index];
+                var mainPlayerAction = playerActions[index];
                 var followUpBlock = new Block(block.NumberOfDice, block.NumberOfSuccessfulResults, 0, false, false, true);
                 var followUpPlayerAction = new PlayerAction(mainPlayerAction.Player, followUpBlock, mainPlayerAction.Depth + 1)
                 {
                     RequiresNonCriticalFailure = true,
                     EndOfBranch = true
                 };
-                CurrentCalculation.PlayerActions.Insert(index + 1, followUpPlayerAction);
+                playerActions.Insert(index + 1, followUpPlayerAction);
                 return;
             }
 
             if (value == 0 && wasUsingFrenzy)
             {
                 var nextIndex = index + 1;
-                if (nextIndex < CurrentCalculation.PlayerActions.Count && IsFrenzyFollowUp(nextIndex))
+                if (nextIndex < playerActions.Count && IsFrenzyFollowUp(nextIndex))
                 {
-                    CurrentCalculation.PlayerActions.RemoveAt(nextIndex);
+                    playerActions.RemoveAt(nextIndex);
                 }
             }
 
@@ -145,19 +146,21 @@ namespace ActionCalculator.Web.Client.Editing
 
         public void RemoveAction(int index)
         {
+            var playerActions = CurrentCalculation.PlayerActions;
+
             if (IsFrenzyMainBlock(index))
             {
                 var followUpIndex = index + 1;
-                var followUp = CurrentCalculation.PlayerActions[followUpIndex];
+                var followUp = playerActions[followUpIndex];
                 ((Block)followUp.Action).NumberOfNonCriticalFailures = 0;
-                CurrentCalculation.PlayerActions[followUpIndex] = new PlayerAction(followUp.Player, followUp.Action, 0);
+                playerActions[followUpIndex] = new PlayerAction(followUp.Player, followUp.Action, 0);
             }
             else if (IsFrenzyFollowUp(index))
             {
-                ((Block)CurrentCalculation.PlayerActions[index - 1].Action).NumberOfNonCriticalFailures = 0;
+                ((Block)playerActions[index - 1].Action).NumberOfNonCriticalFailures = 0;
             }
 
-            CurrentCalculation.PlayerActions.RemoveAt(index);
+            playerActions.RemoveAt(index);
 
             RemoveInvalidPlayerActions();
 
@@ -171,10 +174,10 @@ namespace ActionCalculator.Web.Client.Editing
 
         private bool IsFrenzyMainBlock(int index)
         {
-            var pa = CurrentCalculation.PlayerActions[index];
-            return pa.Action.ActionType == ActionType.Block &&
-                   ((Block)pa.Action).NumberOfNonCriticalFailures > 0 &&
-                   index + 1 < CurrentCalculation.PlayerActions.Count &&
+            var playerActions = CurrentCalculation.PlayerActions;
+
+            return playerActions[index].Action is Block { NumberOfNonCriticalFailures: > 0 } &&
+                   index + 1 < playerActions.Count &&
                    IsFrenzyFollowUp(index + 1);
         }
 
