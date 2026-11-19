@@ -183,32 +183,31 @@ namespace ActionCalculator.Web.Client.Editing
 
         private void RemoveInvalidPlayerActions()
         {
+            var playerActions = CurrentCalculation.PlayerActions;
+
             while (true)
             {
-                var invalidPlayerActionIndexes = new List<int>();
+                var invalidIndex = -1;
 
-                for (var i = 0; i < CurrentCalculation.PlayerActions.Count; i++)
+                for (var i = 0; i < playerActions.Count; i++)
                 {
-                    var actionType = CurrentCalculation.PlayerActions[i].Action.ActionType;
-                    ActionType? previousActionType = i > 0 ? CurrentCalculation.PlayerActions[i - 1].Action.ActionType : null;
-                    ActionType? previousPreviousActionType =
-                        i > 1 ? CurrentCalculation.PlayerActions[i - 2].Action.ActionType : null;
+                    var actionType = playerActions[i].Action.ActionType;
+                    ActionType? previousActionType = i > 0 ? playerActions[i - 1].Action.ActionType : null;
+                    ActionType? previousPreviousActionType = i > 1 ? playerActions[i - 2].Action.ActionType : null;
 
                     if (!actionTypeValidator.ActionTypeIsValid(actionType, previousActionType, previousPreviousActionType))
                     {
-                        invalidPlayerActionIndexes.Add(i);
+                        invalidIndex = i;
+                        break;
                     }
                 }
 
-                foreach (var invalidPlayerActionIndex in invalidPlayerActionIndexes)
+                if (invalidIndex == -1)
                 {
-                    CurrentCalculation.PlayerActions.RemoveAt(invalidPlayerActionIndex);
+                    return;
                 }
 
-                if (!invalidPlayerActionIndexes.Any())
-                {
-                    break;
-                }
+                playerActions.RemoveAt(invalidIndex);
             }
         }
     }

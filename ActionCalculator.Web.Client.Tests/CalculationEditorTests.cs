@@ -25,6 +25,26 @@ namespace ActionCalculator.Web.Client.Tests
         }
 
         [Fact]
+        public void RemoveAction_KeepsValidActionsAfterSeveralDependentActionsAreRemoved()
+        {
+            AddActions("R2", "F8", "J8", "B", "R3");
+
+            _editor.RemoveAction(1);
+
+            Assert.Equal("R2,R3", _editor.CurrentCalculation.ToString());
+        }
+
+        [Fact]
+        public void RemoveAction_RemovesDependentActionsAtTheEndWithoutThrowing()
+        {
+            AddActions("F8", "J8", "B");
+
+            _editor.RemoveAction(0);
+
+            Assert.Empty(_editor.CurrentCalculation.PlayerActions);
+        }
+
+        [Fact]
         public void RemoveAction_OfTheOnlyActionKeepsTheCurrentPlayer()
         {
             var player = new Player(Guid.NewGuid(), CalculatorSkills.Dodge, 0, 0, 0, 0);
