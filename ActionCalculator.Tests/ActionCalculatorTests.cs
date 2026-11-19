@@ -421,5 +421,17 @@ namespace ActionCalculator.Tests
             var result = _calculator.Calculate(calculation);
             Assert.Equal(expectedValid, result.IsValid);
         }
+
+        [Theory]
+        [InlineData("D3x", "Could not read the action \"D3x\"")]
+        [InlineData("R2,D3x", "Could not read the action \"D3x\"")]
+        [InlineData("Q:R2", "Could not read the player \"Q\"")]
+        [InlineData("D3{D3", "No matching closing bracket")]
+        [InlineData("R2,,D3", "An action is missing between two commas")]
+        public void ParseErrorTests(string calculationString, string expectedMessage)
+        {
+            var exception = Assert.Throws<CalculationParseException>(() => _calculationBuilder.Build(calculationString, 1));
+            Assert.Equal(expectedMessage, exception.Message);
+        }
     }
 }

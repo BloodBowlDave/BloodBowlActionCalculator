@@ -10,6 +10,8 @@ namespace ActionCalculator.Web.Client.Pages
     public partial class Advanced
     {
         private string _calculationString;
+
+        private string? _parseError;
         
         private List<Calculation> _calculations = new();
 
@@ -59,6 +61,7 @@ namespace ActionCalculator.Web.Client.Pages
             }
 
             _calculationString = _calculations[0].PlayerActions.ToString();
+            _parseError = null;
         }
 
         private void RerollsChanged(Tuple<int, int> value)
@@ -84,13 +87,21 @@ namespace ActionCalculator.Web.Client.Pages
             _calculations = calculations;
 
             _calculationString = _calculations[0].PlayerActions.ToString();
+            _parseError = null;
         }
 
         private void Evaluate()
         {
-            var playerActions = PlayerActionsBuilder.Build(_calculationString);
-            
-            _calculations[0] = new Calculation(playerActions, 1);
+            try
+            {
+                _calculations[0] = new Calculation(PlayerActionsBuilder.Build(_calculationString), 1);
+                _parseError = null;
+            }
+            catch (CalculationParseException e)
+            {
+                _calculations[0] = new Calculation(new PlayerActions(), 1);
+                _parseError = e.Message;
+            }
         }
         
         private CalculationResult? GetCalculationResult(Calculation calculation)
@@ -126,18 +137,6 @@ namespace ActionCalculator.Web.Client.Pages
             {
                 yield return new Tuple<int, decimal>(i, results[i]);
             }
-        }
-
-        private bool CalculationIsValid()
-        {
-            if (string.IsNullOrWhiteSpace(_calculationString))
-            {
-                return true;
-            }
-
-            var playerActions = _calculations[0].PlayerActions;
-
-            return playerActions.Any();
         }
 
         private void OnKeyUp(KeyboardEventArgs obj)

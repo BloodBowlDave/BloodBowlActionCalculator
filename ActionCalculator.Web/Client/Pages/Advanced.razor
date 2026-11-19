@@ -11,7 +11,8 @@
         OnClearButtonClick="() => ClearCalculation(0)"
         FullWidth="true"
         Label="Calculation" 
-        Error="!CalculationIsValid()"
+        Error="_parseError != null"
+        ErrorText="@_parseError"
         @bind-Value="_calculationString"
         OnKeyUp="OnKeyUp"
         OnBlur="Evaluate" />
