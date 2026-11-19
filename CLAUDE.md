@@ -20,14 +20,14 @@ A probability calculator for Blood Bowl 2020. Players chain actions (dodges, blo
 dotnet build
 
 # Run tests
-dotnet test ActionCalculator.Tests
+dotnet test BloodBowl.sln
 
 # Run web server
 dotnet run --project ActionCalculator.Web/Server/ActionCalculator.Web.Server.csproj
 # → http://localhost:5000
 ```
 
-All tests are parametrised `[Theory]` cases — no test names to remember. Running `dotnet test` is always sufficient.
+Engine tests are parametrised `[Theory]` cases in `ActionCalculator.Tests`; client page logic is tested in `ActionCalculator.Web.Client.Tests`. Running `dotnet test BloodBowl.sln` runs both, and CI does the same.
 
 CI (`.github/workflows/master_bloodbowldave.yml`) runs the tests on every pull request to `master` and on every push to `master`; the client is only published and deployed to Azure Static Web Apps after the tests pass on `master`. Dependabot (`.github/dependabot.yml`) opens weekly, grouped NuGet and GitHub Actions update PRs.
 
@@ -41,8 +41,9 @@ CI (`.github/workflows/master_bloodbowldave.yml`) runs the tests on every pull r
 | `ActionCalculator.Abstractions` | Shared interfaces: `ICalculator`, `IActionStrategy`, `ICalculationContext`, `IProHelper`, `IStrategyFactory`, … |
 | `ActionCalculator.Utilities` | Small helpers: enum flag extensions, clamping, combinatorics |
 | `ActionCalculator` | Core engine: all strategies, `Calculator`, `StrategyFactory`, parsers, `D6`, `ProHelper`, `ConsummateProfessionalHelper`, `CalculationContext` |
-| `ActionCalculator.Tests` | xUnit tests (~280 parametrised cases across all action types and star players) |
-| `ActionCalculator.Web/Client` | Blazor WASM UI: player editor, action builder, save/compare, season toggle |
+| `ActionCalculator.Tests` | xUnit engine tests (~330 parametrised cases across all action types, star players, validation and parse errors) |
+| `ActionCalculator.Web/Client` | Blazor WASM UI: player editor, action builder, save/compare, season toggle. Page logic for editing calculations lives in `Editing/CalculationEditor` |
+| `ActionCalculator.Web.Client.Tests` | xUnit tests for `CalculationEditor`, the page logic behind the Calculator and Advanced pages |
 | `ActionCalculator.Web/Server` | Local development host only (serves the client on localhost); not part of the deployed site |
 
 ---
@@ -352,7 +353,7 @@ The remaining star players (68 in total) have no special calculator skill and us
 
 ## Key implementation notes
 
-### Frenzy (PushesChanged in Index.razor.cs)
+### Frenzy (CalculationEditor.SetPushes)
 A Frenzy follow-up block is inserted as a second `PlayerAction` immediately after the main block with `RequiresNonCriticalFailure = true`. When removing Frenzy, `IsFrenzyFollowUp` checks `NumberOfNonCriticalFailures > 0` on the *previous* block — always check this **before** setting `NumberOfNonCriticalFailures = 0`, or the check will fail.
 
 ### Savage Blow (BlockStrategy / FractionalDiceBlockStrategy)
@@ -366,6 +367,9 @@ H'thark's per-block free reroll of one die, and Lucien's equivalent in Season 3.
 
 ### SneakyGit and doubles
 `FoulStrategy` skips the "sent off on a double" roll entirely when SneakyGit is active — `var rollDouble = canUseSneakyGit ? 0 : d6.RollDouble(roll, 12)`.
+
+### Parse errors
+`PlayerActionsBuilder.Build` throws `CalculationParseException` with a short message (for example `Could not read the action "D3x"`) instead of returning an empty calculation. The Advanced page catches it and shows the message under the calculation field.
 
 ### Season enum vs UI strings
 `Calculation.Season` is a `Season` enum (`Season2` / `Season3`). The Blazor UI stores and passes season as a `string` ("Season 2" / "Season 3") via `[CascadingParameter]` and local storage. Convert at the boundary using `ParseSeason(string)` in `Index.razor.cs`. Never store the string in `Calculation`.
