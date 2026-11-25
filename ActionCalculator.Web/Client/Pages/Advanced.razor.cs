@@ -1,5 +1,6 @@
 ﻿using ActionCalculator.Abstractions;
 using ActionCalculator.Models;
+using ActionCalculator.Web.Client.Editing;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -9,29 +10,29 @@ namespace ActionCalculator.Web.Client.Pages
 {
     public partial class Advanced
     {
-        private string _calculationString;
-        
-        private List<Calculation> _calculations = new();
+        private string _calculationString = "";
+
+        private string? _parseError;
 
         private readonly Dictionary<Tuple<int, string>, CalculationResult?> _resultsLookup = new();
 
-        [Inject] 
-        public IPlayerActionsBuilder PlayerActionsBuilder { get; set; } = null!;
+        [Inject]
+        public CalculationEditor Editor { get; set; } = null!;
+
+        [Inject]
+        public ICalculationBuilder CalculationBuilder { get; set; } = null!;
 
         [Inject]
         public ICalculator Calculator { get; set; } = null!;
-        
+
         [Inject]
         public IValidator<Calculation> CalculationValidator { get; set; } = null!;
 
         [Inject]
         public NavigationManager NavigationManager { get; set; } = null!;
-        
-        public Advanced()
-        {
-            _calculations.Add(new Calculation(new PlayerActions(), 1));
-            _calculationString = "";
-        }
+
+        private IReadOnlyList<Calculation> Calculations => Editor.Calculations;
+
         protected override void OnInitialized()
         {
             var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -46,56 +47,51 @@ namespace ActionCalculator.Web.Client.Pages
 
         private void ClearCalculation(int index)
         {
-            _calculations.RemoveAt(index);
+            Editor.ClearCalculation(index);
 
             if (index > 0)
             {
                 return;
             }
-            
-            if (!_calculations.Any())
-            {
-                _calculations.Add(new Calculation(new PlayerActions(), 1));
-            }
 
-            _calculationString = _calculations[0].PlayerActions.ToString();
+            ShowCurrentCalculation();
         }
 
-        private void RerollsChanged(Tuple<int, int> value)
-        {
-            var (index, rerolls) = value;
+        private void RerollsChanged(Tuple<int, int> value) => Editor.SetRerolls(value.Item1, value.Item2);
 
-            _calculations[index].Rerolls = rerolls;
-        }
-
-        private void SaveCalculation(int index)
-        {
-            var playerActions = PlayerActionsBuilder.Build(_calculations[index].PlayerActions.ToString());
-
-            _calculations.Add(new Calculation(playerActions, _calculations[index].Rerolls));
-        }
+        private void SaveCalculation(int index) => Editor.SaveCalculation(index);
 
         private void EditCalculation(int index)
         {
-            var calculations = new List<Calculation> { _calculations[index] };
+            Editor.EditCalculation(index);
+            ShowCurrentCalculation();
+        }
 
-            calculations.AddRange(_calculations.Where((_, i) => i != index));
-
-            _calculations = calculations;
-
-            _calculationString = _calculations[0].PlayerActions.ToString();
+        private void ShowCurrentCalculation()
+        {
+            _calculationString = Editor.CurrentCalculation.ToString();
+            _parseError = null;
         }
 
         private void Evaluate()
         {
-            var playerActions = PlayerActionsBuilder.Build(_calculationString);
-            
-            _calculations[0] = new Calculation(playerActions, 1);
+            var rerolls = Editor.CurrentCalculation.Rerolls;
+
+            try
+            {
+                Editor.ReplaceCurrentCalculation(CalculationBuilder.Build(_calculationString, rerolls));
+                _parseError = null;
+            }
+            catch (CalculationParseException e)
+            {
+                Editor.ReplaceCurrentCalculation(new Calculation(new PlayerActions(), rerolls));
+                _parseError = e.Message;
+            }
         }
-        
+
         private CalculationResult? GetCalculationResult(Calculation calculation)
         {
-            var key = new Tuple<int, string>(calculation.Rerolls, calculation.PlayerActions.ToString());
+            var key = new Tuple<int, string>(calculation.Rerolls, calculation.ToString());
 
             if (_resultsLookup.TryGetValue(key, out var result))
             {
@@ -126,18 +122,6 @@ namespace ActionCalculator.Web.Client.Pages
             {
                 yield return new Tuple<int, decimal>(i, results[i]);
             }
-        }
-
-        private bool CalculationIsValid()
-        {
-            if (string.IsNullOrWhiteSpace(_calculationString))
-            {
-                return true;
-            }
-
-            var playerActions = _calculations[0].PlayerActions;
-
-            return playerActions.Any();
         }
 
         private void OnKeyUp(KeyboardEventArgs obj)
