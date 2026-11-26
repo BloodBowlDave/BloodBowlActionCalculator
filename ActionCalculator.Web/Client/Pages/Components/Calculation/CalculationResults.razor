@@ -42,7 +42,14 @@
             {
                 <MudTable Items="@Results" Striped="true" Breakpoint="Breakpoint.None" >
                     <HeaderContent>
-                        <MudTh>Rerolls Used</MudTh>
+                        <MudTh>
+                            Rerolls Used
+                            <MudTooltip Text="Chance of success without using more than this many team rerolls. Team rerolls are used before Pro unless you choose Use Pro in the action's Overrides.">
+                                <span style="vertical-align: middle;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Style="cursor: help; opacity: 0.7;"/>
+                                </span>
+                            </MudTooltip>
+                        </MudTh>
                         <MudTh>Success %</MudTh>
                     </HeaderContent>
                     <RowTemplate>
