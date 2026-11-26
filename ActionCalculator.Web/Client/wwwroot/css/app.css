@@ -197,26 +197,27 @@ h2 {
     height: 1em !important;
 }
 
-.action-summary h6 {
-    padding-right: 30px;
-    position: relative;
+.action-summary h6, .calculation-results h4 {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     white-space: normal;
 }
 
-.action-summary h6:hover {
-    cursor: pointer;
+.action-summary h6 .heading-text, .calculation-results h4 .heading-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
-.action-summary h6 > .mud-icon-root {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: -1px;
-    height: 18px;
-}
-
-.action-summary h6 .mud-tooltip-root {
+.action-summary h6 .mud-tooltip-root, .calculation-results h4 .mud-tooltip-root {
     vertical-align: middle;
+}
+
+.action-summary h6 .remove-button, .calculation-results h4 .remove-button {
+    flex-shrink: 0;
+    padding: 7px !important;
+    margin: -7px -4px -7px 0;
 }
 
 .action-summary .mud-button-root, .player-editor .mud-button-root {
@@ -301,28 +302,6 @@ h2 {
     min-width: 100px;
 }
 
-.calculation-results h4 {
-    padding-right: 30px;
-    position: relative;
-}
-
-.calculation-results h4:hover {
-    cursor: pointer;
-}
-
-.calculation-results h4 .mud-tooltip-root {
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
-}
-
-.calculation-results h4 > .mud-icon-root {
-    position: absolute;
-    top: 4px;
-    right: 1px;
-    height: 18px;
-}
-
 .calculation-results .mud-input-number-control {
     margin-left: 17px !important;
     margin-right: 17px !important;
@@ -342,4 +321,71 @@ h2 {
     gap: 4px;
     font-size: 0.9rem;
     font-weight: 500;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('../fonts/roboto-latin-300-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/roboto-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../fonts/roboto-latin-500-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../fonts/roboto-latin-700-normal.woff2') format('woff2');
+}
+
+#update-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 64px;
+    transform: translateX(-50%);
+    z-index: 1500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: calc(100vw - 32px);
+    padding: 10px 16px;
+    background: #27273f;
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #594AE2;
+    border-radius: 6px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+}
+
+#update-banner[hidden] {
+    display: none;
+}
+
+#update-banner button {
+    background: #594AE2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
 }

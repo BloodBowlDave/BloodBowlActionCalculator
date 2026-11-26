@@ -2,17 +2,19 @@
 {
     <MudItem>
         <MudPaper Class="calculation-results">
-            <h4 @onclick="ClearCalculation">
-                @Calculation.ToString()
-                @if (HasPuntPass)
-                {
-                    <MudTooltip Text="A pass without a catch is assumed to be a punt and is therefore successful even if inaccurate">
-                        <span @onclick:stopPropagation="true" style="vertical-align: middle;">
+            <h4>
+                <span class="heading-text">
+                    @Calculation.ToString()
+                    @if (HasPuntPass)
+                    {
+                        <MudTooltip Text="A pass without a catch is assumed to be a punt and is therefore successful even if inaccurate">
                             <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Style="cursor: help; opacity: 0.7;"/>
-                        </span>
-                    </MudTooltip>
-                }
-                <MudIcon Icon="@Icons.Material.Filled.Cancel"/>
+                        </MudTooltip>
+                    }
+                </span>
+                <MudIconButton Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Inherit"
+                               Class="remove-button" aria-label="Remove calculation" title="Remove calculation"
+                               OnClick="ClearCalculation"/>
             </h4>
         
             <MudNumericField T="int" 
@@ -40,7 +42,14 @@
             {
                 <MudTable Items="@Results" Striped="true" Breakpoint="Breakpoint.None" >
                     <HeaderContent>
-                        <MudTh>Rerolls Used</MudTh>
+                        <MudTh>
+                            Rerolls Used
+                            <MudTooltip Text="Chance of success without using more than this many team rerolls. Team rerolls are used before Pro unless you choose Use Pro in the action's Overrides.">
+                                <span style="vertical-align: middle;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Style="cursor: help; opacity: 0.7;"/>
+                                </span>
+                            </MudTooltip>
+                        </MudTh>
                         <MudTh>Success %</MudTh>
                     </HeaderContent>
                     <RowTemplate>

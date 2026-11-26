@@ -2,7 +2,8 @@
 <MudItem Class="action-summary">
     <MudPaper>
 
-        <h6 @onclick="() => RemoveActionByIndex(Index)">
+        <h6>
+            <span class="heading-text">
             @if (PlayerAction.RequiresNonCriticalFailure && Action.ActionType == ActionType.Block)
             {
                 @("Frenzy - ")
@@ -24,10 +25,13 @@
             @if (PlayerAction.RequiresNonCriticalFailure && Action.ActionType == ActionType.Block)
             {
                 <MudTooltip Text="Triggered on a push result">
-                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small"/>
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Style="cursor: help; opacity: 0.7;"/>
                 </MudTooltip>
             }
-            <MudIcon Icon="@Icons.Material.Filled.Cancel" Size="Size.Small"/>
+            </span>
+            <MudIconButton Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Inherit"
+                           Class="remove-button" aria-label="Remove action" title="Remove action"
+                           OnClick="() => RemoveActionByIndex(Index)"/>
         </h6>
 
         @if (Action.ActionType == ActionType.Block)

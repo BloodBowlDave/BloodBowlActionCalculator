@@ -7,7 +7,8 @@
     <div class="section-toggle">
         <span>Player</span>
         <MudIconButton Icon="@(_showPlayerEditor ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
-                       Size="Size.Small" OnClick="@(() => _showPlayerEditor = !_showPlayerEditor)"/>
+                       Size="Size.Small" aria-label="Show or hide the player editor"
+                       OnClick="@(() => _showPlayerEditor = !_showPlayerEditor)"/>
     </div>
 
     @if (_showPlayerEditor)
@@ -24,7 +25,8 @@
     <div class="section-toggle">
         <span>Actions</span>
         <MudIconButton Icon="@(_showActionsContainer ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
-                       Size="Size.Small" OnClick="@(() => _showActionsContainer = !_showActionsContainer)"/>
+                       Size="Size.Small" aria-label="Show or hide the actions"
+                       OnClick="@(() => _showActionsContainer = !_showActionsContainer)"/>
     </div>
 
     @if (_showActionsContainer)
@@ -41,7 +43,8 @@
     <div class="section-toggle">
         <span>Calculation</span>
         <MudIconButton Icon="@(_showCalculation ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)"
-                       Size="Size.Small" OnClick="@(() => _showCalculation = !_showCalculation)"/>
+                       Size="Size.Small" aria-label="Show or hide the calculation"
+                       OnClick="@(() => _showCalculation = !_showCalculation)"/>
     </div>
     }
 

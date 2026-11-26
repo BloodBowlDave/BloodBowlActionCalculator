@@ -37,6 +37,20 @@
         It is URL-friendly and should be able to represent any sequence of actions. It is my hope that this notation becomes a standard way of describing actions among the Blood Bowl community. 
         You can see all of the calculations I have tested in the tests that are in the code repository.
     </p>
+
+    <h6>What do the rows in the results table mean?</h6>
+    <p>
+        Each row shows the chance of success without using more than that many team rerolls.
+        For example, the row for 1 reroll is the chance of succeeding while using at most one of the rerolls you entered.
+        The 0 row is therefore how often you get through without needing a team reroll at all.
+    </p>
+    <p>
+        When a player has Pro and a team reroll is available, the calculator uses the team reroll first and keeps Pro as a backup,
+        because a team reroll is more likely to succeed. This shows you the safest line.
+        If you would rather save your team rerolls for later in the turn, choose "Use Pro" in the action's Overrides
+        and compare the two results. The calculator can't know how valuable a team reroll is to you later in the half, so that choice is left to you.
+        "Use Brawler" works the same way for blocks.
+    </p>
     
     <h6>I used your calculator to help me choose a play and I got a turnover!</h6>
     <p>

@@ -1,8 +1,8 @@
 ﻿<MudAppBar Dense="true" Elevation="1" Style="position: relative;">
     <span class="appbar-title">Dave's Action Calculator</span>
     
-    <MudIconButton Href="/" Icon="fa-solid fa-calculator" Color="Color.Inherit" title="Calculator" aria-label="Calculator"/>
-    <MudIconButton Href="/advanced" Icon="fa-solid fa-gears" Color="Color.Inherit" title="Advanced" aria-label="Advanced"/>
+    <MudIconButton Href="/" Icon="@Icons.Material.Filled.Calculate" Color="Color.Inherit" title="Calculator" aria-label="Calculator"/>
+    <MudIconButton Href="/advanced" Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" title="Advanced" aria-label="Advanced"/>
     <MudIconButton Href="/glossary" Icon="@Icons.Material.Filled.ListAlt" Color="Color.Inherit" title="Glossary" aria-label="Glossary"/>
     <MudIconButton Href="/faq" Icon="@Icons.Material.Filled.QuestionAnswer" Color="Color.Inherit" title="FAQ" aria-label="FAQ"/>
     <MudIconButton Href="/about" Icon="@Icons.Material.Filled.Info" Color="Color.Inherit" title="About" aria-label="About"/>
@@ -19,10 +19,10 @@
 
     @if (_isLightMode)
     {
-        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme" title="Dark mode" aria-label="Switch to dark mode"/>
     }
     else
     {
-        <MudIconButton Icon="@Icons.Material.Filled.Brightness5" Color="Color.Inherit" OnClick="ToggleTheme"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness5" Color="Color.Inherit" OnClick="ToggleTheme" title="Light mode" aria-label="Switch to light mode"/>
     }
 </MudAppBar>
