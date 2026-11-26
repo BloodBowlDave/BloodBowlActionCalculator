@@ -186,7 +186,49 @@
         <a class="dismiss">&#x1F5D9;</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }</script>
+    <div id="update-banner" role="status" hidden>
+        <span>A new version is available.</span>
+        <button type="button" id="update-reload">Reload</button>
+    </div>
+    <script>
+        (function () {
+            if (!('serviceWorker' in navigator)) {
+                return;
+            }
+
+            var banner = document.getElementById('update-banner');
+            var updateRequested = false;
+
+            function showUpdateBanner(worker) {
+                banner.hidden = false;
+                document.getElementById('update-reload').onclick = function () {
+                    updateRequested = true;
+                    worker.postMessage('skipWaiting');
+                };
+            }
+
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                if (updateRequested) {
+                    window.location.reload();
+                }
+            });
+
+            navigator.serviceWorker.register('service-worker.js').then(function (registration) {
+                if (registration.waiting && navigator.serviceWorker.controller) {
+                    showUpdateBanner(registration.waiting);
+                }
+
+                registration.addEventListener('updatefound', function () {
+                    var worker = registration.installing;
+                    worker.addEventListener('statechange', function () {
+                        if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showUpdateBanner(worker);
+                        }
+                    });
+                });
+            });
+        })();
+    </script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 </body>
 
